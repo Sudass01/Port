@@ -1125,7 +1125,110 @@ select.sel{
 .mini-flow span{ color: var(--text-dim); font-family: var(--font-mono); }
 .mini-flow.now span{ color: var(--text); }
 
-/* ===================== ETAPA 7 — CONCLUSÃO ===================== */
+/* ===================== ETAPA 7 — DESAFIO DO ALVO (aplicação de PREVER) ===================== */
+.h2-sub{ font-family: var(--font-sans); font-size: .82rem; font-weight:400; letter-spacing:0; color: var(--text-dim); }
+#alvoStage{ background: radial-gradient(ellipse at 70% 70%, rgba(240,161,63,.06), transparent 60%), linear-gradient(180deg, rgba(255,255,255,.018), transparent 40%), var(--bg-1); }
+#alvoStage .corner-tick{ border-color: var(--traj-soft); }
+.alvo-hud{
+  position:absolute; z-index:2; top:12px; left:14px; right: 320px;
+  display:flex; align-items:center; gap:8px 10px; flex-wrap:wrap; pointer-events:none;
+}
+.ah-tries, .ah-prize{
+  display:flex; align-items:center; gap:10px;
+  padding: 7px 12px; border-radius: var(--r-sm);
+  background: linear-gradient(180deg, rgba(12,19,34,.94), rgba(7,12,22,.9));
+  border:1px solid var(--line-strong); box-shadow: var(--inner-hi);
+}
+.ah-lbl{ font-family: var(--font-mono); font-size:.66rem; letter-spacing:.16em; color: var(--text-dim); }
+.ah-dots{ display:flex; gap:7px; }
+.ah-dots i{
+  width:14px; height:14px; border-radius:50%;
+  background: var(--traj); box-shadow: 0 0 10px var(--traj-soft), inset 0 1px 0 rgba(255,255,255,.4);
+  transition: background-color var(--dur-3) var(--ease), box-shadow var(--dur-3) var(--ease), transform var(--dur-3) var(--ease-out);
+}
+.ah-dots i.used{ background: transparent; box-shadow: inset 0 0 0 1.5px var(--line-hi); transform: scale(.86); }
+.ah-dots i.win{ background: var(--radar); box-shadow: 0 0 12px var(--radar-soft); }
+.ah-count{ font-family: var(--font-display); font-size:.95rem; font-weight:600; color: var(--text); }
+.ah-prize{ font-family: var(--font-mono); font-size:.72rem; font-weight:600; letter-spacing:.14em; color: var(--traj); border-color: var(--traj-soft); }
+.ah-prize .candy{ width:30px; height:15px; color: var(--traj); }
+.ovl.alvo-intro{
+  top: 50%; left: 50%; width: min(360px, 56%); margin: -120px 0 0 calc(min(360px, 56%) / -2);
+  text-align:center; padding: 14px 16px 12px;
+  border-color: var(--traj-soft);
+  animation: popIn .4s var(--ease-out) both;
+}
+.ovl.alvo-intro::before{ border-color: var(--traj); }
+.ai-big{ font-family: var(--font-display); font-weight:700; font-size: 1.3rem; letter-spacing:.04em; color: var(--text); }
+.ai-steps{ list-style:none; margin: 10px 0; padding:0; display:grid; grid-template-columns: 1fr 1fr; gap:6px 10px; text-align:left; }
+.ai-steps li{ display:flex; align-items:center; gap:8px; font-size:.86rem; color: var(--text); }
+.ai-steps b{
+  width:20px; height:20px; border-radius:50%; flex:0 0 auto;
+  display:inline-flex; align-items:center; justify-content:center;
+  font-family: var(--font-mono); font-size:.7rem; color: var(--traj); border:1px solid var(--traj-soft);
+}
+.ai-prize{ font-family: var(--font-mono); font-size:.74rem; font-weight:600; letter-spacing:.24em; color: var(--traj); padding-top:8px; border-top:1px dashed var(--line-strong); }
+.ovl.alvo-result{ top:56px; right:12px; width: 290px; animation: feedbackPop .35s var(--ease-out) both; }
+.alvo-result .ar-status{ font-family: var(--font-display); font-weight:700; font-size:1.05rem; letter-spacing:.04em; }
+.alvo-result.miss .ar-status{ color: var(--traj); }
+.alvo-result.hit .ar-status{ color: var(--radar); }
+.alvo-result .ar-err{ font-family: var(--font-mono); font-size:1.35rem; font-weight:600; color: var(--text); margin: 2px 0; font-variant-numeric: tabular-nums; }
+.alvo-result .ar-err small{ font-size:.72rem; font-weight:400; color: var(--text-dim); margin-left:6px; }
+.alvo-result .ar-msg{ font-size:.82rem; color: var(--text); line-height:1.4; }
+.alvo-result .ar-hint{ margin-top:7px; padding: 6px 8px; border-left:2px solid var(--traj); background: rgba(240,161,63,.06); font-size:.78rem; line-height:1.4; color: var(--text-dim); }
+.alvo-result .ar-hint b{ display:block; font-family: var(--font-mono); font-size:.62rem; letter-spacing:.14em; color: var(--traj); font-weight:600; }
+.alvo-result .ar-data{ margin-top:6px; font-family: var(--font-mono); font-size:.7rem; color: var(--text-dimmer); }
+.ovl.alvo-banner{
+  top: 68px; left: calc((100% - 316px) / 2); width: min(390px, 60%); margin-left: calc(min(390px, 60%) / -2);
+  text-align:center; padding: 14px 18px;
+  animation: bannerIn .5s var(--ease-out) both;
+}
+.alvo-banner.win{ border-color: var(--radar); box-shadow: 0 0 0 3px var(--radar-soft), 0 0 44px -6px var(--radar-soft), 0 16px 34px rgba(0,0,0,.45); }
+.alvo-banner.win::before{ border-color: var(--radar); }
+.alvo-banner.lost{ border-color: var(--traj-soft); }
+@keyframes bannerIn{ from{ opacity:0; transform: translateY(-10px) scale(.97); } to{ opacity:1; transform:none; } }
+.ab-kicker{ display:flex; align-items:center; justify-content:center; gap:8px; font-family: var(--font-mono); font-size:.68rem; letter-spacing:.18em; color: var(--radar); }
+.alvo-banner.lost .ab-kicker{ color: var(--traj); }
+.ab-kicker svg{ width:16px; height:16px; }
+.ab-title{ font-family: var(--font-display); font-weight:700; font-size: 1.9rem; letter-spacing:.02em; line-height:1.1; margin-top:4px; color: var(--text); }
+.alvo-banner.win .ab-title{ text-shadow: 0 0 24px var(--radar-soft); }
+.ab-text{ font-size:.92rem; color: var(--text-dim); margin-top:3px; }
+.ab-prize{
+  display:inline-flex; align-items:center; gap:10px; margin-top:10px;
+  padding: 7px 12px; border:1px solid var(--traj); border-radius: var(--r-sm);
+  background: rgba(240,161,63,.1); color: var(--text); font-size:.86rem;
+  animation: prizePulse 1.6s ease-in-out .6s 3;
+}
+.ab-prize b{ font-family: var(--font-mono); font-size:.7rem; letter-spacing:.16em; color: var(--traj); }
+.ab-prize .candy{ width:32px; height:16px; color: var(--traj); }
+@keyframes prizePulse{ 50%{ box-shadow: 0 0 0 4px var(--traj-soft), 0 0 20px var(--traj-soft); } }
+.ab-meta{ margin-top:9px; font-family: var(--font-mono); font-size:.72rem; letter-spacing:.14em; color: var(--text-dim); }
+.ab-legend{ display:flex; justify-content:center; gap:14px; margin-top:9px; font-family: var(--font-mono); font-size:.74rem; color: var(--text-dim); }
+.ab-legend span{ display:flex; align-items:center; gap:5px; }
+.ab-legend i{ width:16px; height:3px; border-radius:2px; background: var(--c); box-shadow: 0 0 6px var(--c); }
+.alvo-model{ position:absolute; z-index:2; left:14px; bottom:8px; font-family: var(--font-mono); font-size:.6rem; letter-spacing:.12em; color: var(--text-dimmer); pointer-events:none; }
+.alvo-counter{
+  position:absolute; z-index:2; top:12px; right:12px;
+  display:flex; align-items:center; gap:10px; padding: 5px 10px;
+  border:1px solid var(--line-strong); border-radius: var(--r-sm); background: rgba(7,12,22,.85);
+  font-family: var(--font-mono); font-size:.62rem; letter-spacing:.16em; color: var(--text-dim);
+}
+.alvo-counter b{ font-size:1.15rem; letter-spacing:.04em; color: var(--radar); font-variant-numeric: tabular-nums; }
+.alvo-counter.bump b{ animation: counterBump .7s var(--ease-out); }
+@keyframes counterBump{ 30%{ transform: scale(1.4); text-shadow: 0 0 14px var(--radar); } }
+.alvo-controls .row label{ font-family: var(--font-mono); font-size:.72rem; letter-spacing:.14em; color: var(--text-dim); }
+.alvo-controls .row .val{ font-size:1.05rem; color: var(--traj); }
+.alvo-controls input[type="range"]{ accent-color: var(--traj); height: 22px; }
+.alvo-controls input[type="range"]:disabled{ opacity:.4; }
+.btn.alvo-fire{ font-family: var(--font-display); font-size: 1.15rem; letter-spacing:.14em; padding: 13px 14px; }
+.btn.alvo-fire.pulse{ animation: fireFeedback .6s var(--ease-out); }
+@keyframes fireFeedback{ 0%{ box-shadow: 0 0 0 0 var(--radar-soft); } 40%{ box-shadow: 0 0 0 6px var(--radar-soft), 0 0 30px var(--radar-soft); } }
+.btn.alvo-solve{ margin-top:6px; color: var(--radar); border-color: var(--radar-soft); }
+.btn.alvo-solve[hidden]{ display:none; }
+.alvo-q .qopt[aria-pressed="true"]{ background: var(--traj); border-color: var(--traj); color: #1a0f02; box-shadow: 0 0 0 3px var(--traj-soft); }
+.alvo-sol{ margin-top:8px; font-family: var(--font-mono); font-size:.8rem; color: var(--text); }
+.alvo-sol b{ color: var(--radar); }
+
+/* ===================== ETAPA 8 — CONCLUSÃO ===================== */
 .concl{
   position:relative;
   display:flex; flex-direction:column; justify-content:center; gap: clamp(12px, 2.4vh, 24px); min-height:0; padding: 0 4px; overflow:auto;
@@ -1308,6 +1411,9 @@ select.sel{
   [data-mode="presentation"] #step-separacao .st-bar{ height:8px; }
   [data-mode="presentation"] #step-schwarzschild .btn.lg{ padding: 8px 12px; }
   [data-mode="presentation"] #step-schwarzschild .panel{ gap:5px; }
+  .h2-sub{ font-size:.76rem; }
+  .ovl.alvo-result{ width: 270px; }
+  .ab-title{ font-size:1.6rem; }
   [data-mode="presentation"] #step-schwarzschild .qcard{ padding: 6px 10px; }
   [data-mode="presentation"] #step-schwarzschild .qtext{ margin: 4px 0 6px; }
   [data-mode="presentation"] #step-schwarzschild .qactions{ margin-top:6px; }
@@ -1386,6 +1492,13 @@ select.sel{
   .sort-main, .bh-main{ display:flex; flex-direction:column; }
   .sort-pipe{ order:-1; }
   .bh-left{ order:-1; }
+  #alvoStage{ display:flex; flex-direction:column; }
+  #alvoCanvas{ height: min(50vh, 72vw); min-height: 260px; order:2; }
+  .alvo-hud{ position:static; order:1; padding: 10px 10px 0; }
+  .ovl.alvo-intro, .ovl.alvo-result, .ovl.alvo-banner{ position:static; order:3; width:auto; margin: 8px; }
+  .alvo-hud{ right:auto; }
+  .ovl.alvo-banner{ margin-left:8px; }
+  .alvo-model, .alvo-counter{ position:static; order:4; margin: 0 8px 8px; align-self:flex-start; }
   .tile{ width: 22px; height: 32px; font-size: .95rem; }
   .alpha-row{ grid-template-columns: 1fr; }
   .alpha-k{ text-align:left; }
@@ -1405,6 +1518,8 @@ select.sel{
   .concl-title{ animation:none; clip-path:none; }
   .concl-sign{ animation:none; opacity:1; }
   .hero-rule.in, .bh-node.on, #helpPanel, .guide-panel{ animation:none; }
+  .ovl.alvo-intro, .ovl.alvo-result, .ovl.alvo-banner, .ab-prize, .alvo-counter.bump b, .btn.alvo-fire.pulse{ animation:none; }
+  .ah-dots i{ transition:none; }
   #hudCorner .hc-live::before{ animation:none; }
   .nav-fill, .nav-progress i{ transition:none; }
   .nav-dot[aria-current="step"] .n{ animation:none; }
@@ -1473,6 +1588,7 @@ select.sel{
       <li><span>4:40–5:50</span><span>Separação: medir → comparar → classificar</span></li>
       <li><span>5:50–7:20</span><span>Schwarzschild: massa → rₛ = 2GM/c²</span></li>
       <li><span>7:20–8:00</span><span>Conclusão: Além do Visível</span></li>
+      <li><span>livre</span><span>Desafio do alvo: visitantes (3 tentativas, prêmio: 1 bala)</span></li>
     </ol>
     <p class="note" style="margin-top:6px;">Se o tempo for mais curto, encurte a separação (poucos alimentos) e mostre só um preset em Schwarzschild.</p>
     <p class="note" style="margin-top:10px;">Os atalhos ficam desligados enquanto você digita em um campo ou mexe em um controle deslizante.</p>
@@ -1996,9 +2112,115 @@ select.sel{
       </div>
     </section>
 
-    <!-- ======================= ETAPA 7: CONCLUSÃO ======================= -->
-    <section class="step" id="step-conclusao" data-step-name="Conclusão" data-order="6" data-num="06" data-ch="end">
+    <!-- ======================= ETAPA 7: DESAFIO DO ALVO (APLICAÇÃO DE PREVER) ======================= -->
+    <section class="step" id="step-alvo" data-step-name="Desafio do alvo" data-order="6" data-num="06" data-word="ACERTAR" data-hud="06 · DESAFIO DO ALVO" data-ch="prev">
       <div class="step-head" data-num="06">
+        <h2><span class="chapter prev" data-num="06">ACERTAR</span>Desafio do alvo<span class="h2-sub">Use altura, ângulo e velocidade para acertar o alvo.</span></h2>
+        <span class="kicker">APLICAÇÃO INTERATIVA · PREVER</span>
+      </div>
+      <div class="step-body">
+        <div class="stage" id="alvoStage">
+          <canvas id="alvoCanvas" aria-label="Simulador de lançamento: lançador, trajetória e alvo"></canvas>
+
+          <!-- tentativas + prêmio (sempre visível) -->
+          <div class="alvo-hud" aria-live="polite">
+            <div class="ah-tries">
+              <span class="ah-lbl">TENTATIVAS</span>
+              <span class="ah-dots" id="alvoDots"><i></i><i></i><i></i></span>
+              <span class="ah-count" id="alvoTryLabel">Tentativa 1 de 3</span>
+            </div>
+            <div class="ah-prize">
+              <svg class="candy" viewBox="0 0 40 20" aria-hidden="true"><path d="M11 10 3 4v12z M29 10l8-6v12z" fill="currentColor" opacity=".55"/><circle cx="20" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M15 6c3 2 7 6 10 8" stroke="currentColor" stroke-width="1.2" fill="none" opacity=".7"/></svg>
+              PRÊMIO: 1 BALA
+            </div>
+          </div>
+          <div class="alvo-counter" title="Acertos registrados hoje neste computador">
+            <span>ACERTOS HOJE</span><b id="alvoWinsToday">00</b>
+          </div>
+
+          <!-- instruções no começo de cada partida -->
+          <div class="ovl alvo-intro" id="alvoIntro">
+            <div class="ai-big">VOCÊ TEM 3 TENTATIVAS</div>
+            <ol class="ai-steps">
+              <li><b>1</b>Ajuste a altura</li>
+              <li><b>2</b>Escolha o ângulo</li>
+              <li><b>3</b>Escolha a velocidade</li>
+              <li><b>4</b>Acerte o alvo</li>
+            </ol>
+            <div class="ai-prize">VALENDO UMA BALA</div>
+          </div>
+
+          <!-- resultado de cada tentativa -->
+          <div class="ovl alvo-result" id="alvoResult" hidden></div>
+          <!-- vitória / fim das tentativas -->
+          <div class="ovl alvo-banner" id="alvoBanner" hidden></div>
+
+          <span class="alvo-model">MODELO IDEAL · SEM RESISTÊNCIA DO AR · g = 9,8 m/s²</span>
+          <span class="corner-tick tl"></span><span class="corner-tick tr"></span>
+          <span class="corner-tick bl"></span><span class="corner-tick br"></span>
+        </div>
+
+        <div class="panel">
+          <div class="group alvo-controls">
+            <h3>Agora é sua vez de usar o modelo</h3>
+            <div class="row"><label for="sldAlvoH">ALTURA</label><span class="val mono" id="valAlvoH">1,5 m</span></div>
+            <input type="range" id="sldAlvoH" min="0" max="5" step="0.1" value="1.5" />
+            <div class="row"><label for="sldAlvoA">ÂNGULO</label><span class="val mono" id="valAlvoA">θ = 45°</span></div>
+            <input type="range" id="sldAlvoA" min="5" max="85" step="1" value="45" />
+            <div class="row"><label for="sldAlvoV">VELOCIDADE</label><span class="val mono" id="valAlvoV">v₀ = 15 m/s</span></div>
+            <input type="range" id="sldAlvoV" min="5" max="30" step="0.5" value="15" />
+          </div>
+          <div class="group">
+            <button class="btn lg primary-traj wide cta alvo-fire" id="btnAlvoFire">DISPARAR</button>
+            <div class="btnrow" style="margin-top:6px;">
+              <button class="btn" id="btnAlvoNew" style="flex:1;">NOVA PARTIDA</button>
+            </div>
+            <button class="btn wide alvo-solve" id="btnAlvoSolve" hidden>VER UMA SOLUÇÃO POSSÍVEL</button>
+          </div>
+          <div class="qcard alvo-q" id="alvoQuestion" hidden>
+            <div class="qhead"><span class="qtag">Pergunta para conversar</span></div>
+            <p class="qtext">O que mais influenciou sua trajetória?</p>
+            <div class="qopts" id="alvoQOpts">
+              <button class="btn qopt" aria-pressed="false">ALTURA</button>
+              <button class="btn qopt" aria-pressed="false">ÂNGULO</button>
+              <button class="btn qopt" aria-pressed="false">VELOCIDADE</button>
+            </div>
+            <p class="note" style="margin-top:6px;">Não existe uma única resposta: explique sua escolha para o grupo.</p>
+          </div>
+
+          <!-- ===== modo exploração ===== -->
+          <div class="group explore-only">
+            <h3>O modelo matemático</h3>
+            <div class="math-box">x(t) = v₀ · cos(θ) · t<br>y(t) = h₀ + v₀ · sen(θ) · t − ½ · g · t²<br><span class="dim">acerto: √((x − x<sub>alvo</sub>)² + (y − y<sub>alvo</sub>)²) ≤ r</span></div>
+          </div>
+          <div class="group explore-only">
+            <h3>Tentativas desta partida <span class="h3-aside" id="alvoTargetInfo">alvo —</span></h3>
+            <div class="sort-table-wrap"><table class="res-table" id="alvoTable"></table></div>
+          </div>
+          <div class="group explore-only">
+            <h3>Estatística do evento <span class="h3-aside">salva neste computador</span></h3>
+            <div class="readout" id="alvoStats"></div>
+            <div class="btnrow" style="margin-top:6px;"><button class="btn" id="btnAlvoResetStats">Zerar contador</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="guide" data-guide-for="alvo">
+        <button class="guide-btn" data-guide-toggle>▸ Guia do grupo <span class="gtime">livre · visitantes</span></button>
+        <div class="guide-panel" hidden>
+          <div><h4>Fala sugerida</h4>
+            <p>"Agora é a sua vez. Você tem três tentativas para acertar o alvo. Pode controlar a altura, o ângulo e a velocidade inicial."</p>
+            <p>Fechamento: "Você acabou de usar exatamente as mesmas equações que mostramos na etapa anterior para tomar decisões."</p></div>
+          <div><h4>Pergunta para o público</h4><p>"Qual dessas três variáveis você acha que vai fazer mais diferença?"</p></div>
+          <div><h4>O que demonstrar</h4><p>Deixe o visitante configurar e disparar. Depois de cada erro, leia a pista junto com ele. Acertou: entregue a bala e clique em Nova partida.</p></div>
+          <div><h4>Conceito matemático</h4><p>Lançamento oblíquo, trigonometria, função quadrática, velocidade, ângulo, altura inicial, tentativa e erro, modelagem.</p></div>
+          <div><h4>Tempo</h4><p>~1 min por visitante</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= ETAPA 8: CONCLUSÃO ======================= -->
+    <section class="step" id="step-conclusao" data-step-name="Conclusão" data-order="7" data-num="07" data-ch="end">
+      <div class="step-head" data-num="07">
         <h2>Cinco problemas, uma linguagem</h2>
         <span class="kicker">dado → matemática → conhecimento</span>
       </div>
@@ -2077,8 +2299,8 @@ select.sel{
       </div>
     </section>
 
-    <!-- ======================= ETAPA 8: DESAFIOS EXTRAS ======================= -->
-    <section class="step" id="step-desafios" data-step-name="Desafios" data-order="7" data-extra="true" data-num="+" data-ch="extra">
+    <!-- ======================= ETAPA 9: DESAFIOS EXTRAS ======================= -->
+    <section class="step" id="step-desafios" data-step-name="Desafios" data-order="8" data-extra="true" data-num="+" data-ch="extra">
       <div class="step-head">
         <h2>Desafios extras</h2>
         <span class="kicker">prever → testar → entender · para depois da apresentação</span>
@@ -2181,7 +2403,7 @@ select.sel{
                 Scramble → HeroBG → IntroModule → DecodeModule →
                 makeQuiz → RadarModule → TrajectoryModule →
                 ChallengesModule → SortModule → BlackHoleModule →
-                ConclusionModule → Init
+                AlvoModule → ConclusionModule → Init
    ===================================================================== */
 
 /* --------------------------- UTILITÁRIOS --------------------------- */
@@ -2453,7 +2675,7 @@ const StepManager = (() => {
     // indicador de capítulo
     const num = el.dataset.num || "";
     const word = el.dataset.word;
-    const label = word ? `${num} / 05 · ${word}`
+    const label = el.dataset.hud ? el.dataset.hud : word ? `${num} / 05 · ${word}`
       : ch === "intro" ? `${num} · ABERTURA` : ch === "end" ? `${num} · ENCERRAMENTO` : "EXTRA · DESAFIOS";
     document.getElementById("hudChapter").textContent = label;
     updateNavFill();
@@ -6249,6 +6471,652 @@ const BlackHoleModule = (() => {
   return { init, fullReset, example };
 })();
 
+/* ======================= DESAFIO DO ALVO (APLICAÇÃO DE PREVER) ======================= */
+/* Configuração do jogo — ajuste aqui para o evento.
+   TARGET: alvo usado quando randomizeTarget = false (x e y em metros).
+   TARGET_PRESETS: posições já testadas (todas têm solução dentro dos controles).
+   difficulty: "facil" | "normal" | "dificil" (muda só o raio do alvo). */
+const TARGET = { x: 20, y: 2, radius: 0.8 };
+const ALVO_CONFIG = {
+  randomizeTarget: true,
+  TARGET_PRESETS: [
+    { x: 18, y: 2 }, { x: 20, y: 3 }, { x: 22, y: 2.5 }, { x: 24, y: 4 },
+    { x: 16, y: 1.5 }, { x: 19, y: 4.5 }, { x: 21, y: 1.2 }, { x: 25, y: 3 }
+  ],
+  difficulty: "normal",
+  RADIUS_BY_DIFFICULTY: { facil: 1.1, normal: 0.8, dificil: 0.5 },
+  ATTEMPTS: 3,
+  LIMITS: { h: [0, 5, 0.1], angle: [5, 85, 1], v: [5, 30, 0.5] },   // [mín, máx, passo] dos controles
+  DEFAULTS: { h: 1.5, angle: 45, v: 15 },
+  SOUND: false,          // o módulo não usa som (o evento pode ser barulhento)
+  STORAGE_KEY: "alemDoVisivel.desafioAlvo.v1"
+};
+
+const AlvoModule = (() => {
+  const G = Physics.G;                         // 9,8 m/s²
+  const TRY_COLORS = ["#f0a13f", "#5ec8f8", "#e58fd0"];
+  const SOL_COLOR = "#52d8a4";
+  const X_VIEW = 27;                           // metros visíveis no eixo x (câmera fixa)
+  const ML = 64, MR = 26, MT_DESK = 86, MB = 46;   // margens do gráfico (px)
+
+  let target = { x: TARGET.x, y: TARGET.y, r: TARGET.radius };
+  let params = { ...ALVO_CONFIG.DEFAULTS };
+  let shots = [];            // tentativas desta partida: { ...simulação, color, n }
+  let flight = null;         // disparo em andamento: { shot, t, dur }
+  let solution = null;       // "ver uma solução possível": { ...simulação }
+  let state = "ready";       // ready | flying | won | lost
+  let gameCounted = false;
+  let fx = [];               // efeitos curtos: { kind, x, y, t, color }
+  let hitAt = 0;
+  let lastPresetIndex = -1;
+  let stats = { day: "", games: 0, wins: 0, first: 0 };
+  let entered = false, looping = false, raf = null, lastTs = null, pausedByVisibility = null;
+  let canvas, ctx = null, W = 0, H = 0;
+
+  const $ = (id) => document.getElementById(id);
+  const fmt = Utils.fmt, fmtM = Utils.fmtM;
+  const radiusFor = (d) => ALVO_CONFIG.RADIUS_BY_DIFFICULTY[d] || ALVO_CONFIG.RADIUS_BY_DIFFICULTY.normal;
+
+  /* ------------------------------ física ------------------------------ */
+  /* x(t) = v₀·cos θ·t   ·   y(t) = h₀ + v₀·sen θ·t − g·t²/2
+     O acerto é testado ao longo de TODA a trajetória: distância ao centro ≤ raio. */
+  function simulate(h, angleDeg, v, tg) {
+    const th = Utils.toRad(angleDeg);
+    const vx = v * Math.cos(th), vy = v * Math.sin(th);
+    const T = (vy + Math.sqrt(vy * vy + 2 * G * h)) / G;          // tempo até tocar o solo (y = 0)
+    const range = vx * T;
+    const tTop = Math.max(0, vy / G);
+    const hmax = h + vy * tTop - G * tTop * tTop / 2;
+    const pos = (t) => ({ x: vx * t, y: h + vy * t - G * t * t / 2 });
+    const dt = 0.001;
+    let hitT = null, minD = Infinity;
+    for (let t = 0; t <= T; t += dt) {
+      const p = pos(t);
+      const d = Math.hypot(p.x - tg.x, p.y - tg.y);
+      if (d < minD) minD = d;
+      if (d <= tg.r) {
+        // refina o instante de entrada no círculo (bisseção)
+        let a = Math.max(0, t - dt), b = t;
+        for (let k = 0; k < 20; k++) {
+          const m = (a + b) / 2, q = pos(m);
+          if (Math.hypot(q.x - tg.x, q.y - tg.y) <= tg.r) b = m; else a = m;
+        }
+        hitT = b; minD = Math.min(minD, 0); break;
+      }
+      if (p.x > tg.x + tg.r + 0.5) { // já passou do alvo: só falta o resto do voo (sem chance de acerto)
+        if (minD === Infinity) minD = d;
+        break;
+      }
+    }
+    // erro vertical ao passar pela coordenada x do alvo: y_projétil − y_alvo
+    const tX = tg.x / vx;
+    const err = tX <= T ? pos(tX).y - tg.y : null;
+    const tEnd = hitT !== null ? hitT : T;
+    return {
+      h, angle: angleDeg, v, vx, vy, T, range, hmax, tTop, tEnd, pos,
+      hit: hitT !== null, hitPoint: hitT !== null ? pos(hitT) : null,
+      err, minD
+    };
+  }
+
+  /* Uma solução possível, respeitando os passos dos controles e testada pela mesma simulação. */
+  function findSolution(tg, preferH) {
+    const [, , hStep] = ALVO_CONFIG.LIMITS.h, [vMin, vMax, vStep] = ALVO_CONFIG.LIMITS.v;
+    const hs = [preferH, 1.5, 1, 2, 0.5, 2.5, 3, 0, 4, 5].map(x => Math.round(x / hStep) * hStep)
+      .filter((x, i, a) => a.indexOf(x) === i && x >= 0 && x <= 5);
+    const angs = [];
+    for (let d = 0; d <= 30; d++) { angs.push(45 + d); if (d) angs.push(45 - d); }
+    for (const h of hs) {
+      for (const a of angs) {
+        const th = Utils.toRad(a);
+        const k = h + tg.x * Math.tan(th) - tg.y;
+        if (k <= 0) continue;
+        const vExact = Math.sqrt(G * tg.x * tg.x / (2 * Math.cos(th) ** 2 * k));
+        const vr = Math.round(vExact / vStep) * vStep;
+        for (const v of [vr, vr + vStep, vr - vStep]) {
+          if (v < vMin || v > vMax) continue;
+          const sim = simulate(h, a, v, tg);
+          if (sim.hit) return { h, angle: a, v };
+        }
+      }
+    }
+    return null;
+  }
+
+  /* ----------------------- estatística local (localStorage) ----------------------- */
+  function today() { const d = new Date(); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; }
+  function loadStats() {
+    let s = null;
+    try { s = JSON.parse(localStorage.getItem(ALVO_CONFIG.STORAGE_KEY) || "null"); } catch (e) { s = null; }
+    if (!s || s.day !== today()) s = { day: today(), games: 0, wins: 0, first: 0 };
+    stats = s;
+  }
+  function saveStats() {
+    try { localStorage.setItem(ALVO_CONFIG.STORAGE_KEY, JSON.stringify(stats)); } catch (e) { /* sem armazenamento: segue só na memória */ }
+  }
+  function renderStats(bump) {
+    $("alvoWinsToday").textContent = String(stats.wins).padStart(2, "0");
+    if (bump && !Utils.prefersReducedMotion()) {
+      const c = document.querySelector(".alvo-counter");
+      c.classList.remove("bump"); void c.offsetWidth; c.classList.add("bump");
+    }
+    const rate = stats.games ? stats.wins / stats.games * 100 : 0;
+    $("alvoStats").innerHTML =
+      `<span class="lbl">partidas</span><span class="v">${stats.games}</span>` +
+      `<span class="lbl">acertos (vencedores)</span><span class="v">${stats.wins}</span>` +
+      `<span class="lbl">taxa = acertos ÷ partidas × 100</span><span class="v">${fmt(rate, 1)}%</span>` +
+      `<span class="lbl">acertos de primeira</span><span class="v">${stats.first}</span>`;
+  }
+  function resetStats() {
+    if (!window.confirm("Zerar o contador de partidas e acertos deste computador?")) return;
+    stats = { day: today(), games: 0, wins: 0, first: 0 };
+    saveStats(); renderStats(false);
+  }
+
+  /* ------------------------------ interface ------------------------------ */
+  function readSliders() {
+    params.h = parseFloat($("sldAlvoH").value);
+    params.angle = parseFloat($("sldAlvoA").value);
+    params.v = parseFloat($("sldAlvoV").value);
+    $("valAlvoH").textContent = `${fmt(params.h, 1)} m`;
+    $("valAlvoA").textContent = `θ = ${fmt(params.angle, 0)}°`;
+    $("valAlvoV").textContent = `v₀ = ${fmt(params.v, params.v % 1 ? 1 : 0)} m/s`;
+  }
+  function setSliders(p) {
+    $("sldAlvoH").value = p.h; $("sldAlvoA").value = p.angle; $("sldAlvoV").value = p.v;
+    readSliders();
+  }
+  function setControlsLocked(lock) {
+    ["sldAlvoH", "sldAlvoA", "sldAlvoV"].forEach(id => { $(id).disabled = lock; });
+    const fire = $("btnAlvoFire");
+    fire.disabled = lock;
+    fire.textContent = state === "won" || state === "lost" ? "PARTIDA ENCERRADA" : state === "flying" ? "EM VOO…" : "DISPARAR";
+  }
+  function updateHud() {
+    const dots = $("alvoDots").children;
+    for (let i = 0; i < dots.length; i++) {
+      dots[i].classList.toggle("used", i < shots.length && !(state === "won" && i === shots.length - 1));
+      dots[i].classList.toggle("win", state === "won" && i === shots.length - 1);
+    }
+    let lbl;
+    if (state === "won") lbl = `Acertou na tentativa ${shots.length}/${ALVO_CONFIG.ATTEMPTS}`;
+    else if (state === "lost") lbl = "Fim das tentativas";
+    else lbl = `Tentativa ${Math.min(shots.length + (state === "flying" ? 0 : 1), ALVO_CONFIG.ATTEMPTS)} de ${ALVO_CONFIG.ATTEMPTS}`;
+    $("alvoTryLabel").textContent = lbl;
+    $("alvoTargetInfo").textContent = `alvo (${fmt(target.x, 1)} ; ${fmt(target.y, 1)}) m · r = ${fmt(target.r, 1)} m · ${ALVO_CONFIG.difficulty}`;
+    renderTable();
+  }
+  function renderTable() {
+    let html = `<tr><th>#</th><th>h₀</th><th>θ</th><th>v₀</th><th>alt. máx.</th><th>tempo</th><th>erro</th></tr>`;
+    if (!shots.length) html += `<tr class="empty"><td colspan="7">Os dados aparecem depois de cada disparo.</td></tr>`;
+    shots.forEach(s => {
+      html += `<tr><td><span class="dot" style="background:${s.color}"></span>T${s.n}</td><td>${fmt(s.h, 1)}</td><td>${fmt(s.angle, 0)}°</td>` +
+        `<td>${fmt(s.v, 1)}</td><td>${fmt(s.hmax, 1)} m</td><td>${fmt(s.tEnd, 2)} s</td>` +
+        `<td>${s.hit ? "acerto" : s.err === null ? "curto" : (s.err > 0 ? "+" : "") + fmtM(s.err, 1) + " m"}</td></tr>`;
+    });
+    $("alvoTable").innerHTML = html;
+  }
+  function hideIntro() { $("alvoIntro").hidden = true; }
+
+  const CANDY = `<svg class="candy" viewBox="0 0 40 20" aria-hidden="true"><path d="M11 10 3 4v12z M29 10l8-6v12z" fill="currentColor" opacity=".55"/><circle cx="20" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M15 6c3 2 7 6 10 8" stroke="currentColor" stroke-width="1.2" fill="none" opacity=".7"/></svg>`;
+  const CHECK = `<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M4.5 8.2l2.3 2.3 4.7-4.9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+  /* Resultado de cada tentativa: onde passou e uma PISTA (nunca a resposta). */
+  function showResult(s) {
+    const el = $("alvoResult");
+    el.className = "ovl alvo-result " + (s.hit ? "hit" : "miss");
+    const data = `<div class="ar-data">alt. máx. ${fmt(s.hmax, 1)} m · distância ${fmt(s.hit ? s.hitPoint.x : s.range, 1)} m · tempo ${fmt(s.tEnd, 2)} s</div>`;
+    if (s.hit) {
+      el.innerHTML = `<div class="ovl-title">Tentativa ${s.n} de ${ALVO_CONFIG.ATTEMPTS}</div><div class="ar-status">ALVO ATINGIDO</div>${data}`;
+    } else {
+      let err, msg, hint;
+      if (s.err === null) {
+        const short = target.x - s.range;
+        err = `${fmt(short, 1)} m <small>antes do alvo</small>`;
+        msg = `O alcance foi insuficiente: caiu a ${fmt(s.range, 1)} m do lançador.`;
+        hint = "Seu alcance foi insuficiente. O que faz o projétil ir mais longe?";
+      } else if (s.err > 0) {
+        err = `+${fmt(s.err, 1)} m <small>acima do alvo</small>`;
+        msg = `O projétil passou ${fmt(s.err, 1)} m acima do centro do alvo.`;
+        hint = "Experimente reduzir alguma das variáveis responsáveis pela altura da trajetória.";
+      } else {
+        err = `${fmtM(s.err, 1)} m <small>abaixo do alvo</small>`;
+        msg = `O projétil passou ${fmt(-s.err, 1)} m abaixo do centro do alvo.`;
+        hint = "Talvez seja necessário aumentar a velocidade, aumentar o ângulo ou ajustar a altura.";
+      }
+      el.innerHTML = `<div class="ovl-title">Tentativa ${s.n} de ${ALVO_CONFIG.ATTEMPTS} · miss</div>` +
+        `<div class="ar-status">ALVO NÃO ATINGIDO</div><div class="ar-err">${err}</div>` +
+        `<div class="ar-msg">${msg}</div>` +
+        (state === "lost" ? "" : `<div class="ar-hint"><b>PISTA</b>${hint}</div>`) + data;
+    }
+    el.hidden = false;
+  }
+  function showBanner(kind) {
+    const el = $("alvoBanner");
+    el.className = "ovl alvo-banner " + kind;
+    if (kind === "win") {
+      el.innerHTML =
+        `<div class="ab-kicker">${CHECK}ALVO ATINGIDO · TARGET HIT</div>` +
+        `<div class="ab-title">PARABÉNS!</div>` +
+        `<div class="ab-text">Você acertou usando matemática.</div>` +
+        `<div class="ab-prize">${CANDY}<span><b>PRÊMIO LIBERADO</b><br>Você ganhou uma bala.</span></div>` +
+        `<div class="ab-meta">ACERTOU NA TENTATIVA ${shots.length}/${ALVO_CONFIG.ATTEMPTS}</div>`;
+    } else {
+      el.innerHTML =
+        `<div class="ab-kicker">FIM DAS TENTATIVAS</div>` +
+        `<div class="ab-title">Você quase conseguiu.</div>` +
+        `<div class="ab-text">Veja como cada tentativa corrigiu a anterior.</div>` +
+        `<div class="ab-legend">${shots.map(s => `<span style="--c:${s.color}"><i></i>T${s.n}</span>`).join("")}</div>` +
+        `<div id="alvoSolText"></div>`;
+    }
+    el.hidden = false;
+  }
+
+  /* ------------------------------ partida ------------------------------ */
+  function pickTarget() {
+    const r = radiusFor(ALVO_CONFIG.difficulty);
+    if (!ALVO_CONFIG.randomizeTarget) return { x: TARGET.x, y: TARGET.y, r: TARGET.radius || r };
+    const list = ALVO_CONFIG.TARGET_PRESETS;
+    let i = Math.floor(Math.random() * list.length);
+    if (list.length > 1 && i === lastPresetIndex) i = (i + 1) % list.length;
+    lastPresetIndex = i;
+    return { x: list[i].x, y: list[i].y, r };
+  }
+  function newGame() {
+    target = pickTarget();
+    shots = []; flight = null; solution = null; fx = [];
+    state = "ready"; gameCounted = false;
+    setSliders(ALVO_CONFIG.DEFAULTS);
+    $("alvoResult").hidden = true;
+    $("alvoBanner").hidden = true;
+    $("alvoIntro").hidden = false;
+    $("btnAlvoSolve").hidden = true;
+    $("alvoQuestion").hidden = true;
+    document.querySelectorAll("#alvoQOpts .qopt").forEach(b => b.setAttribute("aria-pressed", "false"));
+    setControlsLocked(false);
+    updateHud();
+    draw();
+  }
+  function fire() {
+    if (state !== "ready") return;
+    readSliders();
+    hideIntro();
+    const n = shots.length + 1;
+    const sim = simulate(params.h, params.angle, params.v, target);
+    const shot = { ...sim, n, color: TRY_COLORS[n - 1] };
+    if (!gameCounted) { gameCounted = true; stats.games++; saveStats(); renderStats(false); }
+    state = "flying";
+    $("alvoResult").hidden = true;
+    flight = { shot, t: 0, dur: Utils.clamp(shot.tEnd * 0.8, 0.8, 2.4) };
+    fx.push({ kind: "muzzle", t: 0, color: shot.color });
+    setControlsLocked(true);
+    updateHud();
+    if (Utils.prefersReducedMotion()) finishFlight();
+  }
+  function finishFlight() {
+    const s = flight.shot;
+    flight = null;
+    shots.push(s);
+    if (s.hit) {
+      state = "won";
+      stats.wins++; if (s.n === 1) stats.first++;
+      saveStats(); renderStats(true);
+      hitAt = performance.now();
+      fx.push({ kind: "hit", t: 0, x: s.hitPoint.x, y: s.hitPoint.y });
+      const b = $("btnAlvoFire");
+      b.classList.remove("pulse"); void b.offsetWidth; b.classList.add("pulse");
+      $("alvoResult").hidden = true;
+      showBanner("win");
+      $("alvoQuestion").hidden = false;
+    } else {
+      fx.push({ kind: s.err === null || s.range <= X_VIEW + 2 ? "ground" : "none", t: 0, x: s.range, y: 0, color: s.color });
+      if (shots.length >= ALVO_CONFIG.ATTEMPTS) {
+        state = "lost";
+        showResult(s);
+        showBanner("lost");
+        $("btnAlvoSolve").hidden = false;
+        $("alvoQuestion").hidden = false;
+      } else {
+        state = "ready";
+        showResult(s);
+      }
+    }
+    setControlsLocked(state !== "ready");
+    updateHud();
+  }
+  /* Depois das 3 tentativas: mostra UMA das soluções possíveis. */
+  function showSolution() {
+    if (state !== "lost" || flight) return;
+    const sol = findSolution(target, params.h);
+    const box = $("alvoSolText");
+    if (!sol) { if (box) box.innerHTML = `<div class="alvo-sol">Nenhuma solução encontrada com estes limites.</div>`; return; }
+    setSliders(sol);
+    solution = { ...simulate(sol.h, sol.angle, sol.v, target), color: SOL_COLOR, n: "S", progress: 0 };
+    if (box) box.innerHTML = `<div class="alvo-sol">Esta é uma das soluções possíveis:<br>altura = <b>${fmt(sol.h, 1)} m</b> · ângulo = <b>${fmt(sol.angle, 0)}°</b> · velocidade = <b>${fmt(sol.v, 1)} m/s</b></div>`;
+    $("btnAlvoSolve").hidden = true;
+    if (Utils.prefersReducedMotion()) solution.progress = 1;
+  }
+
+  /* ------------------------------ desenho ------------------------------ */
+  function geom() {
+    const MT = W < 600 ? 18 : MT_DESK;   // no celular os cartões ficam fora do canvas
+    const plotW = Math.max(60, W - ML - MR), plotH = Math.max(60, H - MT - MB);
+    const scale = Math.min(plotW / X_VIEW, plotH / 10);
+    const x0 = ML, base = H - MB;
+    return { scale, x0, base, yVis: (base - 8) / scale, P: (x, y) => ({ sx: x0 + x * scale, sy: base - y * scale }) };
+  }
+  function tag(text, x, y, color, align) {
+    ctx.save();
+    ctx.font = Utils.monoFont(11);
+    const w = ctx.measureText(text).width + 12;
+    let x0 = align === "right" ? x - w : align === "center" ? x - w / 2 : x;
+    x0 = Utils.clamp(x0, 2, W - w - 2);
+    ctx.fillStyle = "rgba(8,13,24,0.9)"; ctx.strokeStyle = color; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.rect(x0, y - 13, w, 18); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = color; ctx.textAlign = "left"; ctx.fillText(text, x0 + 6, y);
+    ctx.restore();
+  }
+  function drawGrid(g) {
+    ctx.save();
+    ctx.lineWidth = 1; ctx.font = Utils.monoFont(10);
+    const xMaxPx = W - MR;
+    for (let x = 0; g.P(x, 0).sx <= xMaxPx - 34; x += 5) {
+      const p = g.P(x, 0);
+      ctx.strokeStyle = "rgba(215,226,245,0.07)";
+      ctx.beginPath(); ctx.moveTo(p.sx, 8); ctx.lineTo(p.sx, g.base); ctx.stroke();
+      ctx.fillStyle = "rgba(215,226,245,0.45)"; ctx.textAlign = "center";
+      ctx.fillText(`${x}`, p.sx, g.base + 14);
+    }
+    for (let y = 1; y < g.yVis; y += 1) {
+      const p = g.P(0, y);
+      ctx.strokeStyle = y % 5 === 0 ? "rgba(215,226,245,0.08)" : "rgba(215,226,245,0.035)";
+      ctx.beginPath(); ctx.moveTo(g.x0, p.sy); ctx.lineTo(xMaxPx, p.sy); ctx.stroke();
+      if (y % 5 === 0 && y > 5) { ctx.fillStyle = "rgba(215,226,245,0.45)"; ctx.textAlign = "right"; ctx.fillText(`${y}`, g.x0 - 30, p.sy + 3); }
+    }
+    // solo: faixa de testes
+    const gr = ctx.createLinearGradient(0, g.base, 0, H);
+    gr.addColorStop(0, "rgba(240,161,63,0.09)"); gr.addColorStop(1, "rgba(240,161,63,0)");
+    ctx.fillStyle = gr; ctx.fillRect(0, g.base, W, MB);
+    ctx.strokeStyle = "rgba(215,226,245,0.5)"; ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.moveTo(0, g.base); ctx.lineTo(W, g.base); ctx.stroke();
+    ctx.strokeStyle = "rgba(215,226,245,0.12)"; ctx.lineWidth = 1;
+    for (let x = -((performance.now() / 60) % 16); x < W; x += 16) { ctx.beginPath(); ctx.moveTo(x, g.base + 1); ctx.lineTo(x - 6, g.base + 7); ctx.stroke(); }
+    ctx.fillStyle = "rgba(215,226,245,0.45)"; ctx.textAlign = "right";
+    ctx.fillText("x (m)", xMaxPx, g.base + 14);
+    ctx.textAlign = "left"; ctx.fillText("y (m)", 8, W < 600 ? 14 : MT_DESK - 10);
+    ctx.restore();
+  }
+  function drawTarget(g, now) {
+    const c = g.P(target.x, target.y);
+    const R = target.r * g.scale;
+    const hitK = state === "won" ? (now - hitAt) / 1000 : 99;
+    ctx.save();
+    // haste de apoio
+    ctx.strokeStyle = "rgba(215,226,245,0.35)"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(c.sx, c.sy + R); ctx.lineTo(c.sx, g.base); ctx.stroke();
+    ctx.fillStyle = "rgba(215,226,245,0.3)"; ctx.fillRect(c.sx - 10, g.base - 3, 20, 3);
+    // anéis concêntricos
+    const win = state === "won";
+    const pulse = win ? 1 + 0.06 * Math.sin(now / 160) : 1;
+    const main = win ? "#52d8a4" : "#f0a13f";
+    ctx.shadowColor = win ? "rgba(82,216,164,0.8)" : "rgba(240,161,63,0.55)";
+    ctx.shadowBlur = win ? 22 : 12;
+    ctx.fillStyle = win ? "rgba(82,216,164,0.14)" : "rgba(240,161,63,0.1)";
+    ctx.beginPath(); ctx.arc(c.sx, c.sy, R * pulse, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowBlur = 0;
+    [[1, 2], [0.66, 1.4], [0.33, 1.4]].forEach(([f, lw], i) => {
+      ctx.strokeStyle = i === 0 ? main : "rgba(238,242,248,0.75)"; ctx.lineWidth = lw;
+      ctx.beginPath(); ctx.arc(c.sx, c.sy, R * f * pulse, 0, Math.PI * 2); ctx.stroke();
+    });
+    ctx.fillStyle = main; ctx.beginPath(); ctx.arc(c.sx, c.sy, Math.max(2.5, R * 0.1), 0, Math.PI * 2); ctx.fill();
+    // cruz de mira discreta
+    ctx.strokeStyle = "rgba(238,242,248,0.35)"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(c.sx - R - 8, c.sy); ctx.lineTo(c.sx - R - 3, c.sy); ctx.moveTo(c.sx + R + 3, c.sy); ctx.lineTo(c.sx + R + 8, c.sy);
+    ctx.moveTo(c.sx, c.sy - R - 8); ctx.lineTo(c.sx, c.sy - R - 3); ctx.stroke();
+    // ondas e flash no acerto
+    if (hitK < 1.4) {
+      for (let k = 0; k < 3; k++) {
+        const q = hitK - k * 0.18;
+        if (q < 0 || q > 1) continue;
+        ctx.strokeStyle = `rgba(82,216,164,${1 - q})`; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(c.sx, c.sy, R + q * 70, 0, Math.PI * 2); ctx.stroke();
+      }
+      if (hitK < 0.25) { ctx.fillStyle = `rgba(255,255,255,${0.5 * (1 - hitK / 0.25)})`; ctx.beginPath(); ctx.arc(c.sx, c.sy, R * 1.6, 0, Math.PI * 2); ctx.fill(); }
+    }
+    ctx.restore();
+    const label = win ? "ALVO ATINGIDO" : `ALVO (${fmt(target.x, 1)} ; ${fmt(target.y, 1)}) m`;
+    tag(label, c.sx, c.sy - R - 14, win ? "#52d8a4" : "#f7b866", "center");
+  }
+  function drawLauncher(g, now) {
+    const h = params.h, th = Utils.toRad(params.angle);
+    const railX = g.x0 - 18;
+    const top = g.P(0, 5).sy, pivot = g.P(0, h);
+    ctx.save();
+    // trilho vertical com marcações de altura (0 a 5 m)
+    ctx.strokeStyle = "rgba(215,226,245,0.35)"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(railX, g.base); ctx.lineTo(railX, top - 6); ctx.stroke();
+    ctx.lineWidth = 1; ctx.font = Utils.monoFont(9); ctx.fillStyle = "rgba(215,226,245,0.45)"; ctx.textAlign = "right";
+    for (let y = 0; y <= 5; y++) {
+      const sy = g.P(0, y).sy;
+      ctx.beginPath(); ctx.moveTo(railX - 5, sy); ctx.lineTo(railX, sy); ctx.stroke();
+      ctx.fillText(`${y}`, railX - 8, sy + 3);
+    }
+    // carro na altura escolhida
+    ctx.fillStyle = "#1a2540"; ctx.strokeStyle = "#f0a13f"; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.rect(railX - 6, pivot.sy - 7, 12, 14); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle = "rgba(240,161,63,0.5)"; ctx.setLineDash([3, 3]);
+    ctx.beginPath(); ctx.moveTo(railX + 6, pivot.sy); ctx.lineTo(pivot.sx, pivot.sy); ctx.stroke(); ctx.setLineDash([]);
+    // altura h₀
+    tag(`h₀ = ${fmt(h, 1)} m`, railX + 10, Math.min(g.base - 6, pivot.sy + 26), "#f7b866", "left");
+    // arco do ângulo
+    ctx.strokeStyle = "rgba(240,161,63,0.7)"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(pivot.sx, pivot.sy); ctx.lineTo(pivot.sx + 58, pivot.sy); ctx.stroke();
+    ctx.beginPath(); ctx.arc(pivot.sx, pivot.sy, 40, 0, -th, true); ctx.stroke();
+    ctx.font = Utils.monoFont(12); ctx.fillStyle = "#f7b866"; ctx.textAlign = "left";
+    ctx.fillText(`θ = ${fmt(params.angle, 0)}°`, pivot.sx + 46 * Math.cos(th / 2) + 4, pivot.sy - 46 * Math.sin(th / 2) + 4);
+    // tubo do lançador experimental (gira com o ângulo)
+    ctx.translate(pivot.sx, pivot.sy);
+    ctx.rotate(-th);
+    const len = 34;
+    const tg = ctx.createLinearGradient(0, -7, 0, 7);
+    tg.addColorStop(0, "#3a4a6c"); tg.addColorStop(0.5, "#243150"); tg.addColorStop(1, "#141d31");
+    ctx.fillStyle = tg; ctx.strokeStyle = "rgba(240,161,63,0.85)"; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.rect(-8, -7, len + 8, 14); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle = "rgba(240,161,63,0.5)";
+    [6, 14, 22].forEach(x => { ctx.beginPath(); ctx.moveTo(x, -7); ctx.lineTo(x, 7); ctx.stroke(); });
+    ctx.fillStyle = "#f0a13f"; ctx.fillRect(len - 2, -8, 3, 16);
+    // intensidade do lançamento: seta proporcional a v₀ (sem prever o alcance)
+    if (state === "ready") {
+      const k = (params.v - 5) / 25;
+      const aLen = 14 + 46 * k;
+      const glow = 0.35 + 0.5 * k + 0.1 * Math.sin(now / 250);
+      ctx.strokeStyle = `rgba(247,184,102,${glow})`; ctx.fillStyle = `rgba(247,184,102,${glow})`; ctx.lineWidth = 2;
+      ctx.shadowColor = "rgba(240,161,63,0.8)"; ctx.shadowBlur = 6 + 10 * k;
+      Utils.arrow(ctx, len + 6, 0, len + 6 + aLen, 0, 7);
+    }
+    ctx.restore();
+    ctx.save();
+    ctx.fillStyle = "#eef2f8"; ctx.beginPath(); ctx.arc(pivot.sx, pivot.sy, 3.5, 0, Math.PI * 2); ctx.fill();
+    if (state === "ready") tag(`v₀ = ${fmt(params.v, params.v % 1 ? 1 : 0)} m/s`, pivot.sx + 90 * Math.cos(th) + 8, pivot.sy - 90 * Math.sin(th) - 4, "#f7b866", "left");
+    ctx.restore();
+  }
+  function drawPath(g, s, tUpTo, emphasis) {
+    const P = g.P;
+    ctx.save();
+    ctx.beginPath(); ctx.rect(0, 0, W, g.base + 0.5); ctx.clip();
+    ctx.strokeStyle = s.color; ctx.lineWidth = emphasis ? 3 : 2.2;
+    ctx.shadowColor = s.color; ctx.shadowBlur = emphasis ? 16 : 6;
+    if (s.n === "S") ctx.setLineDash([7, 5]);
+    ctx.beginPath();
+    const N = 140;
+    for (let i = 0; i <= N; i++) {
+      const p = s.pos(tUpTo * i / N);
+      const q = P(p.x, Math.max(0, p.y));
+      if (i === 0) ctx.moveTo(q.sx, q.sy); else ctx.lineTo(q.sx, q.sy);
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+  function drawBall(g, s, t) {
+    const p = s.pos(t), q = g.P(p.x, Math.max(0, p.y));
+    ctx.save();
+    if (q.sy < 6) { // fora da tela por cima: indicador na borda
+      ctx.fillStyle = s.color; ctx.font = Utils.monoFont(10); ctx.textAlign = "center";
+      ctx.beginPath(); ctx.moveTo(q.sx, 6); ctx.lineTo(q.sx - 6, 16); ctx.lineTo(q.sx + 6, 16); ctx.closePath(); ctx.fill();
+      ctx.fillText(`${fmt(p.y, 0)} m`, q.sx, 30);
+    } else if (q.sx <= W) {
+      ctx.shadowColor = s.color; ctx.shadowBlur = 16; ctx.fillStyle = "#fff";
+      ctx.beginPath(); ctx.arc(q.sx, q.sy, 5.5, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+  }
+  function drawMarkers(g, s) {
+    // somente DEPOIS do disparo: altura máxima, distância e tempo
+    const P = g.P;
+    ctx.save();
+    if (s.tTop > 0 && s.tTop < s.tEnd) {
+      const top = P(s.vx * s.tTop, s.hmax);
+      if (top.sy > 18 && top.sx < W - 20) {
+        ctx.fillStyle = s.color; ctx.beginPath(); ctx.arc(top.sx, top.sy, 3.5, 0, Math.PI * 2); ctx.fill();
+        tag(`alt. máx. ${fmt(s.hmax, 1)} m`, top.sx, top.sy - 10, s.color, "center");
+      }
+    }
+    const endX = s.hit ? s.hitPoint.x : s.range;
+    if (!s.hit && endX <= X_VIEW + 1) {
+      const e = P(endX, 0);
+      tag(`${fmt(endX, 1)} m · ${fmt(s.tEnd, 2)} s`, e.sx, g.base - 8, s.color, "center");
+    } else if (!s.hit) {
+      tag(`caiu a ${fmt(endX, 1)} m ►`, W - MR, g.base - 30, s.color, "right");
+    }
+    ctx.restore();
+  }
+  /* fim da partida: só o nome de cada tentativa (T1, T2, T3) no ponto final visível */
+  function drawPathLabel(g, s) {
+    let t = s.tEnd, p = s.pos(t), q = g.P(p.x, p.y);
+    for (let k = 0; k < 60 && (q.sx > W - MR - 8 || q.sy < 70); k++) { t *= 0.95; p = s.pos(t); q = g.P(p.x, p.y); }
+    tag(`T${s.n}`, q.sx, Math.min(q.sy - 8, g.base - 10), s.color, "center");
+  }
+  function drawFx(g) {
+    fx.forEach(f => {
+      if (f.kind === "muzzle") {
+        const p = g.P(0, params.h), k = f.t / 0.45;
+        if (k > 1) return;
+        ctx.save(); ctx.globalAlpha = 1 - k; ctx.strokeStyle = f.color; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(p.sx, p.sy, 8 + 34 * k, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+      } else if (f.kind === "ground") {
+        const k = f.t / 0.7;
+        if (k > 1) return;
+        const p = g.P(f.x, 0);
+        ctx.save(); ctx.globalAlpha = 1 - k; ctx.strokeStyle = f.color; ctx.lineWidth = 1.6;
+        ctx.beginPath(); ctx.ellipse(p.sx, p.sy, 6 + 26 * k, 2 + 6 * k, 0, Math.PI, 2 * Math.PI); ctx.stroke(); ctx.restore();
+      } else if (f.kind === "hit") {
+        const k = f.t / 0.9;
+        if (k > 1) return;
+        const p = g.P(f.x, f.y);
+        ctx.save(); ctx.globalAlpha = 1 - k; ctx.fillStyle = "#b9f5dc";
+        for (let i = 0; i < 12; i++) {
+          const a = i / 12 * Math.PI * 2, r = 6 + 46 * Utils.easeOut(k);
+          ctx.beginPath(); ctx.arc(p.sx + r * Math.cos(a), p.sy + r * Math.sin(a), 2, 0, Math.PI * 2); ctx.fill();
+        }
+        ctx.restore();
+      }
+    });
+  }
+  function draw() {
+    if (!ctx) return;
+    ctx.clearRect(0, 0, W, H);
+    if (W < 120 || H < 120) return;
+    const g = geom(), now = performance.now();
+    drawGrid(g);
+    drawTarget(g, now);
+    const winning = state === "won";
+    shots.forEach((s, i) => drawPath(g, s, s.tEnd, winning && i === shots.length - 1));
+    if (solution) drawPath(g, solution, solution.tEnd * solution.progress, true);
+    if (flight) {
+      const t = flight.shot.tEnd * Utils.clamp(flight.t / flight.dur, 0, 1);
+      drawPath(g, flight.shot, t, false);
+      drawBall(g, flight.shot, t);
+    }
+    drawLauncher(g, now);
+    const last = shots[shots.length - 1];
+    if (last && !flight) {
+      if (state === "lost") shots.forEach(s => drawPathLabel(g, s)); else drawMarkers(g, last);
+      if (!last.hit) drawBall(g, last, last.tEnd);
+    }
+    if (solution) {
+      drawBall(g, solution, solution.tEnd * solution.progress);
+      if (solution.progress >= 1) tag("SOLUÇÃO POSSÍVEL", g.P(target.x, target.y).sx, g.P(target.x, target.y).sy + target.r * g.scale + 22, SOL_COLOR, "center");
+    }
+    drawFx(g);
+  }
+
+  /* ------------------------------ loop ------------------------------ */
+  function tick(now) {
+    if (!looping) return;
+    if (lastTs === null) lastTs = now;
+    const dt = Math.min(0.1, (now - lastTs) / 1000);
+    lastTs = now;
+    if (flight) {
+      flight.t += dt;
+      if (flight.t >= flight.dur) finishFlight();
+    }
+    if (solution && solution.progress < 1) solution.progress = Math.min(1, solution.progress + dt / Utils.clamp(solution.tEnd * 0.8, 0.8, 2.4));
+    fx.forEach(f => { f.t += dt; });
+    fx = fx.filter(f => f.t < 1.2);
+    draw();
+    raf = requestAnimationFrame(tick);
+  }
+  function startLoop() { if (looping) return; looping = true; lastTs = null; raf = requestAnimationFrame(tick); }
+  function stopLoop() { looping = false; if (raf) cancelAnimationFrame(raf); raf = null; }
+  function fit() { const f = Utils.fitCanvas(canvas); ctx = f.ctx; W = f.cssW; H = f.cssH; draw(); }
+
+  /* Garante que todo alvo configurado tenha solução dentro dos controles. */
+  function validatePresets() {
+    const r = radiusFor(ALVO_CONFIG.difficulty);
+    const ok = ALVO_CONFIG.TARGET_PRESETS.filter(p => {
+      const good = !!findSolution({ x: p.x, y: p.y, r }, ALVO_CONFIG.DEFAULTS.h);
+      if (!good && window.console) console.warn("Desafio do alvo: posição sem solução ignorada", p);
+      return good;
+    });
+    if (ok.length) ALVO_CONFIG.TARGET_PRESETS = ok;
+    else ALVO_CONFIG.randomizeTarget = false;
+  }
+
+  function init() {
+    canvas = $("alvoCanvas");
+    Utils.observeResize($("alvoStage"), fit);
+    const L = ALVO_CONFIG.LIMITS;
+    [["sldAlvoH", L.h], ["sldAlvoA", L.angle], ["sldAlvoV", L.v]].forEach(([id, [mn, mx, st]]) => {
+      const s = $(id); s.min = mn; s.max = mx; s.step = st;
+      s.addEventListener("input", () => { hideIntro(); readSliders(); draw(); });
+    });
+    $("btnAlvoFire").addEventListener("click", fire);
+    $("btnAlvoNew").addEventListener("click", newGame);
+    $("btnAlvoSolve").addEventListener("click", showSolution);
+    $("btnAlvoResetStats").addEventListener("click", resetStats);
+    document.querySelectorAll("#alvoQOpts .qopt").forEach(b => b.addEventListener("click", () => {
+      document.querySelectorAll("#alvoQOpts .qopt").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    }));
+    validatePresets();
+    loadStats(); renderStats(false);
+    newGame();
+    fit();
+
+    Visibility.subscribe((hidden) => {
+      if (!entered) return;
+      if (hidden) { pausedByVisibility = looping; stopLoop(); }
+      else if (pausedByVisibility) startLoop();
+    });
+    StepManager.onModeChange(() => { updateHud(); draw(); });
+    StepManager.onEnter("alvo", () => { entered = true; loadStats(); renderStats(false); startLoop(); fit(); });
+    StepManager.onLeave("alvo", () => { entered = false; stopLoop(); });
+    // Espaço = DISPARAR · R = nova partida
+    StepManager.registerActiveSim("alvo", { toggle: fire, reset: newGame });
+  }
+
+  return { init, fullReset: newGame, simulate, findSolution };
+})();
+
 /* =========================== CONCLUSÃO =========================== */
 /* Os exemplos são calculados pelo próprio código, para não haver número errado. */
 const ConclusionModule = {
@@ -6273,6 +7141,7 @@ function fullResetAll() {
   TrajectoryModule.fullReset();
   SortModule.fullReset();
   BlackHoleModule.fullReset();
+  AlvoModule.fullReset();
   ChallengesModule.fullReset();
 }
 
@@ -6289,6 +7158,7 @@ document.addEventListener("DOMContentLoaded", () => {
   ChallengesModule.init();
   SortModule.init();
   BlackHoleModule.init();
+  AlvoModule.init();
   ConclusionModule.init();
 
   StepManager.onEnter("inicio", () => { HeroBG.enter(); IntroModule.play(); });
