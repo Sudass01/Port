@@ -1152,7 +1152,7 @@ select.sel{
 .ah-prize{ font-family: var(--font-mono); font-size:.72rem; font-weight:600; letter-spacing:.14em; color: var(--traj); border-color: var(--traj-soft); }
 .ah-prize .candy{ width:30px; height:15px; color: var(--traj); }
 .ovl.alvo-intro{
-  top: 50%; left: 50%; width: min(360px, 56%); margin: -120px 0 0 calc(min(360px, 56%) / -2);
+  top: 50%; left: 50%; width: min(380px, 58%); margin: -150px 0 0 calc(min(380px, 58%) / -2);
   text-align:center; padding: 14px 16px 12px;
   border-color: var(--traj-soft);
   animation: popIn .4s var(--ease-out) both;
@@ -1217,8 +1217,50 @@ select.sel{
 @keyframes counterBump{ 30%{ transform: scale(1.4); text-shadow: 0 0 14px var(--radar); } }
 .alvo-controls .row label{ font-family: var(--font-mono); font-size:.72rem; letter-spacing:.14em; color: var(--text-dim); }
 .alvo-controls .row .val{ font-size:1.05rem; color: var(--traj); }
-.alvo-controls input[type="range"]{ accent-color: var(--traj); height: 22px; }
-.alvo-controls input[type="range"]:disabled{ opacity:.4; }
+/* controles deslizantes com trilho preenchido e botões − / + */
+.alvo-controls input[type="range"], .alvo-range{
+  -webkit-appearance:none; appearance:none; height: 22px; background: transparent; cursor: pointer;
+}
+.alvo-controls input[type="range"]::-webkit-slider-runnable-track, .alvo-range::-webkit-slider-runnable-track{
+  height:6px; border-radius:3px;
+  background: linear-gradient(90deg, var(--traj) var(--p, 50%), rgba(215,226,245,.14) var(--p, 50%));
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.4);
+}
+.alvo-controls input[type="range"]::-moz-range-track, .alvo-range::-moz-range-track{
+  height:6px; border-radius:3px;
+  background: linear-gradient(90deg, var(--traj) var(--p, 50%), rgba(215,226,245,.14) var(--p, 50%));
+}
+.alvo-controls input[type="range"]::-webkit-slider-thumb, .alvo-range::-webkit-slider-thumb{
+  -webkit-appearance:none; width:20px; height:20px; margin-top:-7px; border-radius:50%;
+  background: radial-gradient(circle at 35% 35%, #fff, #f7b866 45%, #d9851f);
+  border: 2px solid #0b1322; box-shadow: 0 0 0 1px var(--traj), 0 0 12px var(--traj-soft);
+  transition: transform var(--dur-1) var(--ease);
+}
+.alvo-controls input[type="range"]::-moz-range-thumb, .alvo-range::-moz-range-thumb{
+  width:18px; height:18px; border-radius:50%;
+  background: radial-gradient(circle at 35% 35%, #fff, #f7b866 45%, #d9851f);
+  border: 2px solid #0b1322; box-shadow: 0 0 0 1px var(--traj), 0 0 12px var(--traj-soft);
+}
+.alvo-controls input[type="range"]:hover::-webkit-slider-thumb, .alvo-range:hover::-webkit-slider-thumb{ transform: scale(1.15); }
+.alvo-controls input[type="range"]:disabled, .alvo-range:disabled{ opacity:.4; cursor: default; }
+.stepper{ display:flex; align-items:center; gap:6px; }
+.btn.step-btn{
+  width:26px; height:26px; padding:0; display:inline-flex; align-items:center; justify-content:center;
+  font-family: var(--font-mono); font-size:1rem; line-height:1; color: var(--traj); border-color: var(--traj-soft);
+}
+.stepper .val{ min-width: 6.4em; text-align:center; }
+.ai-tip{
+  display:flex; align-items:flex-start; gap:8px; text-align:left;
+  margin: 0 0 9px; padding: 7px 9px; border-radius: var(--r-sm);
+  background: rgba(240,161,63,.07); border:1px solid var(--traj-soft);
+  font-size:.78rem; line-height:1.4; color: var(--text-dim);
+}
+.ai-tip b{ color: var(--text); }
+.ai-tip svg{ width:14px; height:14px; flex:0 0 auto; color: var(--traj); margin-top:2px; }
+#alvoStage.editable::after{
+  content:"ARRASTE NO DESENHO · ALTURA · MIRA · ALVO"; position:absolute; z-index:2; right:14px; bottom:8px;
+  font-family: var(--font-mono); font-size:.58rem; letter-spacing:.14em; color: rgba(247,184,102,.6); pointer-events:none;
+}
 .btn.alvo-fire{ font-family: var(--font-display); font-size: 1.15rem; letter-spacing:.14em; padding: 13px 14px; }
 .btn.alvo-fire.pulse{ animation: fireFeedback .6s var(--ease-out); }
 @keyframes fireFeedback{ 0%{ box-shadow: 0 0 0 0 var(--radar-soft); } 40%{ box-shadow: 0 0 0 6px var(--radar-soft), 0 0 30px var(--radar-soft); } }
@@ -1499,6 +1541,7 @@ select.sel{
   .alvo-hud{ right:auto; }
   .ovl.alvo-banner{ margin-left:8px; }
   .alvo-model, .alvo-counter{ position:static; order:4; margin: 0 8px 8px; align-self:flex-start; }
+  #alvoStage.editable::after{ display:none; }
   .tile{ width: 22px; height: 32px; font-size: .95rem; }
   .alpha-row{ grid-template-columns: 1fr; }
   .alpha-k{ text-align:left; }
@@ -2147,6 +2190,10 @@ select.sel{
               <li><b>3</b>Escolha a velocidade</li>
               <li><b>4</b>Acerte o alvo</li>
             </ol>
+            <div class="ai-tip">
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5v9.2l2.3-2 1.6 3.8 1.7-.7-1.6-3.7H11z" fill="currentColor"/></svg>
+              <span>Use os controles ao lado <b>ou arraste no desenho</b>: o carrinho (altura), a seta (ângulo e velocidade) e o alvo.</span>
+            </div>
             <div class="ai-prize">VALENDO UMA BALA</div>
           </div>
 
@@ -2162,18 +2209,19 @@ select.sel{
 
         <div class="panel">
           <div class="group alvo-controls">
-            <h3>Agora é sua vez de usar o modelo</h3>
-            <div class="row"><label for="sldAlvoH">ALTURA</label><span class="val mono" id="valAlvoH">1,5 m</span></div>
+            <h3>Agora é sua vez de usar o modelo <span class="h3-aside">ou arraste</span></h3>
+<div class="row"><label for="sldAlvoH">ALTURA</label><span class="stepper"><button class="btn step-btn" data-for="sldAlvoH" data-d="-1" aria-label="diminuir altura">−</button><span class="val mono" id="valAlvoH">1,5 m</span><button class="btn step-btn" data-for="sldAlvoH" data-d="1" aria-label="aumentar altura">+</button></span></div>
             <input type="range" id="sldAlvoH" min="0" max="5" step="0.1" value="1.5" />
-            <div class="row"><label for="sldAlvoA">ÂNGULO</label><span class="val mono" id="valAlvoA">θ = 45°</span></div>
+<div class="row"><label for="sldAlvoA">ÂNGULO</label><span class="stepper"><button class="btn step-btn" data-for="sldAlvoA" data-d="-1" aria-label="diminuir ângulo">−</button><span class="val mono" id="valAlvoA">θ = 45°</span><button class="btn step-btn" data-for="sldAlvoA" data-d="1" aria-label="aumentar ângulo">+</button></span></div>
             <input type="range" id="sldAlvoA" min="5" max="85" step="1" value="45" />
-            <div class="row"><label for="sldAlvoV">VELOCIDADE</label><span class="val mono" id="valAlvoV">v₀ = 15 m/s</span></div>
+<div class="row"><label for="sldAlvoV">VELOCIDADE</label><span class="stepper"><button class="btn step-btn" data-for="sldAlvoV" data-d="-1" aria-label="diminuir velocidade">−</button><span class="val mono" id="valAlvoV">v₀ = 15 m/s</span><button class="btn step-btn" data-for="sldAlvoV" data-d="1" aria-label="aumentar velocidade">+</button></span></div>
             <input type="range" id="sldAlvoV" min="5" max="30" step="0.5" value="15" />
           </div>
           <div class="group">
             <button class="btn lg primary-traj wide cta alvo-fire" id="btnAlvoFire">DISPARAR</button>
             <div class="btnrow" style="margin-top:6px;">
               <button class="btn" id="btnAlvoNew" style="flex:1;">NOVA PARTIDA</button>
+              <button class="btn" id="btnAlvoShuffle" title="Coloca o alvo em outra posição já testada">SORTEAR ALVO</button>
             </div>
             <button class="btn wide alvo-solve" id="btnAlvoSolve" hidden>VER UMA SOLUÇÃO POSSÍVEL</button>
           </div>
@@ -2189,6 +2237,14 @@ select.sel{
           </div>
 
           <!-- ===== modo exploração ===== -->
+          <div class="group explore-only">
+            <h3>Posição do alvo <span class="h3-aside">ou arraste o alvo</span></h3>
+            <div class="row"><label for="sldAlvoTX">distância x</label><span class="val mono" id="valAlvoTX">20 m</span></div>
+            <input type="range" class="alvo-range" id="sldAlvoTX" min="12" max="25.5" step="0.5" value="20" />
+            <div class="row"><label for="sldAlvoTY">altura y</label><span class="val mono" id="valAlvoTY">2 m</span></div>
+            <input type="range" class="alvo-range" id="sldAlvoTY" min="0.6" max="7" step="0.1" value="2" />
+            <p class="note" style="margin-top:4px;">Só antes do 1º disparo. Posições sem solução com os controles são recusadas.</p>
+          </div>
           <div class="group explore-only">
             <h3>O modelo matemático</h3>
             <div class="math-box">x(t) = v₀ · cos(θ) · t<br>y(t) = h₀ + v₀ · sen(θ) · t − ½ · g · t²<br><span class="dim">acerto: √((x − x<sub>alvo</sub>)² + (y − y<sub>alvo</sub>)²) ≤ r</span></div>
@@ -2211,7 +2267,7 @@ select.sel{
             <p>"Agora é a sua vez. Você tem três tentativas para acertar o alvo. Pode controlar a altura, o ângulo e a velocidade inicial."</p>
             <p>Fechamento: "Você acabou de usar exatamente as mesmas equações que mostramos na etapa anterior para tomar decisões."</p></div>
           <div><h4>Pergunta para o público</h4><p>"Qual dessas três variáveis você acha que vai fazer mais diferença?"</p></div>
-          <div><h4>O que demonstrar</h4><p>Deixe o visitante configurar e disparar. Depois de cada erro, leia a pista junto com ele. Acertou: entregue a bala e clique em Nova partida.</p></div>
+          <div><h4>O que demonstrar</h4><p>Deixe o visitante configurar (controles ao lado ou arrastando no desenho: carrinho = altura, seta = ângulo e velocidade) e disparar. Depois de cada erro, leia a pista junto com ele. Acertou: entregue a bala e clique em Nova partida.</p><p>Antes do 1º disparo, o grupo pode arrastar o alvo para outro lugar (ele continua lá nas próximas partidas; Sortear alvo volta ao aleatório).</p></div>
           <div><h4>Conceito matemático</h4><p>Lançamento oblíquo, trigonometria, função quadrática, velocidade, ângulo, altura inicial, tentativa e erro, modelagem.</p></div>
           <div><h4>Tempo</h4><p>~1 min por visitante</p></div>
         </div>
@@ -6509,6 +6565,9 @@ const AlvoModule = (() => {
   let fx = [];               // efeitos curtos: { kind, x, y, t, color }
   let hitAt = 0;
   let lastPresetIndex = -1;
+  let hover = null, drag = null;        // alça sob o mouse / sendo arrastada: "height" | "aim" | "target"
+  let manualTarget = false;             // alvo posicionado à mão: continua na próxima partida
+  let recoilT = 9, wobbleT = 9;         // tempos das animações de recuo e balanço do alvo
   let stats = { day: "", games: 0, wins: 0, first: 0 };
   let entered = false, looping = false, raf = null, lastTs = null, pausedByVisibility = null;
   let canvas, ctx = null, W = 0, H = 0;
@@ -6614,7 +6673,13 @@ const AlvoModule = (() => {
   }
 
   /* ------------------------------ interface ------------------------------ */
+  /* trilho do controle preenchido até o valor atual (visual) */
+  function fillRange(s) {
+    const p = (parseFloat(s.value) - parseFloat(s.min)) / (parseFloat(s.max) - parseFloat(s.min)) * 100;
+    s.style.setProperty("--p", `${Utils.clamp(p, 0, 100)}%`);
+  }
   function readSliders() {
+    ["sldAlvoH", "sldAlvoA", "sldAlvoV"].forEach(id => fillRange($(id)));
     params.h = parseFloat($("sldAlvoH").value);
     params.angle = parseFloat($("sldAlvoA").value);
     params.v = parseFloat($("sldAlvoV").value);
@@ -6628,6 +6693,10 @@ const AlvoModule = (() => {
   }
   function setControlsLocked(lock) {
     ["sldAlvoH", "sldAlvoA", "sldAlvoV"].forEach(id => { $(id).disabled = lock; });
+    document.querySelectorAll("#step-alvo .step-btn").forEach(b => { b.disabled = lock; });
+    $("alvoStage").classList.toggle("editable", !lock);
+    if (lock && drag) { drag = null; }
+    if (typeof syncTargetSliders === "function") syncTargetSliders();
     const fire = $("btnAlvoFire");
     fire.disabled = lock;
     fire.textContent = state === "won" || state === "lost" ? "PARTIDA ENCERRADA" : state === "flying" ? "EM VOO…" : "DISPARAR";
@@ -6641,7 +6710,7 @@ const AlvoModule = (() => {
     let lbl;
     if (state === "won") lbl = `Acertou na tentativa ${shots.length}/${ALVO_CONFIG.ATTEMPTS}`;
     else if (state === "lost") lbl = "Fim das tentativas";
-    else lbl = `Tentativa ${Math.min(shots.length + (state === "flying" ? 0 : 1), ALVO_CONFIG.ATTEMPTS)} de ${ALVO_CONFIG.ATTEMPTS}`;
+    else lbl = `Tentativa ${Math.min(shots.length + 1, ALVO_CONFIG.ATTEMPTS)} de ${ALVO_CONFIG.ATTEMPTS}`;
     $("alvoTryLabel").textContent = lbl;
     $("alvoTargetInfo").textContent = `alvo (${fmt(target.x, 1)} ; ${fmt(target.y, 1)}) m · r = ${fmt(target.r, 1)} m · ${ALVO_CONFIG.difficulty}`;
     renderTable();
@@ -6723,7 +6792,8 @@ const AlvoModule = (() => {
     return { x: list[i].x, y: list[i].y, r };
   }
   function newGame() {
-    target = pickTarget();
+    target = manualTarget ? { x: target.x, y: target.y, r: radiusFor(ALVO_CONFIG.difficulty) } : pickTarget();
+    recoilT = 9; wobbleT = 9; drag = null;
     shots = []; flight = null; solution = null; fx = [];
     state = "ready"; gameCounted = false;
     setSliders(ALVO_CONFIG.DEFAULTS);
@@ -6747,8 +6817,9 @@ const AlvoModule = (() => {
     if (!gameCounted) { gameCounted = true; stats.games++; saveStats(); renderStats(false); }
     state = "flying";
     $("alvoResult").hidden = true;
-    flight = { shot, t: 0, dur: Utils.clamp(shot.tEnd * 0.8, 0.8, 2.4) };
+    flight = { shot, t: 0, dur: Utils.clamp(shot.tEnd * 0.95, 1.0, 2.8) };
     fx.push({ kind: "muzzle", t: 0, color: shot.color });
+    recoilT = 0;
     setControlsLocked(true);
     updateHud();
     if (Utils.prefersReducedMotion()) finishFlight();
@@ -6762,6 +6833,7 @@ const AlvoModule = (() => {
       stats.wins++; if (s.n === 1) stats.first++;
       saveStats(); renderStats(true);
       hitAt = performance.now();
+      wobbleT = 0;
       fx.push({ kind: "hit", t: 0, x: s.hitPoint.x, y: s.hitPoint.y });
       const b = $("btnAlvoFire");
       b.classList.remove("pulse"); void b.offsetWidth; b.classList.add("pulse");
@@ -6798,6 +6870,7 @@ const AlvoModule = (() => {
   }
 
   /* ------------------------------ desenho ------------------------------ */
+  const TUBE = 40;                 // comprimento do tubo do lançador (px)
   function geom() {
     const MT = W < 600 ? 18 : MT_DESK;   // no celular os cartões ficam fora do canvas
     const plotW = Math.max(60, W - ML - MR), plotH = Math.max(60, H - MT - MB);
@@ -6805,19 +6878,40 @@ const AlvoModule = (() => {
     const x0 = ML, base = H - MB;
     return { scale, x0, base, yVis: (base - 8) / scale, P: (x, y) => ({ sx: x0 + x * scale, sy: base - y * scale }) };
   }
-  function tag(text, x, y, color, align) {
+  /* posições das "alças" que o mouse pode arrastar */
+  function handles(g) {
+    const th = Utils.toRad(params.angle);
+    const pivot = g.P(0, params.h);
+    const k = (params.v - 5) / 25;
+    const aim = TUBE + 10 + 22 + 78 * k;           // ponta da seta: ângulo (direção) + velocidade (comprimento)
+    const c = g.P(target.x, target.y);
+    return {
+      th, pivot, k,
+      rail: { x: g.x0 - 18, top: g.P(0, 5).sy },
+      carriage: { x: g.x0 - 18, y: pivot.sy },
+      tip: { x: pivot.sx + aim * Math.cos(th), y: pivot.sy - aim * Math.sin(th) },
+      target: { x: c.sx, y: c.sy, R: target.r * g.scale }
+    };
+  }
+  function canEdit() { return state === "ready" && !flight; }
+  function canMoveTarget() { return canEdit() && shots.length === 0; }
+  function tag(text, x, y, color, align, bg) {
     ctx.save();
     ctx.font = Utils.monoFont(11);
     const w = ctx.measureText(text).width + 12;
     let x0 = align === "right" ? x - w : align === "center" ? x - w / 2 : x;
     x0 = Utils.clamp(x0, 2, W - w - 2);
-    ctx.fillStyle = "rgba(8,13,24,0.9)"; ctx.strokeStyle = color; ctx.lineWidth = 1;
+    ctx.fillStyle = bg || "rgba(8,13,24,0.9)"; ctx.strokeStyle = color; ctx.lineWidth = 1;
     ctx.beginPath(); ctx.rect(x0, y - 13, w, 18); ctx.fill(); ctx.stroke();
     ctx.fillStyle = color; ctx.textAlign = "left"; ctx.fillText(text, x0 + 6, y);
     ctx.restore();
   }
   function drawGrid(g) {
     ctx.save();
+    // céu da área de testes: brilho suave no horizonte
+    const sky = ctx.createLinearGradient(0, 0, 0, g.base);
+    sky.addColorStop(0, "rgba(40,60,110,0.0)"); sky.addColorStop(1, "rgba(240,161,63,0.05)");
+    ctx.fillStyle = sky; ctx.fillRect(0, 0, W, g.base);
     ctx.lineWidth = 1; ctx.font = Utils.monoFont(10);
     const xMaxPx = W - MR;
     for (let x = 0; g.P(x, 0).sx <= xMaxPx - 34; x += 5) {
@@ -6827,6 +6921,11 @@ const AlvoModule = (() => {
       ctx.fillStyle = "rgba(215,226,245,0.45)"; ctx.textAlign = "center";
       ctx.fillText(`${x}`, p.sx, g.base + 14);
     }
+    for (let x = 1; g.P(x, 0).sx <= xMaxPx; x++) {   // marcas de metro no solo
+      const p = g.P(x, 0);
+      ctx.strokeStyle = x % 5 ? "rgba(215,226,245,0.18)" : "rgba(215,226,245,0.4)";
+      ctx.beginPath(); ctx.moveTo(p.sx, g.base); ctx.lineTo(p.sx, g.base + (x % 5 ? 3 : 6)); ctx.stroke();
+    }
     for (let y = 1; y < g.yVis; y += 1) {
       const p = g.P(0, y);
       ctx.strokeStyle = y % 5 === 0 ? "rgba(215,226,245,0.08)" : "rgba(215,226,245,0.035)";
@@ -6835,110 +6934,167 @@ const AlvoModule = (() => {
     }
     // solo: faixa de testes
     const gr = ctx.createLinearGradient(0, g.base, 0, H);
-    gr.addColorStop(0, "rgba(240,161,63,0.09)"); gr.addColorStop(1, "rgba(240,161,63,0)");
+    gr.addColorStop(0, "rgba(240,161,63,0.11)"); gr.addColorStop(1, "rgba(240,161,63,0)");
     ctx.fillStyle = gr; ctx.fillRect(0, g.base, W, MB);
-    ctx.strokeStyle = "rgba(215,226,245,0.5)"; ctx.lineWidth = 1.4;
+    ctx.strokeStyle = "rgba(240,161,63,0.55)"; ctx.lineWidth = 1.4;
+    ctx.shadowColor = "rgba(240,161,63,0.5)"; ctx.shadowBlur = 6;
     ctx.beginPath(); ctx.moveTo(0, g.base); ctx.lineTo(W, g.base); ctx.stroke();
-    ctx.strokeStyle = "rgba(215,226,245,0.12)"; ctx.lineWidth = 1;
-    for (let x = -((performance.now() / 60) % 16); x < W; x += 16) { ctx.beginPath(); ctx.moveTo(x, g.base + 1); ctx.lineTo(x - 6, g.base + 7); ctx.stroke(); }
+    ctx.shadowBlur = 0;
     ctx.fillStyle = "rgba(215,226,245,0.45)"; ctx.textAlign = "right";
     ctx.fillText("x (m)", xMaxPx, g.base + 14);
     ctx.textAlign = "left"; ctx.fillText("y (m)", 8, W < 600 ? 14 : MT_DESK - 10);
     ctx.restore();
   }
   function drawTarget(g, now) {
-    const c = g.P(target.x, target.y);
-    const R = target.r * g.scale;
-    const hitK = state === "won" ? (now - hitAt) / 1000 : 99;
-    ctx.save();
-    // haste de apoio
-    ctx.strokeStyle = "rgba(215,226,245,0.35)"; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(c.sx, c.sy + R); ctx.lineTo(c.sx, g.base); ctx.stroke();
-    ctx.fillStyle = "rgba(215,226,245,0.3)"; ctx.fillRect(c.sx - 10, g.base - 3, 20, 3);
-    // anéis concêntricos
+    const hd = handles(g);
+    const R = hd.target.R;
     const win = state === "won";
+    const hitK = win ? (now - hitAt) / 1000 : 99;
+    // o alvo balança depois do impacto (amortecido)
+    const wob = wobbleT < 2 ? Math.exp(-3 * wobbleT) * Math.sin(wobbleT * 22) : 0;
+    const cx = hd.target.x + wob * R * 0.35, cy = hd.target.y;
+    const dragging = drag && drag.kind === "target";
+    ctx.save();
+    // haste de apoio (inclina junto com o balanço)
+    ctx.strokeStyle = dragging ? "rgba(247,184,102,0.8)" : "rgba(215,226,245,0.35)"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(cx, cy + R); ctx.lineTo(hd.target.x, g.base); ctx.stroke();
+    ctx.fillStyle = "rgba(215,226,245,0.35)"; ctx.fillRect(hd.target.x - 12, g.base - 3, 24, 3);
+    // anéis concêntricos
     const pulse = win ? 1 + 0.06 * Math.sin(now / 160) : 1;
     const main = win ? "#52d8a4" : "#f0a13f";
     ctx.shadowColor = win ? "rgba(82,216,164,0.8)" : "rgba(240,161,63,0.55)";
-    ctx.shadowBlur = win ? 22 : 12;
-    ctx.fillStyle = win ? "rgba(82,216,164,0.14)" : "rgba(240,161,63,0.1)";
-    ctx.beginPath(); ctx.arc(c.sx, c.sy, R * pulse, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowBlur = win ? 24 : (hover === "target" || dragging ? 20 : 12);
+    const fill = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * pulse);
+    fill.addColorStop(0, win ? "rgba(82,216,164,0.28)" : "rgba(240,161,63,0.22)");
+    fill.addColorStop(1, win ? "rgba(82,216,164,0.08)" : "rgba(240,161,63,0.05)");
+    ctx.fillStyle = fill;
+    ctx.beginPath(); ctx.arc(cx, cy, R * pulse, 0, Math.PI * 2); ctx.fill();
     ctx.shadowBlur = 0;
-    [[1, 2], [0.66, 1.4], [0.33, 1.4]].forEach(([f, lw], i) => {
+    [[1, 2.2], [0.66, 1.4], [0.33, 1.4]].forEach(([f, lw], i) => {
       ctx.strokeStyle = i === 0 ? main : "rgba(238,242,248,0.75)"; ctx.lineWidth = lw;
-      ctx.beginPath(); ctx.arc(c.sx, c.sy, R * f * pulse, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx, cy, R * f * pulse, 0, Math.PI * 2); ctx.stroke();
     });
-    ctx.fillStyle = main; ctx.beginPath(); ctx.arc(c.sx, c.sy, Math.max(2.5, R * 0.1), 0, Math.PI * 2); ctx.fill();
-    // cruz de mira discreta
+    ctx.fillStyle = main; ctx.beginPath(); ctx.arc(cx, cy, Math.max(2.5, R * 0.1), 0, Math.PI * 2); ctx.fill();
+    // cruz de mira
     ctx.strokeStyle = "rgba(238,242,248,0.35)"; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(c.sx - R - 8, c.sy); ctx.lineTo(c.sx - R - 3, c.sy); ctx.moveTo(c.sx + R + 3, c.sy); ctx.lineTo(c.sx + R + 8, c.sy);
-    ctx.moveTo(c.sx, c.sy - R - 8); ctx.lineTo(c.sx, c.sy - R - 3); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx - R - 8, cy); ctx.lineTo(cx - R - 3, cy); ctx.moveTo(cx + R + 3, cy); ctx.lineTo(cx + R + 8, cy);
+    ctx.moveTo(cx, cy - R - 8); ctx.lineTo(cx, cy - R - 3); ctx.stroke();
+    // alça de arraste (antes do 1º disparo)
+    if (canMoveTarget()) {
+      const a = hover === "target" || dragging ? 0.95 : 0.45 + 0.25 * Math.sin(now / 420);
+      ctx.strokeStyle = `rgba(247,184,102,${a})`; ctx.setLineDash([4, 4]); ctx.lineWidth = 1.2;
+      ctx.lineDashOffset = -now / 60;
+      ctx.beginPath(); ctx.arc(cx, cy, R + 9, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]);
+      if (dragging) {  // guias até os eixos enquanto move
+        ctx.strokeStyle = "rgba(247,184,102,0.45)"; ctx.setLineDash([3, 4]);
+        ctx.beginPath(); ctx.moveTo(g.x0, cy); ctx.lineTo(cx - R - 10, cy); ctx.moveTo(cx, cy + R + 10); ctx.lineTo(cx, g.base); ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    }
     // ondas e flash no acerto
     if (hitK < 1.4) {
       for (let k = 0; k < 3; k++) {
         const q = hitK - k * 0.18;
         if (q < 0 || q > 1) continue;
         ctx.strokeStyle = `rgba(82,216,164,${1 - q})`; ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.arc(c.sx, c.sy, R + q * 70, 0, Math.PI * 2); ctx.stroke();
+        ctx.beginPath(); ctx.arc(cx, cy, R + q * 80, 0, Math.PI * 2); ctx.stroke();
       }
-      if (hitK < 0.25) { ctx.fillStyle = `rgba(255,255,255,${0.5 * (1 - hitK / 0.25)})`; ctx.beginPath(); ctx.arc(c.sx, c.sy, R * 1.6, 0, Math.PI * 2); ctx.fill(); }
+      if (hitK < 0.25) { ctx.fillStyle = `rgba(255,255,255,${0.55 * (1 - hitK / 0.25)})`; ctx.beginPath(); ctx.arc(cx, cy, R * 1.8, 0, Math.PI * 2); ctx.fill(); }
     }
     ctx.restore();
-    const label = win ? "ALVO ATINGIDO" : `ALVO (${fmt(target.x, 1)} ; ${fmt(target.y, 1)}) m`;
-    tag(label, c.sx, c.sy - R - 14, win ? "#52d8a4" : "#f7b866", "center");
+    const label = win ? "ALVO ATINGIDO" : dragging ? `x = ${fmt(target.x, 1)} m · y = ${fmt(target.y, 1)} m`
+      : `ALVO (${fmt(target.x, 1)} ; ${fmt(target.y, 1)}) m`;
+    tag(label, cx, cy - R - 16, win ? "#52d8a4" : "#f7b866", "center");
+    if (canMoveTarget() && !dragging && shots.length === 0 && hover === "target") tag("ARRASTE O ALVO", cx, cy + R + 26, "#f7b866", "center");
   }
   function drawLauncher(g, now) {
-    const h = params.h, th = Utils.toRad(params.angle);
-    const railX = g.x0 - 18;
-    const top = g.P(0, 5).sy, pivot = g.P(0, h);
+    const hd = handles(g);
+    const th = hd.th, pivot = hd.pivot, railX = hd.rail.x;
+    const edit = canEdit();
     ctx.save();
+    // base do lançador
+    ctx.fillStyle = "#121b2e"; ctx.strokeStyle = "rgba(240,161,63,0.45)"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(railX - 16, g.base); ctx.lineTo(railX - 9, g.base - 8); ctx.lineTo(railX + 9, g.base - 8); ctx.lineTo(railX + 16, g.base); ctx.closePath(); ctx.fill(); ctx.stroke();
     // trilho vertical com marcações de altura (0 a 5 m)
-    ctx.strokeStyle = "rgba(215,226,245,0.35)"; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(railX, g.base); ctx.lineTo(railX, top - 6); ctx.stroke();
+    const hoverH = hover === "height" || (drag && drag.kind === "height");
+    ctx.strokeStyle = hoverH ? "rgba(247,184,102,0.8)" : "rgba(215,226,245,0.35)"; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(railX, g.base - 8); ctx.lineTo(railX, hd.rail.top - 6); ctx.stroke();
+    ctx.strokeStyle = "rgba(240,161,63,0.6)"; ctx.lineWidth = 3;           // trecho "ocupado" do trilho
+    ctx.beginPath(); ctx.moveTo(railX, g.base - 8); ctx.lineTo(railX, pivot.sy); ctx.stroke();
     ctx.lineWidth = 1; ctx.font = Utils.monoFont(9); ctx.fillStyle = "rgba(215,226,245,0.45)"; ctx.textAlign = "right";
+    ctx.strokeStyle = "rgba(215,226,245,0.35)";
     for (let y = 0; y <= 5; y++) {
       const sy = g.P(0, y).sy;
-      ctx.beginPath(); ctx.moveTo(railX - 5, sy); ctx.lineTo(railX, sy); ctx.stroke();
-      ctx.fillText(`${y}`, railX - 8, sy + 3);
+      ctx.beginPath(); ctx.moveTo(railX - 6, sy); ctx.lineTo(railX - 1, sy); ctx.stroke();
+      ctx.fillText(`${y}`, railX - 9, sy + 3);
     }
-    // carro na altura escolhida
-    ctx.fillStyle = "#1a2540"; ctx.strokeStyle = "#f0a13f"; ctx.lineWidth = 1.2;
-    ctx.beginPath(); ctx.rect(railX - 6, pivot.sy - 7, 12, 14); ctx.fill(); ctx.stroke();
+    // carro na altura escolhida (alça: arrastar para cima/baixo)
+    ctx.fillStyle = hoverH ? "#2a3656" : "#1a2540"; ctx.strokeStyle = "#f0a13f"; ctx.lineWidth = 1.4;
+    if (hoverH) { ctx.shadowColor = "rgba(240,161,63,0.8)"; ctx.shadowBlur = 12; }
+    ctx.beginPath(); ctx.rect(railX - 8, pivot.sy - 9, 16, 18); ctx.fill(); ctx.stroke();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = "rgba(247,184,102,0.9)"; ctx.lineWidth = 1.2;   // setinhas ↕
+    ctx.beginPath(); ctx.moveTo(railX - 3, pivot.sy - 3); ctx.lineTo(railX, pivot.sy - 6); ctx.lineTo(railX + 3, pivot.sy - 3);
+    ctx.moveTo(railX - 3, pivot.sy + 3); ctx.lineTo(railX, pivot.sy + 6); ctx.lineTo(railX + 3, pivot.sy + 3); ctx.stroke();
     ctx.strokeStyle = "rgba(240,161,63,0.5)"; ctx.setLineDash([3, 3]);
-    ctx.beginPath(); ctx.moveTo(railX + 6, pivot.sy); ctx.lineTo(pivot.sx, pivot.sy); ctx.stroke(); ctx.setLineDash([]);
-    // altura h₀
-    tag(`h₀ = ${fmt(h, 1)} m`, railX + 10, Math.min(g.base - 6, pivot.sy + 26), "#f7b866", "left");
+    ctx.beginPath(); ctx.moveTo(railX + 8, pivot.sy); ctx.lineTo(pivot.sx, pivot.sy); ctx.stroke(); ctx.setLineDash([]);
+    tag(`h₀ = ${fmt(params.h, 1)} m`, railX + 10, Math.min(g.base - 12, pivot.sy + 28), "#f7b866", "left");
     // arco do ângulo
     ctx.strokeStyle = "rgba(240,161,63,0.7)"; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(pivot.sx, pivot.sy); ctx.lineTo(pivot.sx + 58, pivot.sy); ctx.stroke();
-    ctx.beginPath(); ctx.arc(pivot.sx, pivot.sy, 40, 0, -th, true); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(pivot.sx, pivot.sy); ctx.lineTo(pivot.sx + 62, pivot.sy); ctx.stroke();
+    ctx.fillStyle = "rgba(240,161,63,0.1)";
+    ctx.beginPath(); ctx.moveTo(pivot.sx, pivot.sy); ctx.arc(pivot.sx, pivot.sy, 44, 0, -th, true); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.arc(pivot.sx, pivot.sy, 44, 0, -th, true); ctx.stroke();
     ctx.font = Utils.monoFont(12); ctx.fillStyle = "#f7b866"; ctx.textAlign = "left";
-    ctx.fillText(`θ = ${fmt(params.angle, 0)}°`, pivot.sx + 46 * Math.cos(th / 2) + 4, pivot.sy - 46 * Math.sin(th / 2) + 4);
-    // tubo do lançador experimental (gira com o ângulo)
+    ctx.fillText(`θ = ${fmt(params.angle, 0)}°`, pivot.sx + 52 * Math.cos(th / 2) + 4, pivot.sy - 52 * Math.sin(th / 2) + 4);
+    // tubo do lançador experimental (gira com o ângulo e recua ao disparar)
+    const recoil = recoilT < 0.35 ? 8 * Math.sin(Math.PI * Math.min(1, recoilT / 0.35)) * (1 - recoilT / 0.35) + 0 : 0;
     ctx.translate(pivot.sx, pivot.sy);
     ctx.rotate(-th);
-    const len = 34;
-    const tg = ctx.createLinearGradient(0, -7, 0, 7);
-    tg.addColorStop(0, "#3a4a6c"); tg.addColorStop(0.5, "#243150"); tg.addColorStop(1, "#141d31");
-    ctx.fillStyle = tg; ctx.strokeStyle = "rgba(240,161,63,0.85)"; ctx.lineWidth = 1.2;
-    ctx.beginPath(); ctx.rect(-8, -7, len + 8, 14); ctx.fill(); ctx.stroke();
-    ctx.strokeStyle = "rgba(240,161,63,0.5)";
-    [6, 14, 22].forEach(x => { ctx.beginPath(); ctx.moveTo(x, -7); ctx.lineTo(x, 7); ctx.stroke(); });
-    ctx.fillStyle = "#f0a13f"; ctx.fillRect(len - 2, -8, 3, 16);
-    // intensidade do lançamento: seta proporcional a v₀ (sem prever o alcance)
-    if (state === "ready") {
-      const k = (params.v - 5) / 25;
-      const aLen = 14 + 46 * k;
-      const glow = 0.35 + 0.5 * k + 0.1 * Math.sin(now / 250);
-      ctx.strokeStyle = `rgba(247,184,102,${glow})`; ctx.fillStyle = `rgba(247,184,102,${glow})`; ctx.lineWidth = 2;
-      ctx.shadowColor = "rgba(240,161,63,0.8)"; ctx.shadowBlur = 6 + 10 * k;
-      Utils.arrow(ctx, len + 6, 0, len + 6 + aLen, 0, 7);
-    }
+    ctx.translate(-recoil, 0);
+    const tg = ctx.createLinearGradient(0, -8, 0, 8);
+    tg.addColorStop(0, "#44567d"); tg.addColorStop(0.45, "#27365a"); tg.addColorStop(1, "#131c30");
+    ctx.fillStyle = tg; ctx.strokeStyle = "rgba(240,161,63,0.9)"; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.rect(-10, -8, TUBE + 10, 16); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle = "rgba(240,161,63,0.45)";
+    [4, 12, 20, 28].forEach(x => { ctx.beginPath(); ctx.moveTo(x, -8); ctx.lineTo(x, 8); ctx.stroke(); });
+    ctx.fillStyle = "#f0a13f"; ctx.fillRect(TUBE - 2, -9, 4, 18);
+    // bolinha carregada no tubo (visível antes do disparo)
+    if (edit) { ctx.fillStyle = "#eef2f8"; ctx.beginPath(); ctx.arc(TUBE - 9, 0, 4.5, 0, Math.PI * 2); ctx.fill(); }
     ctx.restore();
     ctx.save();
-    ctx.fillStyle = "#eef2f8"; ctx.beginPath(); ctx.arc(pivot.sx, pivot.sy, 3.5, 0, Math.PI * 2); ctx.fill();
-    if (state === "ready") tag(`v₀ = ${fmt(params.v, params.v % 1 ? 1 : 0)} m/s`, pivot.sx + 90 * Math.cos(th) + 8, pivot.sy - 90 * Math.sin(th) - 4, "#f7b866", "left");
+    ctx.fillStyle = "#eef2f8"; ctx.beginPath(); ctx.arc(pivot.sx, pivot.sy, 4, 0, Math.PI * 2); ctx.fill();
     ctx.restore();
+    // seta de mira: direção = ângulo · comprimento = velocidade (alça principal)
+    if (edit) {
+      const hoverA = hover === "aim" || (drag && drag.kind === "aim");
+      const start = { x: pivot.sx + (TUBE + 6) * Math.cos(th), y: pivot.sy - (TUBE + 6) * Math.sin(th) };
+      const glow = 0.45 + 0.45 * hd.k + (hoverA ? 0.1 : 0.08 * Math.sin(now / 250));
+      ctx.save();
+      ctx.strokeStyle = `rgba(247,184,102,${glow})`; ctx.fillStyle = `rgba(247,184,102,${glow})`; ctx.lineWidth = 2.4;
+      ctx.shadowColor = "rgba(240,161,63,0.85)"; ctx.shadowBlur = 6 + 14 * hd.k;
+      Utils.arrow(ctx, start.x, start.y, hd.tip.x, hd.tip.y, 9);
+      // pontinhos de "energia" percorrendo a seta
+      const L = Math.hypot(hd.tip.x - start.x, hd.tip.y - start.y);
+      for (let i = 0; i < 3; i++) {
+        const f = ((now / 700) + i / 3) % 1;
+        ctx.globalAlpha = 0.9 * (1 - f);
+        ctx.beginPath(); ctx.arc(start.x + (hd.tip.x - start.x) * f, start.y + (hd.tip.y - start.y) * f, 2, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+      // alça circular na ponta
+      ctx.strokeStyle = hoverA ? "#fff" : "rgba(247,184,102,0.9)"; ctx.lineWidth = 1.6;
+      ctx.fillStyle = hoverA ? "rgba(247,184,102,0.35)" : "rgba(8,13,24,0.8)";
+      ctx.beginPath(); ctx.arc(hd.tip.x, hd.tip.y, 9 + (hoverA ? 2 : 0), 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.restore();
+      void L;
+      tag(`v₀ = ${fmt(params.v, params.v % 1 ? 1 : 0)} m/s`, hd.tip.x + 14, hd.tip.y - 8, "#f7b866", "left");
+      // dicas de uso do mouse (até o 1º disparo)
+      if (shots.length === 0 && !drag) {
+        tag("ARRASTE PARA MIRAR", hd.tip.x + 14, hd.tip.y + 14, "rgba(247,184,102,0.75)", "left", "rgba(8,13,24,0.6)");
+        if (hover === "height") tag("↕ ARRASTE A ALTURA", railX + 14, pivot.sy - 20, "rgba(247,184,102,0.85)", "left");
+      }
+    }
   }
   function drawPath(g, s, tUpTo, emphasis) {
     const P = g.P;
@@ -6948,27 +7104,78 @@ const AlvoModule = (() => {
     ctx.shadowColor = s.color; ctx.shadowBlur = emphasis ? 16 : 6;
     if (s.n === "S") ctx.setLineDash([7, 5]);
     ctx.beginPath();
-    const N = 140;
+    const N = 160;
     for (let i = 0; i <= N; i++) {
       const p = s.pos(tUpTo * i / N);
       const q = P(p.x, Math.max(0, p.y));
       if (i === 0) ctx.moveTo(q.sx, q.sy); else ctx.lineTo(q.sx, q.sy);
     }
     ctx.stroke();
+    ctx.setLineDash([]); ctx.shadowBlur = 0;
+    // pontos de tempo a cada 0,2 s (mostram a velocidade mudando)
+    ctx.fillStyle = s.color;
+    for (let t = 0.2; t < tUpTo; t += 0.2) {
+      const q = P(s.pos(t).x, Math.max(0, s.pos(t).y));
+      ctx.globalAlpha = 0.7; ctx.beginPath(); ctx.arc(q.sx, q.sy, 2, 0, Math.PI * 2); ctx.fill();
+    }
     ctx.restore();
   }
-  function drawBall(g, s, t) {
-    const p = s.pos(t), q = g.P(p.x, Math.max(0, p.y));
+  /* bolinha: brilho, rastro de cometa, giro e sombra no chão */
+  function drawBall(g, s, t, opts) {
+    opts = opts || {};
+    const p = opts.at || s.pos(t);
+    const q = g.P(p.x, Math.max(0, p.y));
     ctx.save();
     if (q.sy < 6) { // fora da tela por cima: indicador na borda
       ctx.fillStyle = s.color; ctx.font = Utils.monoFont(10); ctx.textAlign = "center";
       ctx.beginPath(); ctx.moveTo(q.sx, 6); ctx.lineTo(q.sx - 6, 16); ctx.lineTo(q.sx + 6, 16); ctx.closePath(); ctx.fill();
       ctx.fillText(`${fmt(p.y, 0)} m`, q.sx, 30);
-    } else if (q.sx <= W) {
-      ctx.shadowColor = s.color; ctx.shadowBlur = 16; ctx.fillStyle = "#fff";
-      ctx.beginPath(); ctx.arc(q.sx, q.sy, 5.5, 0, Math.PI * 2); ctx.fill();
+      ctx.restore(); return;
     }
+    if (q.sx > W + 10) { ctx.restore(); return; }
+    // sombra no solo (menor e mais fraca quanto mais alto)
+    const hy = Math.max(0, p.y);
+    const sh = Math.max(0.1, 1 - hy / 12);
+    ctx.fillStyle = `rgba(0,0,0,${0.45 * sh})`;
+    ctx.beginPath(); ctx.ellipse(q.sx, g.base + 2, 7 * sh + 2, 2.2 * sh + 0.6, 0, 0, Math.PI * 2); ctx.fill();
+    // rastro de cometa
+    if (opts.trail) {
+      for (let i = 12; i >= 1; i--) {
+        const tt = t - i * 0.025;
+        if (tt < 0) continue;
+        const pp = s.pos(tt), qq = g.P(pp.x, Math.max(0, pp.y));
+        ctx.globalAlpha = 0.5 * (1 - i / 13);
+        ctx.fillStyle = s.color;
+        ctx.beginPath(); ctx.arc(qq.sx, qq.sy, 5.5 * (1 - i / 16), 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+    const r = opts.r || 6.5;
+    ctx.shadowColor = s.color; ctx.shadowBlur = opts.trail ? 20 : 12;
+    const bg = ctx.createRadialGradient(q.sx - r * 0.35, q.sy - r * 0.35, 1, q.sx, q.sy, r);
+    bg.addColorStop(0, "#ffffff"); bg.addColorStop(1, s.color);
+    ctx.fillStyle = bg;
+    ctx.beginPath(); ctx.arc(q.sx, q.sy, r, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowBlur = 0;
+    // faixa que gira (a bolinha "rola" no ar)
+    const spin = (opts.spin != null ? opts.spin : t * 14);
+    ctx.strokeStyle = "rgba(8,13,24,0.45)"; ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.arc(q.sx, q.sy, r * 0.62, spin, spin + Math.PI * 0.8); ctx.stroke();
     ctx.restore();
+  }
+  /* depois de cair: a bolinha quica duas vezes e rola até parar (só visual) */
+  function bounceState(s) {
+    const tau = s.afterT || 0;
+    const vyL = Math.min(5.5, Math.sqrt(s.vy * s.vy + 2 * G * s.h) * 0.36);
+    let x = s.range, vx = Math.min(s.vx, 9) * 0.5, vy = vyL, t = tau, spin = s.tEnd * 14;
+    for (let b = 0; b < 2; b++) {
+      const d = 2 * vy / G;
+      if (t < d) return { at: { x: x + vx * t, y: vy * t - G * t * t / 2 }, spin: spin + t * 12, done: false };
+      x += vx * d; t -= d; spin += d * 12; vy *= 0.4; vx *= 0.6;
+    }
+    const roll = Math.min(t, 0.5);
+    x += vx * (roll - roll * roll);            // desacelera até parar
+    return { at: { x, y: 0 }, spin: spin + roll * 10, done: t > 0.5 };
   }
   function drawMarkers(g, s) {
     // somente DEPOIS do disparo: altura máxima, distância e tempo
@@ -6977,6 +7184,9 @@ const AlvoModule = (() => {
     if (s.tTop > 0 && s.tTop < s.tEnd) {
       const top = P(s.vx * s.tTop, s.hmax);
       if (top.sy > 18 && top.sx < W - 20) {
+        ctx.strokeStyle = s.color; ctx.globalAlpha = 0.5; ctx.setLineDash([3, 4]); ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(top.sx, top.sy); ctx.lineTo(top.sx, g.base); ctx.stroke();
+        ctx.setLineDash([]); ctx.globalAlpha = 1;
         ctx.fillStyle = s.color; ctx.beginPath(); ctx.arc(top.sx, top.sy, 3.5, 0, Math.PI * 2); ctx.fill();
         tag(`alt. máx. ${fmt(s.hmax, 1)} m`, top.sx, top.sy - 10, s.color, "center");
       }
@@ -6984,9 +7194,11 @@ const AlvoModule = (() => {
     const endX = s.hit ? s.hitPoint.x : s.range;
     if (!s.hit && endX <= X_VIEW + 1) {
       const e = P(endX, 0);
-      tag(`${fmt(endX, 1)} m · ${fmt(s.tEnd, 2)} s`, e.sx, g.base - 8, s.color, "center");
+      tag(`${fmt(endX, 1)} m · ${fmt(s.tEnd, 2)} s`, e.sx, g.base - 14, s.color, "center");
     } else if (!s.hit) {
       tag(`caiu a ${fmt(endX, 1)} m ►`, W - MR, g.base - 30, s.color, "right");
+    } else {
+      tag(`${fmt(s.tEnd, 2)} s`, P(endX, s.hitPoint.y).sx, P(endX, s.hitPoint.y).sy + target.r * g.scale + 38, s.color, "center");
     }
     ctx.restore();
   }
@@ -6999,25 +7211,47 @@ const AlvoModule = (() => {
   function drawFx(g) {
     fx.forEach(f => {
       if (f.kind === "muzzle") {
-        const p = g.P(0, params.h), k = f.t / 0.45;
+        const hd = handles(g), k = f.t / 0.6;
         if (k > 1) return;
-        ctx.save(); ctx.globalAlpha = 1 - k; ctx.strokeStyle = f.color; ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.arc(p.sx, p.sy, 8 + 34 * k, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+        const mx = hd.pivot.sx + (TUBE + 2) * Math.cos(hd.th), my = hd.pivot.sy - (TUBE + 2) * Math.sin(hd.th);
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, 1 - k * 1.6); ctx.strokeStyle = f.color; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(mx, my, 6 + 30 * k, 0, Math.PI * 2); ctx.stroke();
+        // fumaça leve saindo do tubo
+        for (let i = 0; i < 5; i++) {
+          const d = 10 + 40 * k * (0.6 + i * 0.15), sp = (i - 2) * 0.28;
+          const a = hd.th + sp;
+          ctx.globalAlpha = 0.28 * (1 - k);
+          ctx.fillStyle = "#c9d2e6";
+          ctx.beginPath(); ctx.arc(mx + d * Math.cos(a), my - d * Math.sin(a) - 8 * k, 3 + 9 * k, 0, Math.PI * 2); ctx.fill();
+        }
+        if (k < 0.15) { ctx.globalAlpha = 1 - k / 0.15; ctx.fillStyle = "#fff4dc"; ctx.beginPath(); ctx.arc(mx, my, 9, 0, Math.PI * 2); ctx.fill(); }
+        ctx.restore();
       } else if (f.kind === "ground") {
-        const k = f.t / 0.7;
+        const k = f.t / 0.8;
         if (k > 1) return;
         const p = g.P(f.x, 0);
-        ctx.save(); ctx.globalAlpha = 1 - k; ctx.strokeStyle = f.color; ctx.lineWidth = 1.6;
-        ctx.beginPath(); ctx.ellipse(p.sx, p.sy, 6 + 26 * k, 2 + 6 * k, 0, Math.PI, 2 * Math.PI); ctx.stroke(); ctx.restore();
+        ctx.save(); ctx.globalAlpha = 1 - k; ctx.strokeStyle = f.color; ctx.lineWidth = 1.8;
+        ctx.beginPath(); ctx.ellipse(p.sx, p.sy, 6 + 30 * k, 2 + 7 * k, 0, Math.PI, 2 * Math.PI); ctx.stroke();
+        ctx.fillStyle = "rgba(201,210,230,0.5)";
+        for (let i = -3; i <= 3; i++) { ctx.beginPath(); ctx.arc(p.sx + i * 7 * k * 2, p.sy - 14 * k * (1 - Math.abs(i) / 4) + 20 * k * k, 1.6, 0, Math.PI * 2); ctx.fill(); }
+        ctx.restore();
       } else if (f.kind === "hit") {
-        const k = f.t / 0.9;
+        const k = f.t / 1.1;
         if (k > 1) return;
         const p = g.P(f.x, f.y);
-        ctx.save(); ctx.globalAlpha = 1 - k; ctx.fillStyle = "#b9f5dc";
-        for (let i = 0; i < 12; i++) {
-          const a = i / 12 * Math.PI * 2, r = 6 + 46 * Utils.easeOut(k);
-          ctx.beginPath(); ctx.arc(p.sx + r * Math.cos(a), p.sy + r * Math.sin(a), 2, 0, Math.PI * 2); ctx.fill();
+        ctx.save(); ctx.globalAlpha = 1 - k;
+        for (let i = 0; i < 16; i++) {
+          const a = i / 16 * Math.PI * 2, r = 6 + 60 * Utils.easeOut(k);
+          ctx.fillStyle = i % 2 ? "#b9f5dc" : "#f7c889";
+          ctx.beginPath(); ctx.arc(p.sx + r * Math.cos(a), p.sy + r * Math.sin(a) + 18 * k * k, 2.2, 0, Math.PI * 2); ctx.fill();
         }
+        ctx.restore();
+      } else if (f.kind === "msg") {
+        const k = f.t / 2.4;
+        if (k > 1) return;
+        ctx.save(); ctx.globalAlpha = Math.min(1, (1 - k) * 3);
+        tag(f.text, W / 2, 70 + (W < 600 ? -40 : 0), "#f7b866", "center");
         ctx.restore();
       }
     });
@@ -7032,22 +7266,133 @@ const AlvoModule = (() => {
     const winning = state === "won";
     shots.forEach((s, i) => drawPath(g, s, s.tEnd, winning && i === shots.length - 1));
     if (solution) drawPath(g, solution, solution.tEnd * solution.progress, true);
+    drawLauncher(g, now);
     if (flight) {
       const t = flight.shot.tEnd * Utils.clamp(flight.t / flight.dur, 0, 1);
       drawPath(g, flight.shot, t, false);
-      drawBall(g, flight.shot, t);
+      drawBall(g, flight.shot, t, { trail: true });
+      // leitura ao vivo durante o voo (tempo e posição)
+      const p = flight.shot.pos(t);
+      tag(`t = ${fmt(t, 2)} s · x = ${fmt(p.x, 1)} m · y = ${fmt(Math.max(0, p.y), 1)} m`, W / 2, W < 600 ? 30 : 76, "rgba(238,242,248,0.85)", "center");
     }
-    drawLauncher(g, now);
     const last = shots[shots.length - 1];
     if (last && !flight) {
       if (state === "lost") shots.forEach(s => drawPathLabel(g, s)); else drawMarkers(g, last);
-      if (!last.hit) drawBall(g, last, last.tEnd);
+      if (last.hit) drawBall(g, last, last.tEnd, { r: 5.5, spin: last.tEnd * 14 });       // bolinha presa no alvo
+      else if (last.range <= X_VIEW + 1) { const b = bounceState(last); drawBall(g, last, last.tEnd, { at: b.at, spin: b.spin }); }
+      else drawBall(g, last, last.tEnd);
     }
     if (solution) {
-      drawBall(g, solution, solution.tEnd * solution.progress);
+      drawBall(g, solution, solution.tEnd * solution.progress, { trail: solution.progress < 1 });
       if (solution.progress >= 1) tag("SOLUÇÃO POSSÍVEL", g.P(target.x, target.y).sx, g.P(target.x, target.y).sy + target.r * g.scale + 22, SOL_COLOR, "center");
     }
     drawFx(g);
+  }
+
+  /* ----------------------- mouse / toque: arrastar no desenho ----------------------- */
+  function localPoint(e) {
+    const r = canvas.getBoundingClientRect();
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  }
+  function pick(p) {
+    if (!canEdit()) return null;
+    const g = geom(), hd = handles(g);
+    if (Math.hypot(p.x - hd.tip.x, p.y - hd.tip.y) <= 18) return "aim";
+    if (Math.abs(p.x - hd.carriage.x) <= 16 && p.y >= hd.rail.top - 14 && p.y <= g.base) return "height";
+    if (canMoveTarget() && Math.hypot(p.x - hd.target.x, p.y - hd.target.y) <= hd.target.R + 14) return "target";
+    // tubo e arco do ângulo também servem para mirar
+    const dx = p.x - hd.pivot.sx, dy = hd.pivot.sy - p.y, d = Math.hypot(dx, dy);
+    if (d >= 12 && d <= TUBE + 30 && dx > -6) return "aim";
+    return null;
+  }
+  const snap = (v, step) => Math.round(v / step) * step;
+  function applyDrag(p) {
+    const g = geom(), hd = handles(g);
+    const L = ALVO_CONFIG.LIMITS;
+    if (drag.kind === "height") {
+      const h = Utils.clamp(snap((g.base - p.y) / g.scale, L.h[2]), L.h[0], L.h[1]);
+      setSliders({ ...params, h: Number(h.toFixed(2)) });
+    } else if (drag.kind === "aim") {
+      const dx = p.x - hd.pivot.sx, dy = hd.pivot.sy - p.y;
+      const ang = Utils.clamp(Math.round(Utils.toDeg(Math.atan2(dy, Math.max(dx, 0.001)))), L.angle[0], L.angle[1]);
+      const next = { ...params, angle: ang };
+      if (!drag.angleOnly) {
+        const D = Math.hypot(dx, dy);
+        const k = Utils.clamp((D - TUBE - 32) / 78, 0, 1);
+        next.v = Number(Utils.clamp(snap(5 + 25 * k, L.v[2]), L.v[0], L.v[1]).toFixed(1));
+      }
+      setSliders(next);
+    } else if (drag.kind === "target") {
+      const x = Utils.clamp(snap((p.x - g.x0) / g.scale, 0.5), 12, X_VIEW - 1.5);
+      const y = Utils.clamp(snap((g.base - p.y) / g.scale, 0.1), 0.6, 7);
+      target = { x, y, r: target.r };
+      syncTargetSliders();
+      updateHud();
+    }
+    draw();
+  }
+  function setHover(k) {
+    hover = k;
+    canvas.style.cursor = drag ? "grabbing" : k === "height" ? "ns-resize" : k === "aim" || k === "target" ? "grab" : "default";
+  }
+  /* o alvo movido precisa ter solução com os controles; se não tiver, volta */
+  function commitTarget(prev) {
+    if (!findSolution(target, params.h)) {
+      target = prev;
+      fx.push({ kind: "msg", t: 0, text: "SEM SOLUÇÃO NESSA POSIÇÃO · O ALVO VOLTOU" });
+    } else {
+      manualTarget = true;
+      fx.push({ kind: "msg", t: 0, text: `ALVO POSICIONADO EM (${fmt(target.x, 1)} ; ${fmt(target.y, 1)}) m` });
+    }
+    syncTargetSliders(); updateHud(); draw();
+  }
+  function wirePointer() {
+    canvas.style.touchAction = "none";
+    canvas.addEventListener("pointerdown", (e) => {
+      const p = localPoint(e);
+      let k = pick(p);
+      if (!k && canEdit() && shots.length > 0) {
+        const hd = handles(geom());
+        if (Math.hypot(p.x - hd.target.x, p.y - hd.target.y) <= hd.target.R + 14) {
+          fx.push({ kind: "msg", t: 0, text: "O ALVO SÓ PODE SER MOVIDO ANTES DO 1º DISPARO" });
+          return;
+        }
+      }
+      if (!k) return;
+      // tubo (perto do pivô) muda só o ângulo; a ponta da seta muda ângulo e velocidade
+      const hd = handles(geom());
+      const onTip = Math.hypot(p.x - hd.tip.x, p.y - hd.tip.y) <= 18;
+      drag = { kind: k, angleOnly: k === "aim" && !onTip, prevTarget: { ...target } };
+      hideIntro();
+      try { canvas.setPointerCapture(e.pointerId); } catch (err) { /* ok */ }
+      setHover(k);
+      applyDrag(p);
+      e.preventDefault();
+    });
+    canvas.addEventListener("pointermove", (e) => {
+      const p = localPoint(e);
+      if (drag) { applyDrag(p); return; }
+      const k = pick(p);
+      if (k !== hover) setHover(k);
+    });
+    const end = () => {
+      if (!drag) return;
+      const d = drag; drag = null;
+      if (d.kind === "target") commitTarget(d.prevTarget);
+      setHover(null);
+    };
+    canvas.addEventListener("pointerup", end);
+    canvas.addEventListener("pointercancel", end);
+    canvas.addEventListener("pointerleave", () => { if (!drag && hover) setHover(null); });
+  }
+  function syncTargetSliders() {
+    const sx = $("sldAlvoTX"), sy = $("sldAlvoTY");
+    if (!sx) return;
+    sx.value = target.x; sy.value = target.y;
+    $("valAlvoTX").textContent = `${fmt(target.x, 1)} m`;
+    $("valAlvoTY").textContent = `${fmt(target.y, 1)} m`;
+    sx.disabled = sy.disabled = !canMoveTarget();
+    fillRange(sx); fillRange(sy);
   }
 
   /* ------------------------------ loop ------------------------------ */
@@ -7056,13 +7401,15 @@ const AlvoModule = (() => {
     if (lastTs === null) lastTs = now;
     const dt = Math.min(0.1, (now - lastTs) / 1000);
     lastTs = now;
+    recoilT += dt; wobbleT += dt;
     if (flight) {
       flight.t += dt;
       if (flight.t >= flight.dur) finishFlight();
     }
-    if (solution && solution.progress < 1) solution.progress = Math.min(1, solution.progress + dt / Utils.clamp(solution.tEnd * 0.8, 0.8, 2.4));
+    shots.forEach(s => { if (!s.hit) s.afterT = (s.afterT || 0) + dt; });
+    if (solution && solution.progress < 1) solution.progress = Math.min(1, solution.progress + dt / Utils.clamp(solution.tEnd * 0.9, 1, 2.8));
     fx.forEach(f => { f.t += dt; });
-    fx = fx.filter(f => f.t < 1.2);
+    fx = fx.filter(f => f.t < 2.6);
     draw();
     raf = requestAnimationFrame(tick);
   }
@@ -7090,13 +7437,37 @@ const AlvoModule = (() => {
       const s = $(id); s.min = mn; s.max = mx; s.step = st;
       s.addEventListener("input", () => { hideIntro(); readSliders(); draw(); });
     });
+    // botões − / + ao lado de cada controle (ajuste fino)
+    document.querySelectorAll("#step-alvo .step-btn").forEach(b => b.addEventListener("click", () => {
+      const s = $(b.dataset.for);
+      if (s.disabled) return;
+      const st = parseFloat(s.step), v = parseFloat(s.value) + Number(b.dataset.d) * st;
+      s.value = Utils.clamp(Number(v.toFixed(2)), parseFloat(s.min), parseFloat(s.max));
+      s.dispatchEvent(new Event("input"));
+    }));
+    // posição do alvo pelos controles (modo exploração)
+    ["sldAlvoTX", "sldAlvoTY"].forEach(id => {
+      const s = $(id);
+      let prev = null;
+      s.addEventListener("pointerdown", () => { prev = { ...target }; });
+      s.addEventListener("focus", () => { prev = { ...target }; });
+      s.addEventListener("input", () => {
+        if (!canMoveTarget()) return;
+        target = { x: parseFloat($("sldAlvoTX").value), y: parseFloat($("sldAlvoTY").value), r: target.r };
+        $("valAlvoTX").textContent = `${fmt(target.x, 1)} m`; $("valAlvoTY").textContent = `${fmt(target.y, 1)} m`;
+        fillRange(s); updateHud(); draw();
+      });
+      s.addEventListener("change", () => { if (canMoveTarget()) commitTarget(prev || { ...target }); });
+    });
     $("btnAlvoFire").addEventListener("click", fire);
     $("btnAlvoNew").addEventListener("click", newGame);
+    $("btnAlvoShuffle").addEventListener("click", () => { manualTarget = false; newGame(); });
     $("btnAlvoSolve").addEventListener("click", showSolution);
     $("btnAlvoResetStats").addEventListener("click", resetStats);
     document.querySelectorAll("#alvoQOpts .qopt").forEach(b => b.addEventListener("click", () => {
       document.querySelectorAll("#alvoQOpts .qopt").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
     }));
+    wirePointer();
     validatePresets();
     loadStats(); renderStats(false);
     newGame();
@@ -7114,8 +7485,11 @@ const AlvoModule = (() => {
     StepManager.registerActiveSim("alvo", { toggle: fire, reset: newGame });
   }
 
-  return { init, fullReset: newGame, simulate, findSolution };
+  function fullReset() { manualTarget = false; newGame(); }
+
+  return { init, fullReset, simulate, findSolution };
 })();
+
 
 /* =========================== CONCLUSÃO =========================== */
 /* Os exemplos são calculados pelo próprio código, para não haver número errado. */
