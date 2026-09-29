@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Além do Visível — decifrar, localizar, prever, classificar e descobrir com matemática</title>
-<meta name="description" content="Apresentação interativa do grupo de Matemática para o SESI Day: decifrar, localizar, prever, classificar e descobrir com matemática." />
+<title>Além do Visível — localizar, prever, classificar, abastecer e descobrir com matemática</title>
+<meta name="description" content="Apresentação interativa do grupo de Matemática para o SESI Day: localizar, prever, classificar, abastecer e descobrir com matemática." />
 <!-- Fontes: Space Grotesk (títulos) + Inter (interface) + IBM Plex Mono (números).
      Sem internet, os fallbacks definidos no CSS assumem; nada deixa de funcionar. -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -19,7 +19,7 @@
    · fontes: display (títulos) · sans (interface) · mono (números/HUD)
      Carregadas do Google Fonts quando há internet; sem internet, os
      fallbacks do sistema mantêm a interface bonita e 100% funcional.
-   · cores de capítulo: DECIFRAR azul · LOCALIZAR verde · PREVER âmbar
+   · cores de capítulo: LOCALIZAR verde · PREVER âmbar
      · CLASSIFICAR violeta · DESCOBRIR azul profundo/branco/violeta
    · --sesi: vermelho institucional, usado só como detalhe
    · --ch: cor do capítulo atual (definida em #app[data-ch])
@@ -506,11 +506,10 @@ kbd{
 .corner-tick.br{ bottom:8px; right:8px; border-bottom:1px solid; border-right:1px solid; }
 #radarStage .corner-tick{ border-color: var(--radar-soft); }
 #trajStage .corner-tick{ border-color: var(--traj-soft); }
-#decStage .corner-tick{ border-color: var(--dec-soft); }
 #sortStage .corner-tick{ border-color: var(--cls-soft); }
 #bhStage .corner-tick{ border-color: var(--desc-glow); }
 /* scanlines quase invisíveis nas telas "de máquina" */
-#decStage::after, .radar-main::after{
+.radar-main::after{
   content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
   background: repeating-linear-gradient(0deg, rgba(255,255,255,.022) 0 1px, transparent 1px 3px);
 }
@@ -827,88 +826,6 @@ details.adv[open]{ padding-bottom:10px; }
 }
 .hero-cta:hover{ filter:brightness(1.07); transform: translateY(-1px); box-shadow: inset 0 1px 0 rgba(255,255,255,.45), 0 0 0 3px var(--radar-soft), 0 10px 26px -8px var(--radar-glow); }
 .hero-cta:active{ transform: translateY(0) scale(.975); }
-
-/* ===================== ETAPA 2 — DECIFRAR ===================== */
-.dec-stage{ display:flex; flex-direction:column; justify-content:space-between; gap: 12px; padding: 18px 22px; overflow:auto; }
-/* fundo de "dados": sequências de código quase invisíveis */
-#decStage::before{
-  content: "0x4E 0x41 0x49 01001011 7F 3A E9 KDGRV 110010 0x1F 2B C4 ZXQJ 0101 88 4D 0xA7 10110 ENIGMA 3F 91 0110 0x2C UBOAT 7E 11 0xD4 01101 BL 42 0xE1 ROTOR 1001 5C 0x33 PLUG 00101 A9 0x7B 1110 CIFRA 64 0x0F 10001 D2 0x58 CHAVE 0111 3E 0x9A TURING 1011 C7 0x21 BOMBE 0100 6B 0x8F 11011 F0 0x45 0110 1938 0x12 1945 DADOS 0x6E 1100 B5 0xC9 0010 47 0x3D INFO 1111 2A 0xE6 01010 9D 0x74 LOGICA 0x5A 1001 E3 0x1B 0110 5F 0xA2 MATEMATICA 0x39 1010 C1 0x87 0011 7A 0xF3 1101 0x4E 0x41 0x49 01001011 7F 3A E9 KDGRV 110010 0x1F 2B C4 ZXQJ 0101 88 4D 0xA7 10110 ENIGMA 3F 91 0110 0x2C UBOAT 7E 11 0xD4 01101 BL 42 0xE1 ROTOR 1001 5C 0x33 PLUG 00101 A9 0x7B 1110 CIFRA 64 0x0F 10001 D2 0x58 CHAVE 0111 3E 0x9A TURING 1011 C7 0x21 BOMBE";
-  position:absolute; inset:-20px; z-index:0; pointer-events:none;
-  font-family: var(--font-mono); font-size: 11px; line-height: 2.1; letter-spacing:.3em; word-spacing:.6em;
-  color: rgba(134,169,255,.055); overflow:hidden; word-break: break-all;
-  animation: codeDrift 40s linear infinite alternate;
-}
-@keyframes codeDrift{ to{ transform: translate3d(0,-60px,0); } }
-.dec-block, .flows{ position:relative; z-index:2; }
-.dec-block{ flex:1; display:flex; flex-direction:column; gap:10px; align-items:center; justify-content:center; }
-.dec-label{ font-family: var(--font-mono); font-size:.66rem; letter-spacing:.12em; color: var(--text-dimmer); align-self:flex-start; display:flex; align-items:center; gap:8px; }
-.dec-label::before{ content:""; width:6px; height:6px; border:1px solid var(--dec); transform: rotate(45deg); opacity:.8; }
-.tiles{ display:flex; flex-wrap:wrap; gap:5px; justify-content:center; min-height: 44px; }
-.tile{
-  width: clamp(24px, 2.4vw, 36px); height: clamp(34px, 3.3vw, 46px);
-  display:flex; align-items:center; justify-content:center;
-  font-family: var(--font-mono); font-weight:700; font-size: clamp(1rem, 1.7vw, 1.45rem);
-  position:relative;
-  border:1px solid var(--line-strong); border-radius: var(--r-xs);
-  background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
-  box-shadow: var(--inner-hi);
-  color: var(--text-dim);
-  transition: border-color .2s var(--ease), box-shadow .2s var(--ease), color .2s var(--ease), transform .2s var(--ease);
-}
-.tile.gap{ border-color: transparent; background: transparent; width: clamp(10px, 1vw, 16px); }
-.tiles:not(.plain) .tile{ color: var(--dec); }
-.tile.cur{ border-color: var(--dec); box-shadow: 0 0 14px var(--dec-soft), inset 0 0 10px var(--dec-soft); color: var(--text); transform: translateY(-2px); }
-.tile.cur::after{ content:""; position:absolute; left:3px; right:3px; bottom:3px; height:2px; background: var(--dec); box-shadow: 0 0 8px var(--dec); }
-.tiles.plain .tile{ color: var(--text); }
-.tiles.plain .tile.on{ border-color: var(--radar-soft); animation: tileDecode .5s var(--ease-out) both; }
-.tiles.plain.wrong .tile.on{ border-color: rgba(232,103,122,.45); color: #f1a5b0; }
-/* a letra gira, "embaralha" (brilho azul e desfoque) e estabiliza */
-@keyframes tileDecode{
-  0%{ transform: perspective(200px) rotateX(90deg) translateY(-3px); opacity:0; filter: blur(2px); text-shadow: 0 0 14px var(--dec); }
-  40%{ transform: perspective(200px) rotateX(-14deg); opacity:1; filter:none; text-shadow: 0 0 12px var(--dec); }
-  70%{ transform: perspective(200px) rotateX(6deg) translateX(1px); }
-  100%{ transform: none; opacity:1; }
-}
-.alpha{ width:100%; max-width: 900px; display:flex; flex-direction:column; gap:3px; margin: 2px 0; }
-.alpha-row{ display:grid; grid-template-columns: 76px 1fr; align-items:center; gap:8px; }
-.alpha-k{ font-size:.68rem; color: var(--text-dimmer); text-align:right; font-family: var(--font-mono); }
-.alpha-cells{ display:grid; grid-template-columns: repeat(26, 1fr); gap:2px; }
-.alpha-cells span{
-  text-align:center; font-family: var(--font-mono); font-size: clamp(.62rem, .95vw, .84rem);
-  padding: 3px 0; color: var(--text-dimmer); border-radius:2px;
-  transition: background .15s var(--ease), color .15s var(--ease);
-}
-.alpha-cells span.hit{ background: var(--dec-soft); color: var(--text); }
-#alphaBot span.hit{ background: var(--radar-soft); }
-.dec-status{ font-size:.8rem; color: var(--text-dim); min-height:1.3em; }
-.dec-status.ok{ color: var(--radar); }
-.dec-status.bad{ color: #f1a5b0; }
-.flows{ display:flex; flex-direction:column; gap:7px; border-top:1px dashed var(--line-strong); padding-top:12px; }
-.flow{
-  display:grid; grid-template-columns: 1.25fr 30px .9fr 30px 1.25fr 1.3fr; align-items:center; gap:4px;
-  opacity:0; animation: rowIn .55s var(--ease) both;
-}
-.flow:nth-child(1){ animation-delay: .25s; } .flow:nth-child(2){ animation-delay: .5s; } .flow:nth-child(3){ animation-delay: .75s; }
-@keyframes rowIn{
-  from{ opacity:0; transform: translateX(-10px); }
-  to{ opacity:1; transform: translateX(0); }
-}
-.fnode{
-  font-family: var(--font-mono); font-size: .74rem; text-align:center;
-  padding: 6px 6px; border:1px solid var(--line-strong); border-radius: var(--r-xs); color: var(--text-dim);
-  background: rgba(6,10,19,.6);
-}
-.fnode.fm{ color: var(--text); border-style: dashed; }
-.fnode.fo{ color: var(--text); }
-.farrow{ height:1px; background: var(--line-strong); position:relative; }
-.farrow::after{ content:""; position:absolute; right:-1px; top:-3px; border-left:6px solid var(--line-strong); border-top:3.5px solid transparent; border-bottom:3.5px solid transparent; }
-.fcap{ font-size:.76rem; color: var(--text-dim); padding-left:10px; }
-.flow.f-dec .fnode.fo{ border-color: var(--dec); box-shadow: 0 0 10px var(--dec-soft); }
-.flow.f-loc .fnode.fo{ border-color: var(--radar); box-shadow: 0 0 10px var(--radar-soft); }
-.flow.f-prev .fnode.fo{ border-color: var(--traj); box-shadow: 0 0 10px var(--traj-soft); }
-.flow.f-dec .fcap b{ color: var(--dec); } .flow.f-loc .fcap b{ color: var(--radar); } .flow.f-prev .fcap b{ color: var(--traj); }
-.flow.lit .fnode{ animation: nodeLit 1.2s var(--ease); }
-@keyframes nodeLit{ 0%{ background: rgba(134,169,255,.0);} 40%{ background: rgba(134,169,255,.16);} 100%{ background: rgba(134,169,255,0);} }
 
 /* ===================== ETAPA 3 — RADAR ===================== */
 #radarStage{ display:flex; flex-direction:column; }
@@ -1310,15 +1227,14 @@ select.sel{
   to{ opacity:1; transform:none; filter:none; }
 }
 .c5-a{ font-style:normal; color: var(--text-dimmer); font-family: var(--font-mono); opacity:0; animation: fadeUp .6s var(--ease) both; }
-.c5-w:nth-of-type(1){ --wc: var(--dec); --wg: var(--dec-soft); animation-delay: .1s; }
-.c5-w:nth-of-type(2){ --wc: var(--radar); --wg: var(--radar-soft); animation-delay: .4s; }
-.c5-w:nth-of-type(3){ --wc: var(--traj); --wg: var(--traj-soft); animation-delay: .7s; }
-.c5-w:nth-of-type(4){ --wc: var(--cls); --wg: var(--cls-soft); animation-delay: 1s; }
-.c5-w:nth-of-type(5){ --wc: var(--sup); --wg: var(--sup-soft); animation-delay: 1.3s; }
-.c5-w:nth-of-type(6){ --wc: var(--desc); --wg: var(--desc-glow); animation-delay: 1.6s; }
+.c5-w:nth-of-type(1){ --wc: var(--radar); --wg: var(--radar-soft); animation-delay: .1s; }
+.c5-w:nth-of-type(2){ --wc: var(--traj); --wg: var(--traj-soft); animation-delay: .4s; }
+.c5-w:nth-of-type(3){ --wc: var(--cls); --wg: var(--cls-soft); animation-delay: .7s; }
+.c5-w:nth-of-type(4){ --wc: var(--sup); --wg: var(--sup-soft); animation-delay: 1s; }
+.c5-w:nth-of-type(5){ --wc: var(--desc); --wg: var(--desc-glow); animation-delay: 1.3s; }
 .c5-a:nth-of-type(1){ animation-delay: .25s; } .c5-a:nth-of-type(2){ animation-delay: .55s; }
 .c5-a:nth-of-type(3){ animation-delay: .85s; } .c5-a:nth-of-type(4){ animation-delay: 1.15s; } .c5-a:nth-of-type(5){ animation-delay: 1.45s; }
-.pillars{ display:grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+.pillars{ display:grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
 .pillar{
   border-top: 2px solid var(--pc); border-left:1px solid var(--line); border-right:1px solid var(--line); border-bottom:1px solid var(--line);
   border-radius: var(--r-md); padding: 12px 14px 12px;
@@ -1327,7 +1243,6 @@ select.sel{
   display:flex; flex-direction:column; gap:8px;
   opacity:0; animation: fadeUp .7s var(--ease) both;
 }
-.pillar.p-dec{ --pc: var(--dec); --pbg: rgba(134,169,255,.07); animation-delay: 1.6s; }
 .pillar.p-loc{ --pc: var(--radar); --pbg: rgba(82,216,164,.07); animation-delay: 1.8s; }
 .pillar.p-prev{ --pc: var(--traj); --pbg: rgba(240,161,63,.07); animation-delay: 2.0s; }
 .pillar.p-cls{ --pc: var(--cls); --pbg: rgba(183,156,255,.07); animation-delay: 2.2s; }
@@ -1435,10 +1350,6 @@ select.sel{
   .traj-caption{ right: 272px; }
   .preset{ padding: 5px 4px; }
   .res-table td{ padding: 2px 4px; }
-  .dec-stage{ padding: 12px 16px; gap:8px; }
-  .dec-block{ gap:7px; }
-  .flows{ padding-top:8px; gap:5px; }
-  .fnode{ padding: 4px 5px; font-size:.7rem; }
   .pillar{ padding: 10px 12px 10px; gap:6px; }
   .p-ico{ width:28px; height:28px; }
   .pillar-ex{ font-size:.72rem; padding-top:5px; }
@@ -1552,8 +1463,6 @@ select.sel{
   .traj-caption p:not(.show){ display:none; }
   .ovl.eq{ position:static; order:3; width:auto; margin: 8px; }
   .guide-panel{ grid-template-columns: 1fr; max-height:none; }
-  .flow{ grid-template-columns: 1fr 18px 1fr 18px 1fr; }
-  .fcap{ grid-column: 1 / -1; padding-left:0; }
   .pillars{ grid-template-columns: 1fr; }
   .sort-main, .bh-main{ flex: none; height:auto; }
   .sort-main canvas{ height: 54vh; min-height: 340px; }
@@ -1578,14 +1487,11 @@ select.sel{
   .ovl.alvo-banner{ margin-left:8px; }
   .alvo-model, .alvo-counter{ position:static; order:4; margin: 0 8px 8px; align-self:flex-start; }
   #alvoStage.editable::after{ display:none; }
-  .tile{ width: 22px; height: 32px; font-size: .95rem; }
-  .alpha-row{ grid-template-columns: 1fr; }
-  .alpha-k{ text-align:left; }
 }
 
 /* ===================== Movimento reduzido ===================== */
 @media (prefers-reduced-motion: reduce){
-  .fx-grid, .fx-dots, .fx-glow, #decStage::before{ animation:none; }
+  .fx-grid, .fx-dots, .fx-glow{ animation:none; }
   .fx-scan{ display:none; }
   .step.active, .step.active .step-head, .step.active .stage, .step.active .challenge-tabs,
   .step.active .panel > *, .step.active .guide{ animation:none; }
@@ -1604,18 +1510,16 @@ select.sel{
   .nav-dot[aria-current="step"] .n{ animation:none; }
   .intro-el{ transition:none; }
   .hero-q.in{ animation:none; }
-  .flow, .pillar, .concl-statement, .concl-foot, .c5-w, .c5-a{ animation:none; opacity:1; }
+  .pillar, .concl-statement, .concl-foot, .c5-w, .c5-a{ animation:none; opacity:1; }
   .ico-drop, .ico-ring{ animation:none; }
   .sort-q, .bh-caption .cap1{ animation:none; }
   .st-bar i, .sort-pipe span, .rule-line, .bh-node, .bh-arrow{ transition:none; }
   .calc .cl, .calc .cs{ animation:none; opacity:1; }
-  .tiles.plain .tile.on{ animation:none; }
   .ico-sweep, .ico-arc, .ico-blink{ animation:none; }
   .ico-arc{ stroke-dashoffset:0; }
   .traj-caption p{ transition:none; }
   .qfeedback, .challenge-feedback, .ovl.eq{ animation:none; }
   .cconv.flash{ animation:none; }
-  .flow.lit .fnode{ animation:none; }
 }
 </style>
 </head>
@@ -1656,18 +1560,17 @@ select.sel{
       <dt><span class="k">Espaço</span></dt><dd>Pausar / continuar a animação da etapa</dd>
       <dt><span class="k">R</span></dt><dd>Reiniciar a animação da etapa</dd>
     </dl>
-    <h3>Roteiro de 9 minutos</h3>
+    <h3>Roteiro de 8 min e 35 s</h3>
     <ol class="roteiro">
       <li><span>0:00–0:15</span><span>Abertura</span></li>
-      <li><span>0:15–0:40</span><span>Decifrar: Turing e a Enigma</span></li>
-      <li><span>0:40–2:20</span><span>Radar: pulso, cálculo, (r ; θ) → (x ; y)</span></li>
-      <li><span>2:20–2:40</span><span>Pergunta do radar</span></li>
-      <li><span>2:40–4:10</span><span>Trajetória: parábola e 30° / 45° / 60°</span></li>
-      <li><span>4:10–4:40</span><span>Perguntas 30° × 60°</span></li>
-      <li><span>4:40–5:50</span><span>Separação: medir → comparar → classificar</span></li>
-      <li><span>5:50–6:50</span><span>1ª Guerra: comida, água, cartuchos e suprimentos</span></li>
-      <li><span>6:50–8:20</span><span>Schwarzschild: massa → rₛ = 2GM/c²</span></li>
-      <li><span>8:20–9:00</span><span>Conclusão: Além do Visível</span></li>
+      <li><span>0:15–1:55</span><span>Radar: pulso, cálculo, (r ; θ) → (x ; y)</span></li>
+      <li><span>1:55–2:15</span><span>Pergunta do radar</span></li>
+      <li><span>2:15–3:45</span><span>Trajetória: parábola e 30° / 45° / 60°</span></li>
+      <li><span>3:45–4:15</span><span>Perguntas 30° × 60°</span></li>
+      <li><span>4:15–5:25</span><span>Separação: medir → comparar → classificar</span></li>
+      <li><span>5:25–6:25</span><span>1ª Guerra: comida, água, cartuchos e suprimentos</span></li>
+      <li><span>6:25–7:55</span><span>Schwarzschild: massa → rₛ = 2GM/c²</span></li>
+      <li><span>7:55–8:35</span><span>Conclusão: Além do Visível</span></li>
       <li><span>livre</span><span>Desafio do alvo: visitantes (3 tentativas)</span></li>
     </ol>
     <p class="note" style="margin-top:6px;">Se o tempo for mais curto, encurte a separação (poucos alimentos) e mostre só um preset em Schwarzschild.</p>
@@ -1686,17 +1589,16 @@ select.sel{
               <p class="hero-event intro-el" id="introEvent"><span class="ev-mark"></span>SESI DAY <b>2026</b><span class="ev-mark"></span></p>
               <p class="hero-presents intro-el" id="introPresents">Matemática apresenta</p>
               <div class="triad">
-                <span class="tw dec intro-el" id="introW1" data-text="DECIFRAR.">DECIFRAR.</span>
                 <span class="tw loc intro-el" id="introW2" data-text="LOCALIZAR.">LOCALIZAR.</span>
                 <span class="tw prev intro-el" id="introW3" data-text="PREVER.">PREVER.</span>
                 <span class="tw cls intro-el" id="introW4" data-text="CLASSIFICAR.">CLASSIFICAR.</span>
                 <span class="tw sup intro-el" id="introW6" data-text="ABASTECER.">ABASTECER.</span>
                 <span class="tw desc intro-el" id="introW5" data-text="DESCOBRIR.">DESCOBRIR.</span>
               </div>
-              <p class="hero-line intro-el" id="introLine">Seis problemas diferentes. Uma linguagem em comum: a matemática.</p>
+              <p class="hero-line intro-el" id="introLine">Cinco problemas diferentes. Uma linguagem em comum: a matemática.</p>
               <div class="hero-rule intro-el" id="introRule"></div>
               <h1 class="hero-title intro-el" id="introTitle">Além do Visível</h1>
-              <p class="hero-sub intro-el" id="introSub">A matemática por trás de códigos, radares, trajetórias, classificações, suprimentos e da gravidade.</p>
+              <p class="hero-sub intro-el" id="introSub">A matemática por trás de radares, trajetórias, classificações, suprimentos e da gravidade.</p>
               <p class="hero-q intro-el" id="introQ">Como a matemática transforma informações que não conseguimos ver diretamente em algo que podemos entender, localizar, prever, classificar, abastecer e até descobrir?</p>
               <div class="hero-actions intro-el" id="introCta">
                 <button class="hero-cta cta" id="btnStart">Começar</button>
@@ -1711,7 +1613,7 @@ select.sel{
         <div class="guide-panel" hidden>
           <div><h4>Fala sugerida</h4>
             <p>"Oi, a gente é o grupo de Matemática e o nosso trabalho se chama Além do Visível."</p>
-            <p>"Olha essas seis palavras: decifrar, localizar, prever, classificar, abastecer e descobrir. São problemas bem diferentes, mas todos resolvidos com matemática."</p></div>
+            <p>"Olha essas cinco palavras: localizar, prever, classificar, abastecer e descobrir. São problemas bem diferentes, mas todos resolvidos com matemática."</p></div>
           <div><h4>Pergunta para o público</h4><p>"Vocês já pensaram em como um radar sabe onde está um avião que ninguém consegue ver?" (não precisa esperar resposta)</p></div>
           <div><h4>O que demonstrar</h4><p>Deixe a animação terminar. Leia a pergunta do quadro e clique em Começar.</p></div>
           <div><h4>Conceito matemático</h4><p>Matemática como ferramenta para transformar dados em informação.</p></div>
@@ -1720,78 +1622,10 @@ select.sel{
       </div>
     </section>
 
-    <!-- ======================= ETAPA 2: DECIFRAR ======================= -->
-    <section class="step" id="step-decifrar" data-step-name="Decifrar" data-order="1" data-num="01" data-word="DECIFRAR" data-ch="dec">
-      <div class="step-head" data-num="01">
-        <h2><span class="chapter dec" data-num="01">DECIFRAR</span>Alan Turing e a Enigma</h2>
-        <span class="kicker">mensagem codificada → matemática → informação</span>
-      </div>
-      <div class="step-body">
-        <div class="stage dec-stage" id="decStage">
-          <div class="dec-block">
-            <span class="dec-label">Mensagem interceptada</span>
-            <div class="tiles" id="cipherRow" aria-label="Mensagem codificada"></div>
-            <div class="alpha" aria-hidden="true">
-              <div class="alpha-row"><span class="alpha-k">cifrada</span><div class="alpha-cells" id="alphaTop"></div></div>
-              <div class="alpha-row"><span class="alpha-k" id="alphaBotLabel">voltar 3</span><div class="alpha-cells" id="alphaBot"></div></div>
-            </div>
-            <span class="dec-label">Mensagem decifrada</span>
-            <div class="tiles plain" id="plainRow" aria-live="polite"></div>
-            <p class="dec-status" id="decStatus">Pronta para decifrar.</p>
-          </div>
-          <div class="flows" id="decFlows">
-            <div class="flow f-dec"><span class="fnode">Mensagem codificada</span><i class="farrow"></i><span class="fnode fm">Matemática</span><i class="farrow"></i><span class="fnode fo">Informação</span><span class="fcap"><b>Enigma</b>: interpretar mensagens</span></div>
-            <div class="flow f-loc"><span class="fnode">Sinal de radar</span><i class="farrow"></i><span class="fnode fm">Matemática</span><i class="farrow"></i><span class="fnode fo">Posição</span><span class="fcap"><b>Radar</b>: interpretar sinais</span></div>
-            <div class="flow f-prev"><span class="fnode">Velocidade + ângulo</span><i class="farrow"></i><span class="fnode fm">Matemática</span><i class="farrow"></i><span class="fnode fo">Trajetória prevista</span><span class="fcap"><b>Trajetórias</b>: interpretar movimento</span></div>
-          </div>
-          <span class="corner-tick tl"></span><span class="corner-tick tr"></span>
-          <span class="corner-tick bl"></span><span class="corner-tick br"></span>
-        </div>
-        <div class="panel">
-          <div class="group">
-            <h3>O contexto</h3>
-            <p class="lead">Na Segunda Guerra Mundial, Alan Turing e a equipe de Bletchley Park usaram matemática, lógica e máquinas para decifrar mensagens criptografadas pela máquina Enigma.</p>
-          </div>
-          <div class="group">
-            <h3>Demonstração</h3>
-            <button class="btn lg primary-dec wide cta" id="btnDecode">Decifrar mensagem</button>
-            <div class="btnrow" style="margin-top:6px;"><button class="btn" id="btnDecodeReset">Reiniciar</button></div>
-            <p class="note" style="margin-top:7px;">Exemplo simplificado: cada letra foi deslocada 3 posições no alfabeto. A Enigma era muito mais complexa: a regra mudava a cada letra digitada.</p>
-          </div>
-          <div class="group explore-only">
-            <h3>Laboratório: teste outras chaves</h3>
-            <div class="row"><label for="sldKey">Chave usada para decifrar</label><span class="val mono" id="valKey">3</span></div>
-            <input type="range" id="sldKey" min="0" max="25" step="1" value="3" />
-            <p class="note" id="decKeyNote" style="margin-top:4px;">Com a chave certa, a mensagem faz sentido.</p>
-            <div class="row" style="margin-top:8px;"><label for="inpMsg">Escreva outra mensagem</label></div>
-            <input type="text" id="inpMsg" maxlength="26" placeholder="ex.: MATEMATICA" autocomplete="off" />
-            <div class="btnrow" style="margin-top:6px;"><button class="btn" id="btnEncode">Codificar com a chave 3</button></div>
-            <p class="note" style="margin-top:6px;">Testar muitas configurações possíveis, com ajuda de máquinas, foi parte do trabalho em Bletchley Park.</p>
-          </div>
-          <div class="group callout">
-            <p><b>Atenção:</b> Turing não inventou o radar. O que une os temas do nosso trabalho é a mesma ideia: usar matemática para transformar dados em informação.</p>
-          </div>
-        </div>
-      </div>
-      <div class="guide" data-guide-for="decifrar">
-        <button class="guide-btn" data-guide-toggle>▸ Guia do grupo <span class="gtime">0:15–0:40</span></button>
-        <div class="guide-panel" hidden>
-          <div><h4>Fala sugerida</h4>
-            <p>"No filme, o Alan Turing e a equipe dele usam matemática pra decifrar as mensagens da Enigma."</p>
-            <p>"Aqui é um exemplo bem mais simples: cada letra andou 3 casas no alfabeto. Se a gente volta 3, a mensagem aparece."</p>
-            <p>"O radar e a trajetória usam a mesma ideia: pegar um dado que parece não dizer nada e transformar em informação."</p></div>
-          <div><h4>Pergunta para o público</h4><p>"Alguém sabe o que a Enigma fazia?"</p></div>
-          <div><h4>O que demonstrar</h4><p>Clique em Decifrar mensagem. Depois aponte as três linhas de baixo, uma por uma.</p></div>
-          <div><h4>Conceito matemático</h4><p>Regra de deslocamento (somar e subtrair uma constante), padrão e chave.</p><p>Cuidado: não dizer que Turing inventou o radar.</p></div>
-          <div><h4>Tempo</h4><p>~25 s</p></div>
-        </div>
-      </div>
-    </section>
-
     <!-- ======================= ETAPA 3: RADAR ======================= -->
-    <section class="step" id="step-radar" data-step-name="Radar" data-order="2" data-num="02" data-word="LOCALIZAR" data-ch="loc">
-      <div class="step-head" data-num="02">
-        <h2><span class="chapter loc" data-num="02">LOCALIZAR</span>Como um radar descobre a distância de algo que não vemos?</h2>
+    <section class="step" id="step-radar" data-step-name="Radar" data-order="1" data-num="01" data-word="LOCALIZAR" data-ch="loc">
+      <div class="step-head" data-num="01">
+        <h2><span class="chapter loc" data-num="01">LOCALIZAR</span>Como um radar descobre a distância de algo que não vemos?</h2>
         <span class="kicker">0° à direita · ângulos crescem no sentido anti-horário</span>
       </div>
       <div class="step-body">
@@ -1882,7 +1716,7 @@ select.sel{
         </div>
       </div>
       <div class="guide" data-guide-for="radar">
-        <button class="guide-btn" data-guide-toggle>▸ Guia do grupo <span class="gtime">0:40–2:40</span></button>
+        <button class="guide-btn" data-guide-toggle>▸ Guia do grupo <span class="gtime">0:15–2:15</span></button>
         <div class="guide-panel" hidden>
           <div><h4>Fala sugerida</h4>
             <p>"Esse é um radar. Ele sabe pra qual direção está apontando, mas não sabe a distância. Como ele descobre?"</p>
@@ -1898,9 +1732,9 @@ select.sel{
     </section>
 
     <!-- ======================= ETAPA 4: TRAJETÓRIA ======================= -->
-    <section class="step" id="step-trajetoria" data-step-name="Trajetória" data-order="3" data-num="03" data-word="PREVER" data-ch="prev">
-      <div class="step-head" data-num="03">
-        <h2><span class="chapter prev" data-num="03">PREVER</span>Trajetória: saber onde vai cair antes de cair</h2>
+    <section class="step" id="step-trajetoria" data-step-name="Trajetória" data-order="2" data-num="02" data-word="PREVER" data-ch="prev">
+      <div class="step-head" data-num="02">
+        <h2><span class="chapter prev" data-num="02">PREVER</span>Trajetória: saber onde vai cair antes de cair</h2>
         <span class="kicker">sem resistência do ar · g = 9,8 m/s² · lançamento e queda na mesma altura</span>
       </div>
       <div class="step-body">
@@ -1991,7 +1825,7 @@ select.sel{
         </div>
       </div>
       <div class="guide" data-guide-for="trajetoria">
-        <button class="guide-btn" data-guide-toggle>▸ Guia do grupo <span class="gtime">2:40–4:40</span></button>
+        <button class="guide-btn" data-guide-toggle>▸ Guia do grupo <span class="gtime">2:15–4:15</span></button>
         <div class="guide-panel" hidden>
           <div><h4>Fala sugerida</h4>
             <p>"Agora é prever. Se eu sei a velocidade e o ângulo, dá pra saber onde a bolinha vai cair antes de ela cair."</p>
@@ -2006,9 +1840,9 @@ select.sel{
     </section>
 
     <!-- ======================= ETAPA 5: SEPARAÇÃO (CLASSIFICAR) ======================= -->
-    <section class="step" id="step-separacao" data-step-name="Separação" data-order="4" data-num="04" data-word="CLASSIFICAR" data-ch="cls">
-      <div class="step-head" data-num="04">
-        <h2><span class="chapter cls" data-num="04">CLASSIFICAR</span>Separação de alimentos: como transformar medidas em decisões?</h2>
+    <section class="step" id="step-separacao" data-step-name="Separação" data-order="3" data-num="03" data-word="CLASSIFICAR" data-ch="cls">
+      <div class="step-head" data-num="03">
+        <h2><span class="chapter cls" data-num="03">CLASSIFICAR</span>Separação de alimentos: como transformar medidas em decisões?</h2>
         <span class="kicker">medidas → matemática → classificação · valores simulados</span>
       </div>
       <div class="step-body">
@@ -2079,7 +1913,7 @@ select.sel{
         </div>
       </div>
       <div class="guide" data-guide-for="separacao">
-        <button class="guide-btn" data-guide-toggle>▸ Guia do grupo <span class="gtime">4:40–5:50</span></button>
+        <button class="guide-btn" data-guide-toggle>▸ Guia do grupo <span class="gtime">4:15–5:25</span></button>
         <div class="guide-panel" hidden>
           <div><h4>Fala sugerida</h4>
             <p>"Até agora usamos matemática para localizar e prever. Mas ela também pode ser usada para tomar decisões. Aqui, cada alimento possui medidas, e nós criamos regras matemáticas para decidir em qual grupo ele será colocado."</p>
@@ -2093,9 +1927,9 @@ select.sel{
     </section>
 
     <!-- ======================= ETAPA 6: 1ª GUERRA — DISTRIBUIÇÃO DE SUPRIMENTOS (ABASTECER) ======================= -->
-    <section class="step" id="step-abastecer" data-step-name="1ª Guerra" data-order="5" data-num="05" data-word="ABASTECER" data-ch="sup">
-      <div class="step-head" data-num="05">
-        <h2><span class="chapter sup" data-num="05">ABASTECER</span>1ª Guerra: como abastecer as trincheiras?</h2>
+    <section class="step" id="step-abastecer" data-step-name="1ª Guerra" data-order="4" data-num="04" data-word="ABASTECER" data-ch="sup">
+      <div class="step-head" data-num="04">
+        <h2><span class="chapter sup" data-num="04">ABASTECER</span>1ª Guerra: como abastecer as trincheiras?</h2>
         <span class="kicker">necessidades → matemática → distribuição · Frente Ocidental, 1914–1918</span>
       </div>
       <div class="step-body">
@@ -2153,7 +1987,7 @@ select.sel{
         </div>
       </div>
       <div class="guide" data-guide-for="abastecer">
-        <button class="guide-btn" data-guide-toggle>▸ Guia do grupo <span class="gtime">5:50–6:50</span></button>
+        <button class="guide-btn" data-guide-toggle>▸ Guia do grupo <span class="gtime">5:25–6:25</span></button>
         <div class="guide-panel" hidden>
           <div><h4>Fala sugerida</h4>
             <p>"Na Primeira Guerra, milhões de soldados ficavam nas trincheiras. Comida, água, cartuchos e materiais vinham de navio, depois de trem, caminhão, carroça e, no fim, nas costas dos soldados, à noite."</p>
@@ -2167,9 +2001,9 @@ select.sel{
     </section>
 
     <!-- ======================= ETAPA 7: KARL SCHWARZSCHILD (DESCOBRIR) ======================= -->
-    <section class="step" id="step-schwarzschild" data-step-name="Schwarzschild" data-order="6" data-num="06" data-word="DESCOBRIR" data-ch="desc">
-      <div class="step-head" data-num="06">
-        <h2><span class="chapter desc" data-num="06">DESCOBRIR</span>Karl Schwarzschild: a matemática além do visível</h2>
+    <section class="step" id="step-schwarzschild" data-step-name="Schwarzschild" data-order="5" data-num="05" data-word="DESCOBRIR" data-ch="desc">
+      <div class="step-head" data-num="05">
+        <h2><span class="chapter desc" data-num="05">DESCOBRIR</span>Karl Schwarzschild: a matemática além do visível</h2>
         <span class="kicker">massa + constantes físicas → matemática → propriedade extrema da gravidade</span>
       </div>
       <div class="step-body">
@@ -2239,10 +2073,10 @@ select.sel{
           <div class="group explore-only">
             <h3>A mesma ideia, cinco vezes</h3>
             <div class="mini-flows">
-              <div class="mini-flow" style="--mc: var(--dec);"><b>TURING</b><span>mensagem codificada → matemática → informação</span></div>
               <div class="mini-flow" style="--mc: var(--radar);"><b>RADAR</b><span>tempo + sinal → matemática → posição</span></div>
               <div class="mini-flow" style="--mc: var(--traj);"><b>TRAJETÓRIA</b><span>velocidade + ângulo → matemática → movimento previsto</span></div>
               <div class="mini-flow" style="--mc: var(--cls);"><b>SEPARAÇÃO</b><span>medidas → matemática → classificação</span></div>
+              <div class="mini-flow" style="--mc: var(--sup);"><b>1ª GUERRA</b><span>soldados × consumo → matemática → distribuição</span></div>
               <div class="mini-flow now" style="--mc: #cbbcff;"><b>SCHWARZSCHILD</b><span>massa + constantes físicas → matemática → previsão de uma propriedade extrema da gravidade</span></div>
             </div>
           </div>
@@ -2254,7 +2088,7 @@ select.sel{
         </div>
       </div>
       <div class="guide" data-guide-for="schwarzschild">
-        <button class="guide-btn" data-guide-toggle>▸ Guia do grupo <span class="gtime">6:50–8:20</span></button>
+        <button class="guide-btn" data-guide-toggle>▸ Guia do grupo <span class="gtime">6:25–7:55</span></button>
         <div class="guide-panel" hidden>
           <div><h4>Fala sugerida</h4>
             <p>"Existe ainda uma aplicação mais impressionante. Em 1916, Karl Schwarzschild encontrou uma solução das equações da Relatividade Geral de Einstein. A matemática mostrava propriedades de campos gravitacionais extremos muito antes de termos as imagens de buracos negros que existem hoje."</p>
@@ -2268,9 +2102,9 @@ select.sel{
     </section>
 
     <!-- ======================= ETAPA 7: DESAFIO DO ALVO (APLICAÇÃO DE PREVER) ======================= -->
-    <section class="step" id="step-alvo" data-step-name="Desafio do alvo" data-order="7" data-num="07" data-word="ACERTAR" data-hud="07 · DESAFIO DO ALVO" data-ch="prev">
-      <div class="step-head" data-num="07">
-        <h2><span class="chapter prev" data-num="07">ACERTAR</span>Desafio do alvo<span class="h2-sub">Use altura, ângulo e velocidade para acertar o alvo.</span></h2>
+    <section class="step" id="step-alvo" data-step-name="Desafio do alvo" data-order="6" data-num="06" data-word="ACERTAR" data-hud="06 · DESAFIO DO ALVO" data-ch="prev">
+      <div class="step-head" data-num="06">
+        <h2><span class="chapter prev" data-num="06">ACERTAR</span>Desafio do alvo<span class="h2-sub">Use altura, ângulo e velocidade para acertar o alvo.</span></h2>
         <span class="kicker">APLICAÇÃO INTERATIVA · PREVER</span>
       </div>
       <div class="step-body">
@@ -2383,15 +2217,14 @@ select.sel{
     </section>
 
     <!-- ======================= ETAPA 8: CONCLUSÃO ======================= -->
-    <section class="step" id="step-conclusao" data-step-name="Conclusão" data-order="8" data-num="08" data-ch="end">
-      <div class="step-head" data-num="08">
-        <h2>Seis problemas, uma linguagem</h2>
+    <section class="step" id="step-conclusao" data-step-name="Conclusão" data-order="7" data-num="07" data-ch="end">
+      <div class="step-head" data-num="07">
+        <h2>Cinco problemas, uma linguagem</h2>
         <span class="kicker">dado → matemática → conhecimento</span>
       </div>
       <div class="step-body one">
         <div class="concl">
-          <div class="c5-words" aria-label="Decifrar, localizar, prever, classificar, abastecer, descobrir">
-            <b class="c5-w">DECIFRAR</b><i class="c5-a">→</i>
+          <div class="c5-words" aria-label="Localizar, prever, classificar, abastecer, descobrir">
             <b class="c5-w">LOCALIZAR</b><i class="c5-a">→</i>
             <b class="c5-w">PREVER</b><i class="c5-a">→</i>
             <b class="c5-w">CLASSIFICAR</b><i class="c5-a">→</i>
@@ -2399,14 +2232,6 @@ select.sel{
             <b class="c5-w">DESCOBRIR</b>
           </div>
           <div class="pillars">
-            <article class="pillar p-dec">
-              <div class="pillar-top">
-                <svg class="p-ico" viewBox="0 0 40 40" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="11" width="10" height="16" rx="1"/><rect x="15" y="11" width="10" height="16" rx="1" class="ico-blink"/><rect x="27" y="11" width="10" height="16" rx="1"/><path d="M6 19h4M18 19h4M30 19h4"/></svg>
-                <h3 class="pillar-word">TURING</h3>
-              </div>
-              <p class="pillar-txt">mensagens → informação</p>
-              <p class="pillar-ex" id="exDec">—</p>
-            </article>
             <article class="pillar p-loc">
               <div class="pillar-top">
                 <svg class="p-ico" viewBox="0 0 40 40" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="20" cy="20" r="17" stroke-opacity=".5"/><circle cx="20" cy="20" r="10" stroke-opacity=".5"/><line class="ico-sweep" x1="20" y1="20" x2="36" y2="14"/><circle cx="28" cy="11" r="2" fill="currentColor" stroke="none"/></svg>
@@ -2459,13 +2284,13 @@ select.sel{
         </div>
       </div>
       <div class="guide" data-guide-for="conclusao">
-        <button class="guide-btn" data-guide-toggle>▸ Guia do grupo <span class="gtime">8:20–9:00</span></button>
+        <button class="guide-btn" data-guide-toggle>▸ Guia do grupo <span class="gtime">7:55–8:35</span></button>
         <div class="guide-panel" hidden>
           <div><h4>Fala sugerida</h4>
-            <p>"Decifrar, localizar, prever, classificar, abastecer e descobrir. Parecem assuntos que não têm nada a ver."</p>
+            <p>"Localizar, prever, classificar, abastecer e descobrir. Parecem assuntos que não têm nada a ver."</p>
             <p>"Mas em todos eles a matemática pega um dado e transforma em conhecimento. A matemática nos permite entender até aquilo que não conseguimos enxergar diretamente. Isso é estar além do visível. Obrigado!"</p></div>
-          <div><h4>Pergunta para o público</h4><p>"Qual dos seis vocês acharam mais legal?"</p></div>
-          <div><h4>O que demonstrar</h4><p>Espere as seis palavras e os seis cartões aparecerem. Leia a frase final e o título. Depois, troque para o modo Exploração e deixe quem quiser mexer.</p></div>
+          <div><h4>Pergunta para o público</h4><p>"Qual dos cinco vocês acharam mais legal?"</p></div>
+          <div><h4>O que demonstrar</h4><p>Espere as cinco palavras e os cinco cartões aparecerem. Leia a frase final e o título. Depois, troque para o modo Exploração e deixe quem quiser mexer.</p></div>
           <div><h4>Conceito matemático</h4><p>Modelagem: descrever uma situação real com uma regra ou equação.</p></div>
           <div><h4>Tempo</h4><p>~40 s</p></div>
         </div>
@@ -2473,7 +2298,7 @@ select.sel{
     </section>
 
     <!-- ======================= ETAPA 9: DESAFIOS EXTRAS ======================= -->
-    <section class="step" id="step-desafios" data-step-name="Desafios" data-order="9" data-extra="true" data-num="+" data-ch="extra">
+    <section class="step" id="step-desafios" data-step-name="Desafios" data-order="8" data-extra="true" data-num="+" data-ch="extra">
       <div class="step-head">
         <h2>Desafios extras</h2>
         <span class="kicker">prever → testar → entender · para depois da apresentação</span>
@@ -2573,7 +2398,7 @@ select.sel{
 /* =====================================================================
    ALÉM DO VISÍVEL — lógica da aplicação
    Organização: Utils → Physics → CONFIG → StepManager → Visibility →
-                Scramble → HeroBG → IntroModule → DecodeModule →
+                Scramble → HeroBG → IntroModule →
                 makeQuiz → RadarModule → TrajectoryModule →
                 ChallengesModule → SortModule → BlackHoleModule →
                 AlvoModule → ConclusionModule → Init
@@ -2785,8 +2610,7 @@ const CONFIG = {
     { id: "OBJ-4", r: 130, theta: 312 },
     { id: "OBJ-5", r: 25, theta: 95 }
   ],
-  presetSpeed: 14, // m/s — mesma velocidade nos lançamentos prontos e nas perguntas
-  cipher: { message: "DADOS VIRAM INFORMACAO", key: 3 }
+  presetSpeed: 14 // m/s — mesma velocidade nos lançamentos prontos e nas perguntas
 };
 
 /* =========================== STEP MANAGER =========================== */
@@ -2848,7 +2672,7 @@ const StepManager = (() => {
     // indicador de capítulo
     const num = el.dataset.num || "";
     const word = el.dataset.word;
-    const label = el.dataset.hud ? el.dataset.hud : word ? `${num} / 06 · ${word}`
+    const label = el.dataset.hud ? el.dataset.hud : word ? `${num} / 05 · ${word}`
       : ch === "intro" ? `${num} · ABERTURA` : ch === "end" ? `${num} · ENCERRAMENTO` : "EXTRA · DESAFIOS";
     document.getElementById("hudChapter").textContent = label;
     updateNavFill();
@@ -3195,14 +3019,13 @@ const HeroBG = (() => {
 })();
 
 /* ========================= SEQUÊNCIA DE ABERTURA ========================= */
-/* DECIFRAR. → LOCALIZAR. → PREVER. → CLASSIFICAR. → DESCOBRIR. →
+/* LOCALIZAR. → PREVER. → CLASSIFICAR. → ABASTECER. → DESCOBRIR. →
    frase → título → pergunta → botão */
 const IntroModule = (() => {
   let timers = [];
   const SEQ = [
     { id: "introEvent", at: 80 },
     { id: "introPresents", at: 420 },
-    { id: "introW1", at: 800, scramble: 460 },
     { id: "introW2", at: 1150, scramble: 500 },
     { id: "introW3", at: 1500, scramble: 420 },
     { id: "introW4", at: 1850, scramble: 540 },
@@ -3247,182 +3070,6 @@ const IntroModule = (() => {
     });
   }
   return { init, play, stop: showAll };
-})();
-
-/* ============================ DECIFRAR ============================ */
-/* Cifra de deslocamento (exemplo didático — NÃO é a Enigma).
-   Codificar: letra + k. Decifrar: letra − k (volta ao início após Z). */
-const DecodeModule = (() => {
-  const A = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  const TRUE_KEY = CONFIG.cipher.key;
-  const STEP_SEC = 0.13; // tempo entre letras na animação
-
-  let plain = CONFIG.cipher.message;
-  let cipher = "";
-  let tryKey = TRUE_KEY;   // chave usada para decifrar (laboratório)
-  let revealed = 0;        // quantas posições já foram decifradas
-  let running = false, raf = null, lastTs = null, acc = 0;
-  let entered = false, pausedByVisibility = false;
-
-  const shift = (ch, k) => {
-    const i = A.indexOf(ch);
-    if (i < 0) return ch;
-    return A[((i + k) % 26 + 26) % 26];
-  };
-  const encode = (text, k) => text.split("").map(c => shift(c, k)).join("");
-  const decode = (text, k) => text.split("").map(c => shift(c, -k)).join("");
-
-  const $ = (id) => document.getElementById(id);
-
-  function buildTiles() {
-    cipher = encode(plain, TRUE_KEY);
-    const cRow = $("cipherRow"), pRow = $("plainRow");
-    cRow.innerHTML = ""; pRow.innerHTML = "";
-    for (const ch of cipher) {
-      const a = document.createElement("span");
-      const b = document.createElement("span");
-      a.className = b.className = "tile" + (ch === " " ? " gap" : "");
-      a.textContent = ch === " " ? "" : ch;
-      b.textContent = "";
-      cRow.appendChild(a); pRow.appendChild(b);
-    }
-  }
-  function buildAlphabet() {
-    const top = $("alphaTop"), bot = $("alphaBot");
-    top.innerHTML = ""; bot.innerHTML = "";
-    for (const ch of A) {
-      const s1 = document.createElement("span"); s1.textContent = ch; top.appendChild(s1);
-      const s2 = document.createElement("span"); s2.textContent = shift(ch, -tryKey); bot.appendChild(s2);
-    }
-    $("alphaBotLabel").textContent = tryKey === 0 ? "sem mudar" : `voltar ${tryKey}`;
-  }
-
-  function render() {
-    const cTiles = $("cipherRow").children, pTiles = $("plainRow").children;
-    const top = $("alphaTop").children, bot = $("alphaBot").children;
-    for (let i = 0; i < cipher.length; i++) {
-      const on = i < revealed && cipher[i] !== " ";
-      const wasOn = pTiles[i].classList.contains("on");
-      pTiles[i].textContent = on ? shift(cipher[i], -tryKey) : "";
-      pTiles[i].classList.toggle("on", on);
-      if (on && !wasOn && !Utils.prefersReducedMotion()) { /* animação CSS dispara sozinha */ }
-      cTiles[i].classList.toggle("cur", running && i === revealed - 1);
-    }
-    for (let k = 0; k < 26; k++) { top[k].classList.remove("hit"); bot[k].classList.remove("hit"); }
-    const cur = cipher[revealed - 1];
-    if (running && cur && cur !== " ") {
-      const idx = A.indexOf(cur);
-      top[idx].classList.add("hit"); bot[idx].classList.add("hit");
-    }
-    $("plainRow").classList.toggle("wrong", tryKey !== TRUE_KEY);
-    updateStatus();
-  }
-
-  function updateStatus() {
-    const st = $("decStatus");
-    st.className = "dec-status";
-    if (revealed === 0) { st.textContent = "Pronta para decifrar."; return; }
-    if (revealed < cipher.length) { st.textContent = `Decifrando… ${cipher[revealed - 1]} → ${shift(cipher[revealed - 1], -tryKey)}`; return; }
-    if (tryKey === TRUE_KEY) { st.textContent = "Mensagem decifrada: a regra (voltar 3 letras) transformou o código em informação."; st.classList.add("ok"); }
-    else { st.textContent = `Com a chave ${tryKey}, o texto continua sem sentido. Tente outra chave.`; st.classList.add("bad"); }
-  }
-
-  function finish() {
-    running = false;
-    stopLoop();
-    revealed = cipher.length;
-    render();
-    $("btnDecode").textContent = "Decifrar de novo";
-    if (tryKey === TRUE_KEY) {
-      const f = document.querySelector("#decFlows .f-dec");
-      f.classList.remove("lit"); void f.offsetWidth; f.classList.add("lit");
-    }
-  }
-
-  function tick(now) {
-    if (!running) return;
-    if (lastTs === null) lastTs = now;
-    acc += (now - lastTs) / 1000;
-    lastTs = now;
-    while (acc >= STEP_SEC && revealed < cipher.length) {
-      acc -= STEP_SEC;
-      revealed++;
-      if (cipher[revealed - 1] === " ") acc += STEP_SEC; // espaço não gasta tempo
-    }
-    render();
-    if (revealed >= cipher.length) { finish(); return; }
-    raf = requestAnimationFrame(tick);
-  }
-  function startLoop() { lastTs = null; raf = requestAnimationFrame(tick); }
-  function stopLoop() { if (raf) cancelAnimationFrame(raf); raf = null; }
-
-  function play() {
-    if (running) return;
-    if (revealed >= cipher.length) revealed = 0;
-    if (Utils.prefersReducedMotion()) { running = false; finish(); return; }
-    running = true; acc = 0;
-    $("btnDecode").textContent = "Decifrando…";
-    startLoop();
-  }
-  function toggle() {
-    if (running) { running = false; stopLoop(); $("btnDecode").textContent = "Continuar"; render(); }
-    else play();
-  }
-  function reset() {
-    running = false; stopLoop();
-    revealed = 0; acc = 0;
-    $("btnDecode").textContent = "Decifrar mensagem";
-    render();
-  }
-
-  function setTryKey(k) {
-    tryKey = Utils.clamp(Math.round(k), 0, 25);
-    $("sldKey").value = tryKey;
-    $("valKey").textContent = String(tryKey);
-    $("decKeyNote").textContent = tryKey === TRUE_KEY
-      ? "Chave certa: a mensagem faz sentido."
-      : "Chave errada: as letras mudam, mas não formam palavras.";
-    buildAlphabet();
-    if (!running) revealed = cipher.length; // no laboratório, mostra o resultado completo na hora
-    render();
-  }
-
-  function encodeCustom() {
-    const msg = Utils.normalizeLetters($("inpMsg").value).slice(0, 26);
-    plain = msg || CONFIG.cipher.message;
-    $("inpMsg").value = plain;
-    buildTiles();
-    reset();
-  }
-
-  function init() {
-    buildTiles(); buildAlphabet(); render();
-    $("btnDecode").addEventListener("click", () => { if (running) toggle(); else play(); });
-    $("btnDecodeReset").addEventListener("click", reset);
-    $("sldKey").addEventListener("input", (e) => setTryKey(parseFloat(e.target.value)));
-    $("btnEncode").addEventListener("click", encodeCustom);
-    $("inpMsg").addEventListener("keydown", (e) => { if (e.key === "Enter") encodeCustom(); });
-
-    Visibility.subscribe((hidden) => {
-      if (!entered) return;
-      if (hidden && running) { pausedByVisibility = true; running = false; stopLoop(); }
-      else if (!hidden && pausedByVisibility) { pausedByVisibility = false; running = true; startLoop(); }
-    });
-    StepManager.onEnter("decifrar", () => { entered = true; });
-    StepManager.onLeave("decifrar", () => { entered = false; if (running) { running = false; stopLoop(); render(); $("btnDecode").textContent = "Continuar"; } });
-    StepManager.registerActiveSim("decifrar", { toggle, reset });
-  }
-
-  function fullReset() {
-    plain = CONFIG.cipher.message;
-    $("inpMsg").value = "";
-    tryKey = TRUE_KEY;
-    $("sldKey").value = TRUE_KEY; $("valKey").textContent = String(TRUE_KEY);
-    $("decKeyNote").textContent = "Com a chave certa, a mensagem faz sentido.";
-    buildTiles(); buildAlphabet(); reset();
-  }
-
-  return { init, fullReset, encode, decode, TRUE_KEY };
 })();
 
 /* ================== PERGUNTA PARA O PÚBLICO (componente) ================== */
@@ -8006,8 +7653,6 @@ const AlvoModule = (() => {
 /* Os exemplos são calculados pelo próprio código, para não haver número errado. */
 const ConclusionModule = {
   init() {
-    const word = CONFIG.cipher.message.split(" ")[0];
-    document.getElementById("exDec").textContent = `${DecodeModule.encode(word, DecodeModule.TRUE_KEY)} → ${word}`;
     const r = CONFIG.radarObjects[0].r;
     const dt = Physics.timeFromDistance(r);
     document.getElementById("exLoc").textContent = `Δt = ${Utils.fmt(dt * 1e6, 3)} µs → d = ${Utils.fmt(Physics.distanceFromRoundTrip(dt), 0)} m`;
@@ -8022,7 +7667,6 @@ const ConclusionModule = {
 /* ================================ INIT ================================ */
 function fullResetAll() {
   IntroModule.stop();
-  DecodeModule.fullReset();
   RadarModule.fullReset();
   TrajectoryModule.fullReset();
   SortModule.fullReset();
@@ -8039,7 +7683,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   HeroBG.init();
   IntroModule.init();
-  DecodeModule.init();
   RadarModule.init();
   TrajectoryModule.init();
   ChallengesModule.init();
