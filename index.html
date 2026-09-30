@@ -1159,7 +1159,8 @@ select.sel{
 .alvo-controls .row .val{ font-size:1.05rem; color: var(--traj); }
 /* controles deslizantes com trilho preenchido e botões − / + */
 .alvo-controls input[type="range"], .alvo-range{
-  -webkit-appearance:none; appearance:none; height: 22px; background: transparent; cursor: pointer;
+  -webkit-appearance:none; appearance:none; height: 32px; background: transparent; cursor: pointer;
+  touch-action: none;    /* arrastar o controle não rola a página */
 }
 .alvo-controls input[type="range"]::-webkit-slider-runnable-track, .alvo-range::-webkit-slider-runnable-track{
   height:6px; border-radius:3px;
@@ -1185,7 +1186,7 @@ select.sel{
 .alvo-controls input[type="range"]:disabled, .alvo-range:disabled{ opacity:.4; cursor: default; }
 .stepper{ display:flex; align-items:center; gap:6px; }
 .btn.step-btn{
-  width:26px; height:26px; padding:0; display:inline-flex; align-items:center; justify-content:center;
+  width:30px; height:30px; padding:0; display:inline-flex; align-items:center; justify-content:center;
   font-family: var(--font-mono); font-size:1rem; line-height:1; color: var(--traj); border-color: var(--traj-soft);
 }
 .stepper .val{ min-width: 6.4em; text-align:center; }
@@ -1201,7 +1202,7 @@ select.sel{
   content:"ARRASTE NO DESENHO · ALTURA · MIRA · ALVO"; position:absolute; z-index:2; right:14px; bottom:8px;
   font-family: var(--font-mono); font-size:.58rem; letter-spacing:.14em; color: rgba(247,184,102,.6); pointer-events:none;
 }
-.btn.alvo-fire{ font-family: var(--font-display); font-size: 1.15rem; letter-spacing:.14em; padding: 13px 14px; }
+.btn.alvo-fire{ font-family: var(--font-display); font-size: 1.15rem; letter-spacing:.14em; padding: 13px 14px; min-height: 56px; }
 .btn.alvo-fire.pulse{ animation: fireFeedback .6s var(--ease-out); }
 @keyframes fireFeedback{ 0%{ box-shadow: 0 0 0 0 var(--radar-soft); } 40%{ box-shadow: 0 0 0 6px var(--radar-soft), 0 0 30px var(--radar-soft); } }
 .btn.alvo-solve{ margin-top:6px; color: var(--radar); border-color: var(--radar-soft); }
@@ -1209,6 +1210,102 @@ select.sel{
 .alvo-q .qopt[aria-pressed="true"]{ background: var(--traj); border-color: var(--traj); color: #1a0f02; box-shadow: 0 0 0 3px var(--traj-soft); }
 .alvo-sol{ margin-top:8px; font-family: var(--font-mono); font-size:.8rem; color: var(--text); }
 .alvo-sol b{ color: var(--radar); }
+
+/* ---------- Desafio do alvo · TV touchscreen + caneta (stylus) ----------
+   Regras só dentro da etapa: nada de bloquear gestos no resto da apresentação.
+   .touch-mode entra no 1º toque de caneta/dedo (ou já no início se a tela é touch)
+   e só muda o que NÃO mexe no layout (alvos invisíveis maiores, polegar maior),
+   para nada "pular" debaixo da caneta. */
+#step-alvo{ -webkit-tap-highlight-color: transparent; }
+#alvoStage, #step-alvo .alvo-controls, #step-alvo .alvo-actions{
+  -webkit-user-select:none; user-select:none; -webkit-touch-callout:none;
+}
+#alvoCanvas{ touch-action:none; -webkit-user-drag:none; }
+#step-alvo .btn{ touch-action: manipulation; }          /* sem zoom por toque duplo */
+#step-alvo .alvo-actions .btn{ min-height:44px; }
+/* − / +: visual discreto, área de toque invisível maior */
+.btn.step-btn::after{ content:""; position:absolute; inset:-7px -8px; }
+#step-alvo.touch-mode .btn.step-btn::after{ inset:-9px -10px; }
+#step-alvo.touch-mode .btn.step-btn{ font-size:1.15rem; }
+/* polegar do controle deslizante maior com caneta/dedo (a altura do controle é fixa) */
+#step-alvo.touch-mode .alvo-controls input[type="range"]::-webkit-slider-thumb,
+#step-alvo.touch-mode .alvo-range::-webkit-slider-thumb{ width:28px; height:28px; margin-top:-11px; }
+#step-alvo.touch-mode .alvo-controls input[type="range"]::-moz-range-thumb,
+#step-alvo.touch-mode .alvo-range::-moz-range-thumb{ width:24px; height:24px; }
+#step-alvo.touch-mode .alvo-controls input[type="range"]:active::-webkit-slider-thumb,
+#step-alvo.touch-mode .alvo-range:active::-webkit-slider-thumb{ transform: scale(1.15); box-shadow: 0 0 0 1px var(--traj), 0 0 0 6px var(--traj-soft), 0 0 16px var(--traj-soft); }
+/* DISPARAR pulsa de leve durante a rodada de teste (passo 4) */
+.btn.alvo-fire.hint:not(:disabled){ animation: fireHint 1.8s ease-in-out infinite; }
+@keyframes fireHint{ 50%{ box-shadow: inset 0 1px 0 rgba(255,255,255,.4), 0 0 0 4px var(--traj-soft), 0 0 26px var(--traj-soft); } }
+/* reabrir o teste (secundário, para quem cuida do estande) */
+.alvo-aux{ display:flex; justify-content:flex-end; margin-top:6px; }
+.btn.alvo-pentest{
+  display:inline-flex; align-items:center; gap:7px; min-height:40px; padding: 6px 12px;
+  font-family: var(--font-mono); font-size:.68rem; letter-spacing:.14em; text-transform: uppercase;
+  color: var(--text-dim); border-style: dashed;
+}
+.btn.alvo-pentest svg{ width:14px; height:14px; color: var(--traj); }
+
+/* HUD: modo teste e ponteiro detectado */
+.ah-test, .ah-input{
+  display:flex; align-items:center; gap:8px; padding: 7px 11px; border-radius: var(--r-sm);
+  font-family: var(--font-mono); font-size:.66rem; letter-spacing:.14em; text-transform: uppercase;
+  background: rgba(7,12,22,.88); border:1px solid var(--line-strong); color: var(--text-dim);
+}
+.ah-test{ border-style: dashed; border-color: var(--traj-soft); }
+.ah-test b{ color: var(--traj); font-weight:600; }
+.ah-input{ color: var(--radar); border-color: var(--radar-soft); animation: fadeIn .35s var(--ease) both; }
+.ah-input.pending{ color: var(--text-dimmer); border-color: var(--line-strong); }
+.ah-test[hidden], .ah-input[hidden]{ display:none; }
+#step-alvo[data-alvo-mode="test"] .ah-tries{ display:none; }
+
+/* cartões da rodada de teste (centralizados no palco) */
+.alvo-test-wrap{
+  position:absolute; inset:0; z-index:3; display:flex; align-items:center; justify-content:center;
+  padding: 16px; pointer-events:none;
+}
+.alvo-test-wrap.at-top{ align-items:flex-start; padding-top: 64px; }
+.alvo-test-wrap[hidden]{ display:none; }
+.ovl.alvo-test{
+  position:relative; pointer-events:auto; width: min(460px, 100%);
+  text-align:center; padding: 16px 18px 12px; border-color: var(--traj-soft);
+  animation: popIn .4s var(--ease-out) both;
+}
+.ovl.alvo-test::before{ border-color: var(--traj); }
+.ovl.alvo-test.done{ border-color: var(--radar-soft); }
+.ovl.alvo-test.done::before{ border-color: var(--radar); }
+.at-kicker{
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  font-family: var(--font-mono); font-size:.66rem; letter-spacing:.2em; color: var(--traj);
+}
+.alvo-test.done .at-kicker{ color: var(--radar); }
+.at-kicker svg{ width:15px; height:15px; }
+.at-title{ font-family: var(--font-display); font-weight:700; font-size:1.55rem; letter-spacing:.03em; line-height:1.15; margin-top:4px; color: var(--text); }
+.at-text{ font-size:.9rem; line-height:1.45; color: var(--text-dim); margin-top:4px; }
+.at-steps{ list-style:none; margin: 11px 0 4px; padding:0; display:grid; grid-template-columns: 1fr 1fr; gap:6px 12px; text-align:left; }
+.at-steps li{ display:flex; align-items:center; gap:8px; font-size:.86rem; color: var(--text); }
+.at-steps b{
+  width:21px; height:21px; border-radius:50%; flex:0 0 auto;
+  display:inline-flex; align-items:center; justify-content:center;
+  font-family: var(--font-mono); font-size:.7rem; color: var(--traj); border:1px solid var(--traj-soft);
+}
+.at-detect{
+  margin: 9px 0 0; font-family: var(--font-mono); font-size:.68rem; letter-spacing:.16em; text-transform: uppercase;
+  color: var(--text-dimmer);
+}
+.at-detect.ok{ color: var(--radar); }
+.at-actions{ display:flex; gap:8px; margin-top:12px; }
+.at-actions .btn{ min-height:52px; flex:1 1 0; font-family: var(--font-display); letter-spacing:.1em; white-space:nowrap; }
+.at-actions .btn.lg{ font-size:1rem; }
+.at-actions .btn.at-retry{ flex:0 0 auto; padding-left:14px; padding-right:14px; font-size:.78rem; letter-spacing:.08em; color: var(--text); }
+.alvo-test.done .at-actions .btn.lg{ flex:1 0 auto; letter-spacing:.06em; }
+.at-skip{
+  display:inline-block; min-height:44px; margin-top:4px; padding: 10px 12px; border:0; background:none; cursor:pointer;
+  font-family: var(--font-sans); font-size:.76rem; color: var(--text-dimmer); text-decoration: underline; text-underline-offset: 3px;
+  touch-action: manipulation;
+}
+.at-skip:hover{ color: var(--text-dim); }
+.at-skip:focus-visible{ outline: 2px solid var(--traj); outline-offset: 2px; border-radius: 4px; }
 
 /* ===================== ETAPA 8 — CONCLUSÃO ===================== */
 .concl{
@@ -1487,6 +1584,9 @@ select.sel{
   .ovl.alvo-banner{ margin-left:8px; }
   .alvo-model, .alvo-counter{ position:static; order:4; margin: 0 8px 8px; align-self:flex-start; }
   #alvoStage.editable::after{ display:none; }
+  .alvo-test-wrap, .alvo-test-wrap.at-top{ position:static; order:3; display:block; padding: 0 8px 8px; }
+  .alvo-test-wrap[hidden]{ display:none; }
+  .ovl.alvo-test{ width:auto; }
 }
 
 /* ===================== Movimento reduzido ===================== */
@@ -1504,6 +1604,7 @@ select.sel{
   .concl-sign{ animation:none; opacity:1; }
   .hero-rule.in, .bh-node.on, #helpPanel, .guide-panel{ animation:none; }
   .ovl.alvo-intro, .ovl.alvo-result, .ovl.alvo-banner, .ab-prize, .alvo-counter.bump b, .btn.alvo-fire.pulse{ animation:none; }
+  .ovl.alvo-test, .ah-input, .btn.alvo-fire.hint:not(:disabled){ animation:none; }
   .ah-dots i{ transition:none; }
   #hudCorner .hc-live::before{ animation:none; }
   .nav-fill, .nav-progress i{ transition:none; }
@@ -2118,6 +2219,8 @@ select.sel{
               <span class="ah-dots" id="alvoDots"><i></i><i></i><i></i></span>
               <span class="ah-count" id="alvoTryLabel">Tentativa 1 de 3</span>
             </div>
+            <div class="ah-test" id="alvoTestBadge" hidden><b>MODO TESTE</b>· este disparo não conta</div>
+            <div class="ah-input" id="alvoInputBadge" hidden></div>
           </div>
           <div class="alvo-counter" title="Acertos registrados hoje neste computador">
             <span>ACERTOS HOJE</span><b id="alvoWinsToday">00</b>
@@ -2143,6 +2246,10 @@ select.sel{
           <div class="ovl alvo-result" id="alvoResult" hidden></div>
           <!-- vitória / fim das tentativas -->
           <div class="ovl alvo-banner" id="alvoBanner" hidden></div>
+          <!-- rodada de teste da caneta (não conta nas estatísticas) -->
+          <div class="alvo-test-wrap" id="alvoTestWrap" hidden>
+            <div class="ovl alvo-test" id="alvoTest" role="dialog" aria-live="polite"></div>
+          </div>
 
           <span class="alvo-model">MODELO IDEAL · SEM RESISTÊNCIA DO AR · g = 9,8 m/s²</span>
           <span class="corner-tick tl"></span><span class="corner-tick tr"></span>
@@ -2159,13 +2266,18 @@ select.sel{
 <div class="row"><label for="sldAlvoV">VELOCIDADE</label><span class="stepper"><button class="btn step-btn" data-for="sldAlvoV" data-d="-1" aria-label="diminuir velocidade">−</button><span class="val mono" id="valAlvoV">v₀ = 15 m/s</span><button class="btn step-btn" data-for="sldAlvoV" data-d="1" aria-label="aumentar velocidade">+</button></span></div>
             <input type="range" id="sldAlvoV" min="5" max="30" step="0.5" value="15" />
           </div>
-          <div class="group">
+          <div class="group alvo-actions">
             <button class="btn lg primary-traj wide cta alvo-fire" id="btnAlvoFire">DISPARAR</button>
             <div class="btnrow" style="margin-top:6px;">
               <button class="btn" id="btnAlvoNew" style="flex:1;">NOVA PARTIDA</button>
               <button class="btn" id="btnAlvoShuffle" title="Coloca o alvo em outra posição já testada">SORTEAR ALVO</button>
             </div>
             <button class="btn wide alvo-solve" id="btnAlvoSolve" hidden>VER UMA SOLUÇÃO POSSÍVEL</button>
+            <div class="alvo-aux">
+              <button class="btn alvo-pentest" id="btnAlvoPenTest" title="Reabre a rodada de teste (não conta nas estatísticas)">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M11.3 1.8l2.9 2.9-8.3 8.3-3.6.7.7-3.6z M9.8 3.3l2.9 2.9" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>Testar caneta
+              </button>
+            </div>
           </div>
           <div class="qcard alvo-q" id="alvoQuestion" hidden>
             <div class="qhead"><span class="qtag">Pergunta para conversar</span></div>
@@ -2209,7 +2321,7 @@ select.sel{
             <p>"Agora é a sua vez. Você tem três tentativas para acertar o alvo. Pode controlar a altura, o ângulo e a velocidade inicial."</p>
             <p>Fechamento: "Você acabou de usar exatamente as mesmas equações que mostramos na etapa anterior para tomar decisões."</p></div>
           <div><h4>Pergunta para o público</h4><p>"Qual dessas três variáveis você acha que vai fazer mais diferença?"</p></div>
-          <div><h4>O que demonstrar</h4><p>Deixe o visitante configurar (controles ao lado ou arrastando no desenho: carrinho = altura, seta = ângulo e velocidade) e disparar. Depois de cada erro, leia a pista junto com ele. Acertou: comemore com o visitante e clique em Nova partida.</p><p>Antes do 1º disparo, o grupo pode arrastar o alvo para outro lugar (ele continua lá nas próximas partidas; Sortear alvo volta ao aleatório).</p></div>
+          <div><h4>O que demonstrar</h4><p>Deixe o visitante configurar (controles ao lado ou arrastando no desenho: carrinho = altura, seta = ângulo e velocidade) e disparar. Depois de cada erro, leia a pista junto com ele. Acertou: comemore com o visitante e clique em Nova partida.</p><p>Antes do 1º disparo, o grupo pode arrastar o alvo para outro lugar (ele continua lá nas próximas partidas; Sortear alvo volta ao aleatório).</p><p>TV com caneta: ao entrar na etapa aparece o <b>Teste da caneta</b>. O visitante faz um disparo de teste (não conta tentativa nem estatística) e toca em Começar desafio. Para o próximo visitante, use <b>Testar caneta</b> no painel.</p></div>
           <div><h4>Conceito matemático</h4><p>Lançamento oblíquo, trigonometria, função quadrática, velocidade, ângulo, altura inicial, tentativa e erro, modelagem.</p></div>
           <div><h4>Tempo</h4><p>~1 min por visitante</p></div>
         </div>
@@ -6705,7 +6817,12 @@ const ALVO_CONFIG = {
   LIMITS: { h: [0, 5, 0.1], angle: [5, 85, 1], v: [5, 30, 0.5] },   // [mín, máx, passo] dos controles
   DEFAULTS: { h: 1.5, angle: 45, v: 15 },
   SOUND: false,          // o módulo não usa som (o evento pode ser barulhento)
-  STORAGE_KEY: "alemDoVisivel.desafioAlvo.v1"
+  STORAGE_KEY: "alemDoVisivel.desafioAlvo.v1",
+  /* Rodada de teste da caneta: alvo grande e perto; começa um pouco curto
+     (basta aumentar a velocidade para acertar). Nunca conta nas estatísticas. */
+  TEST: { target: { x: 14, y: 2.2, r: 1.2 }, start: { h: 1.5, angle: 45, v: 11 }, HINT_SECONDS: 9 },
+  /* multiplicador da área invisível de captura no desenho, por tipo de ponteiro */
+  HIT_TOLERANCE: { mouse: 1, pen: 1.5, touch: 1.9 }
 };
 
 const AlvoModule = (() => {
@@ -6729,6 +6846,17 @@ const AlvoModule = (() => {
   let manualTarget = false;             // alvo posicionado à mão: continua na próxima partida
   let recoilT = 9, wobbleT = 9;         // tempos das animações de recuo e balanço do alvo
   let stats = { day: "", games: 0, wins: 0, first: 0 };
+  // rodada de teste da caneta: estado separado do jogo oficial (state continua ready | flying | won | lost)
+  let mode = "official";                // official | test
+  let testPhase = null;                 // no teste: "gate" (cartão inicial) | "play" | "done"
+  let testArmed = true;                 // mostrar o teste ao entrar na etapa (novo visitante)
+  let testTarget = null;                // alvo do teste (validado no init)
+  let hints = null;                     // dicas no desenho durante o teste: { t, seen: {height, aim, vel, target} }
+  let manualPos = null;                 // posição do alvo colocada à mão (só partidas oficiais)
+  // entrada: último pointerType e se já houve caneta (só em memória)
+  const input = { last: null, pen: false, session: null };
+  let taps = [];                        // pulso no ponto de contato: { x, y, t, on }
+  let grab = null;                      // destaque do elemento controlado: { kind, angleOnly, k }
   let entered = false, looping = false, raf = null, lastTs = null, pausedByVisibility = null;
   let canvas, ctx = null, W = 0, H = 0;
 
@@ -6859,8 +6987,11 @@ const AlvoModule = (() => {
     if (typeof syncTargetSliders === "function") syncTargetSliders();
     const fire = $("btnAlvoFire");
     fire.disabled = lock;
-    fire.textContent = state === "won" || state === "lost" ? "PARTIDA ENCERRADA" : state === "flying" ? "EM VOO…" : "DISPARAR";
+    fire.textContent = mode === "test" && testPhase === "done" ? "TESTE CONCLUÍDO"
+      : state === "won" || state === "lost" ? "PARTIDA ENCERRADA" : state === "flying" ? "EM VOO…" : "DISPARAR";
+    fire.classList.toggle("hint", mode === "test" && testPhase === "play" && !lock);
   }
+  function syncLock() { setControlsLocked(!canEdit()); }
   function updateHud() {
     const dots = $("alvoDots").children;
     for (let i = 0; i < dots.length; i++) {
@@ -6949,30 +7080,143 @@ const AlvoModule = (() => {
     lastPresetIndex = i;
     return { x: list[i].x, y: list[i].y, r };
   }
-  function newGame() {
-    target = manualTarget ? { x: target.x, y: target.y, r: radiusFor(ALVO_CONFIG.difficulty) } : pickTarget();
-    recoilT = 9; wobbleT = 9; drag = null;
-    shots = []; flight = null; solution = null; fx = [];
+  /* limpa tudo o que pertence a uma rodada (oficial ou de teste) */
+  function resetRound(start) {
+    recoilT = 9; wobbleT = 9; drag = null; grab = null; hover = null;
+    shots = []; flight = null; solution = null; fx = []; taps = [];
     state = "ready"; gameCounted = false;
-    setSliders(ALVO_CONFIG.DEFAULTS);
+    setSliders(start);
     $("alvoResult").hidden = true;
     $("alvoBanner").hidden = true;
-    $("alvoIntro").hidden = false;
+    $("alvoIntro").hidden = true;
     $("btnAlvoSolve").hidden = true;
     $("alvoQuestion").hidden = true;
     document.querySelectorAll("#alvoQOpts .qopt").forEach(b => b.setAttribute("aria-pressed", "false"));
-    setControlsLocked(false);
+  }
+  /* partida OFICIAL limpa (também encerra qualquer rodada de teste) */
+  function newGame() {
+    mode = "official"; testPhase = null; hints = null;
+    $("alvoTestWrap").hidden = true;
+    target = manualTarget && manualPos ? { x: manualPos.x, y: manualPos.y, r: radiusFor(ALVO_CONFIG.difficulty) } : pickTarget();
+    resetRound(ALVO_CONFIG.DEFAULTS);
+    $("alvoIntro").hidden = false;
+    syncLock();
+    updateModeUi();
     updateHud();
     draw();
   }
+
+  /* ----------------------- rodada de teste da caneta ----------------------- */
+  const PEN_ICON = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M11.3 1.8l2.9 2.9-8.3 8.3-3.6.7.7-3.6z M9.8 3.3l2.9 2.9" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>`;
+  const INPUT_LABEL = { pen: "CANETA DETECTADA ✓", touch: "TOQUE DETECTADO ✓", mouse: "PONTEIRO DETECTADO ✓" };
+  function detectText() { return input.session ? INPUT_LABEL[input.session] || INPUT_LABEL.touch : "Toque em INICIAR TESTE com a caneta"; }
+  /* cartão inicial "TESTE DA CANETA" (pausa/descarta a partida em andamento) */
+  function openTest() {
+    mode = "test"; testPhase = "gate"; hints = null; input.session = null;
+    target = { ...testTarget };
+    resetRound(ALVO_CONFIG.TEST.start);
+    renderTestCard(null);
+    syncLock(); updateModeUi(); updateHud(); draw();
+  }
+  /* começa (ou recomeça) só o disparo de teste */
+  function startTest() {
+    if (mode !== "test") return;
+    target = { ...testTarget };
+    resetRound(ALVO_CONFIG.TEST.start);
+    testPhase = "play";
+    hints = { t: 0, seen: {} };
+    $("alvoTestWrap").hidden = true;
+    syncLock(); updateModeUi(); updateHud(); draw();
+  }
+  function finishTest(s) {
+    state = s.hit ? "won" : "lost";        // só para o desenho (alvo verde / rótulo T1)
+    if (s.hit) { hitAt = performance.now(); wobbleT = 0; fx.push({ kind: "hit", t: 0, x: s.hitPoint.x, y: s.hitPoint.y }); }
+    else fx.push({ kind: s.err === null || s.range <= X_VIEW + 2 ? "ground" : "none", t: 0, x: s.range, y: 0, color: s.color });
+    testPhase = "done"; hints = null;
+    renderTestCard(s);
+    syncLock(); updateModeUi(); updateHud();
+  }
+  /* sai do teste: partida oficial limpa, nada do teste permanece */
+  function startOfficial() { testArmed = false; newGame(); }
+  function renderTestCard(shot) {
+    const wrap = $("alvoTestWrap"), el = $("alvoTest");
+    const det = `<div class="at-detect${input.session ? " ok" : ""}" id="alvoTestDetect">${detectText()}</div>`;
+    if (testPhase === "gate") {
+      wrap.classList.remove("at-top");
+      el.className = "ovl alvo-test gate";
+      el.innerHTML =
+        `<div class="at-kicker">${PEN_ICON}ANTES DE COMEÇAR</div>` +
+        `<div class="at-title">TESTE DA CANETA</div>` +
+        `<div class="at-text">Antes do desafio, faça um disparo de teste para conhecer os controles.</div>` +
+        `<ol class="at-steps"><li><b>1</b>Arraste o lançador</li><li><b>2</b>Ajuste a mira</li><li><b>3</b>Ajuste a velocidade</li><li><b>4</b>Toque em DISPARAR</li></ol>` +
+        det +
+        `<div class="at-actions"><button class="btn lg primary-traj cta" data-act="start">INICIAR TESTE</button></div>` +
+        `<button class="at-skip" data-act="skip">pular o teste e ir direto ao desafio</button>`;
+    } else {
+      wrap.classList.add("at-top");
+      el.className = "ovl alvo-test done";
+      const txt = shot && shot.hit ? "Você acertou o alvo de teste. No desafio valem 3 tentativas."
+        : "Não acertou desta vez, e tudo bem: o teste não conta. No desafio você terá 3 tentativas.";
+      el.innerHTML =
+        `<div class="at-kicker">${CHECK}TESTE CONCLUÍDO</div>` +
+        `<div class="at-title">Caneta e controles prontos.</div>` +
+        `<div class="at-text">${txt}</div>` + det +
+        `<div class="at-actions"><button class="btn lg primary-traj cta" data-act="official">COMEÇAR DESAFIO</button>` +
+        `<button class="btn at-retry" data-act="retry">TESTAR NOVAMENTE</button></div>`;
+    }
+    wrap.hidden = false;
+  }
+  /* selos no HUD: MODO TESTE, ponteiro detectado, CANETA ATIVA */
+  function updateModeUi() {
+    const test = mode === "test";
+    $("step-alvo").dataset.alvoMode = test ? "test" : "official";
+    $("alvoTestBadge").hidden = !test || testPhase === "gate";
+    const b = $("alvoInputBadge");
+    if (test) {
+      b.hidden = testPhase === "gate";
+      b.textContent = detectText();
+      b.classList.toggle("pending", !input.session);
+    } else {
+      b.hidden = !input.pen;
+      b.textContent = "CANETA ATIVA";
+      b.classList.remove("pending");
+    }
+    const d = $("alvoTestDetect");
+    if (d) { d.textContent = detectText(); d.classList.toggle("ok", !!input.session); }
+  }
+  /* registra o tipo de ponteiro (captura em toda a etapa, sem bloquear nada) */
+  function noteInput(e) {
+    const type = e.pointerType || "mouse";
+    input.last = type;
+    if (type === "pen") input.pen = true;
+    if (mode === "test") input.session = type;
+    const sec = $("step-alvo");
+    sec.dataset.input = type;
+    if (type !== "mouse") sec.classList.add("touch-mode");
+    updateModeUi();
+  }
+  function markHint(kind, angleOnly) {
+    if (!hints) return;
+    if (kind === "height") hints.seen.height = true;
+    else if (kind === "aim") { hints.seen.aim = true; if (!angleOnly) hints.seen.vel = true; }
+    else if (kind === "target") hints.seen.target = true;
+  }
+  /* ação principal do teclado (Espaço) conforme a fase */
+  function primaryAction() {
+    if (mode === "test" && testPhase === "gate") return startTest();
+    if (mode === "test" && testPhase === "done") return startOfficial();
+    fire();
+  }
+
   function fire() {
-    if (state !== "ready") return;
+    if (!canEdit()) return;
     readSliders();
     hideIntro();
     const n = shots.length + 1;
     const sim = simulate(params.h, params.angle, params.v, target);
     const shot = { ...sim, n, color: TRY_COLORS[n - 1] };
-    if (!gameCounted) { gameCounted = true; stats.games++; saveStats(); renderStats(false); }
+    // o teste nunca passa por aqui: estatística só em partida oficial
+    if (mode === "official" && !gameCounted) { gameCounted = true; stats.games++; saveStats(); renderStats(false); }
     state = "flying";
     $("alvoResult").hidden = true;
     flight = { shot, t: 0, dur: Utils.clamp(shot.tEnd * 0.95, 1.0, 2.8) };
@@ -6986,6 +7230,7 @@ const AlvoModule = (() => {
     const s = flight.shot;
     flight = null;
     shots.push(s);
+    if (mode === "test") { finishTest(s); return; }
     if (s.hit) {
       state = "won";
       stats.wins++; if (s.n === 1) stats.first++;
@@ -7011,12 +7256,13 @@ const AlvoModule = (() => {
         showResult(s);
       }
     }
-    setControlsLocked(state !== "ready");
+    if (state !== "ready") testArmed = true;     // partida encerrada: o próximo visitante começa pelo teste
+    syncLock();
     updateHud();
   }
   /* Depois das 3 tentativas: mostra UMA das soluções possíveis. */
   function showSolution() {
-    if (state !== "lost" || flight) return;
+    if (mode !== "official" || state !== "lost" || flight) return;
     const sol = findSolution(target, params.h);
     const box = $("alvoSolText");
     if (!sol) { if (box) box.innerHTML = `<div class="alvo-sol">Nenhuma solução encontrada com estes limites.</div>`; return; }
@@ -7028,7 +7274,14 @@ const AlvoModule = (() => {
   }
 
   /* ------------------------------ desenho ------------------------------ */
-  const TUBE = 40;                 // comprimento do tubo do lançador (px)
+  const TUBE = 40;                 // comprimento do tubo do lançador (px, antes da escala U)
+  /* Escala visual do lançador, das alças e dos rótulos em telas grandes (Full HD / TV 4K):
+     só desenho e manipulação. Física e escala em metros não mudam. */
+  let U = 1, TU = 1;
+  function updateUiScale() {
+    U = Utils.clamp(Math.min(W / 1000, H / 560), 1, 1.6);
+    TU = 1 + (U - 1) * 0.6;          // textos crescem menos que as alças
+  }
   function geom() {
     const MT = W < 600 ? 18 : MT_DESK;   // no celular os cartões ficam fora do canvas
     const plotW = Math.max(60, W - ML - MR), plotH = Math.max(60, H - MT - MB);
@@ -7041,7 +7294,7 @@ const AlvoModule = (() => {
     const th = Utils.toRad(params.angle);
     const pivot = g.P(0, params.h);
     const k = (params.v - 5) / 25;
-    const aim = TUBE + 10 + 22 + 78 * k;           // ponta da seta: ângulo (direção) + velocidade (comprimento)
+    const aim = (TUBE + 10 + 22 + 78 * k) * U;     // ponta da seta: ângulo (direção) + velocidade (comprimento)
     const c = g.P(target.x, target.y);
     return {
       th, pivot, k,
@@ -7051,16 +7304,17 @@ const AlvoModule = (() => {
       target: { x: c.sx, y: c.sy, R: target.r * g.scale }
     };
   }
-  function canEdit() { return state === "ready" && !flight; }
+  function canEdit() { return state === "ready" && !flight && !(mode === "test" && testPhase !== "play"); }
   function canMoveTarget() { return canEdit() && shots.length === 0; }
   function tag(text, x, y, color, align, bg) {
     ctx.save();
-    ctx.font = Utils.monoFont(11);
+    const fs = Math.round(11 * TU);
+    ctx.font = Utils.monoFont(fs);
     const w = ctx.measureText(text).width + 12;
     let x0 = align === "right" ? x - w : align === "center" ? x - w / 2 : x;
     x0 = Utils.clamp(x0, 2, W - w - 2);
     ctx.fillStyle = bg || "rgba(8,13,24,0.9)"; ctx.strokeStyle = color; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.rect(x0, y - 13, w, 18); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.rect(x0, y - fs - 2, w, fs + 7); ctx.fill(); ctx.stroke();
     ctx.fillStyle = color; ctx.textAlign = "left"; ctx.fillText(text, x0 + 6, y);
     ctx.restore();
   }
@@ -7169,6 +7423,7 @@ const AlvoModule = (() => {
     const hd = handles(g);
     const th = hd.th, pivot = hd.pivot, railX = hd.rail.x;
     const edit = canEdit();
+    const big = bigHandles();
     ctx.save();
     // base do lançador
     ctx.fillStyle = "#121b2e"; ctx.strokeStyle = "rgba(240,161,63,0.45)"; ctx.lineWidth = 1;
@@ -7189,7 +7444,8 @@ const AlvoModule = (() => {
     // carro na altura escolhida (alça: arrastar para cima/baixo)
     ctx.fillStyle = hoverH ? "#2a3656" : "#1a2540"; ctx.strokeStyle = "#f0a13f"; ctx.lineWidth = 1.4;
     if (hoverH) { ctx.shadowColor = "rgba(240,161,63,0.8)"; ctx.shadowBlur = 12; }
-    ctx.beginPath(); ctx.rect(railX - 8, pivot.sy - 9, 16, 18); ctx.fill(); ctx.stroke();
+    const cw = (big ? 10 : 8) * U, chh = (big ? 11 : 9) * U;           // caneta/toque: carrinho um pouco maior
+    ctx.beginPath(); ctx.rect(railX - cw, pivot.sy - chh, cw * 2, chh * 2); ctx.fill(); ctx.stroke();
     ctx.shadowBlur = 0;
     ctx.strokeStyle = "rgba(247,184,102,0.9)"; ctx.lineWidth = 1.2;   // setinhas ↕
     ctx.beginPath(); ctx.moveTo(railX - 3, pivot.sy - 3); ctx.lineTo(railX, pivot.sy - 6); ctx.lineTo(railX + 3, pivot.sy - 3);
@@ -7209,6 +7465,7 @@ const AlvoModule = (() => {
     const recoil = recoilT < 0.35 ? 8 * Math.sin(Math.PI * Math.min(1, recoilT / 0.35)) * (1 - recoilT / 0.35) + 0 : 0;
     ctx.translate(pivot.sx, pivot.sy);
     ctx.rotate(-th);
+    ctx.scale(U, U);
     ctx.translate(-recoil, 0);
     const tg = ctx.createLinearGradient(0, -8, 0, 8);
     tg.addColorStop(0, "#44567d"); tg.addColorStop(0.45, "#27365a"); tg.addColorStop(1, "#131c30");
@@ -7226,7 +7483,7 @@ const AlvoModule = (() => {
     // seta de mira: direção = ângulo · comprimento = velocidade (alça principal)
     if (edit) {
       const hoverA = hover === "aim" || (drag && drag.kind === "aim");
-      const start = { x: pivot.sx + (TUBE + 6) * Math.cos(th), y: pivot.sy - (TUBE + 6) * Math.sin(th) };
+      const start = { x: pivot.sx + (TUBE + 6) * U * Math.cos(th), y: pivot.sy - (TUBE + 6) * U * Math.sin(th) };
       const glow = 0.45 + 0.45 * hd.k + (hoverA ? 0.1 : 0.08 * Math.sin(now / 250));
       ctx.save();
       ctx.strokeStyle = `rgba(247,184,102,${glow})`; ctx.fillStyle = `rgba(247,184,102,${glow})`; ctx.lineWidth = 2.4;
@@ -7243,14 +7500,14 @@ const AlvoModule = (() => {
       // alça circular na ponta
       ctx.strokeStyle = hoverA ? "#fff" : "rgba(247,184,102,0.9)"; ctx.lineWidth = 1.6;
       ctx.fillStyle = hoverA ? "rgba(247,184,102,0.35)" : "rgba(8,13,24,0.8)";
-      ctx.beginPath(); ctx.arc(hd.tip.x, hd.tip.y, 9 + (hoverA ? 2 : 0), 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.arc(hd.tip.x, hd.tip.y, ((big ? 12 : 9) + (hoverA ? 2 : 0)) * U, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
       ctx.restore();
       void L;
       tag(`v₀ = ${fmt(params.v, params.v % 1 ? 1 : 0)} m/s`, hd.tip.x + 14, hd.tip.y - 8, "#f7b866", "left");
       // dicas de uso do mouse (até o 1º disparo)
-      if (shots.length === 0 && !drag) {
+      if (shots.length === 0 && !drag && !hintsVisible()) {
         tag("ARRASTE PARA MIRAR", hd.tip.x + 14, hd.tip.y + 14, "rgba(247,184,102,0.75)", "left", "rgba(8,13,24,0.6)");
-        if (hover === "height") tag("↕ ARRASTE A ALTURA", railX + 14, pivot.sy - 20, "rgba(247,184,102,0.85)", "left");
+        if (hover === "height") tag("ARRASTE A ALTURA", railX + 14, pivot.sy - 20, "rgba(247,184,102,0.85)", "left");
       }
     }
   }
@@ -7371,7 +7628,7 @@ const AlvoModule = (() => {
       if (f.kind === "muzzle") {
         const hd = handles(g), k = f.t / 0.6;
         if (k > 1) return;
-        const mx = hd.pivot.sx + (TUBE + 2) * Math.cos(hd.th), my = hd.pivot.sy - (TUBE + 2) * Math.sin(hd.th);
+        const mx = hd.pivot.sx + (TUBE + 2) * U * Math.cos(hd.th), my = hd.pivot.sy - (TUBE + 2) * U * Math.sin(hd.th);
         ctx.save();
         ctx.globalAlpha = Math.max(0, 1 - k * 1.6); ctx.strokeStyle = f.color; ctx.lineWidth = 2;
         ctx.beginPath(); ctx.arc(mx, my, 6 + 30 * k, 0, Math.PI * 2); ctx.stroke();
@@ -7444,45 +7701,150 @@ const AlvoModule = (() => {
       drawBall(g, solution, solution.tEnd * solution.progress, { trail: solution.progress < 1 });
       if (solution.progress >= 1) tag("SOLUÇÃO POSSÍVEL", g.P(target.x, target.y).sx, g.P(target.x, target.y).sy + target.r * g.scale + 22, SOL_COLOR, "center");
     }
+    drawHints(g, now);
+    drawGrab(g, now);
     drawFx(g);
+    drawTaps();
   }
 
-  /* ----------------------- mouse / toque: arrastar no desenho ----------------------- */
+  /* ---------------- feedback de caneta/toque (desenhado no canvas) ---------------- */
+  function bigHandles() { return !!input.last && input.last !== "mouse"; }
+  function hintsVisible() {
+    return mode === "test" && testPhase === "play" && !!hints && canEdit() && hints.t < ALVO_CONFIG.TEST.HINT_SECONDS + 0.6;
+  }
+  /* rótulos ALTURA · MIRA · VELOCIDADE · ALVO ligados aos elementos (só no teste) */
+  function drawHints(g, now) {
+    if (!hintsVisible()) return;
+    const HS = ALVO_CONFIG.TEST.HINT_SECONDS, t = hints.t;
+    const alpha = t < 0.35 ? t / 0.35 : t > HS ? Math.max(0, 1 - (t - HS) / 0.6) : 1;
+    if (alpha <= 0) return;
+    const hd = handles(g), rm = Utils.prefersReducedMotion();
+    const pulse = rm ? 0 : Math.sin(now / 260);
+    const C = "#f7b866";
+    const item = (ax, ay, lx, ly, text, align) => {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = "rgba(247,184,102,0.75)"; ctx.lineWidth = 1.4;
+      ctx.beginPath(); ctx.arc(ax, ay, 15 + 3 * pulse, 0, Math.PI * 2); ctx.stroke();
+      ctx.setLineDash([3, 3]); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(lx, ly); ctx.stroke(); ctx.setLineDash([]);
+      tag(text, lx, ly + 4, C, align, "rgba(8,13,24,0.94)");
+      ctx.restore();
+    };
+    const s = hints.seen;
+    if (!s.height) item(hd.carriage.x, hd.carriage.y, hd.carriage.x - 8, hd.rail.top - 26, "1 · ALTURA: ARRASTE O CARRINHO", "left");
+    if (!s.aim) {
+      const m = { x: hd.pivot.sx + TUBE * U * 0.55 * Math.cos(hd.th), y: hd.pivot.sy - TUBE * U * 0.55 * Math.sin(hd.th) };
+      item(m.x, m.y, hd.pivot.sx + 104, Math.min(g.base - 12, hd.pivot.sy + 34), "2 · MIRA: GIRE O TUBO", "left");
+    }
+    if (!s.vel) item(hd.tip.x, hd.tip.y, hd.tip.x + 26, hd.tip.y - 40, "3 · VELOCIDADE: ARRASTE A PONTA", "left");
+    if (!s.target) item(hd.target.x, hd.target.y, hd.target.x + hd.target.R + 34, hd.target.y, canMoveTarget() ? "ALVO · PODE ARRASTAR" : "ALVO", "left");
+    ctx.save(); ctx.globalAlpha = alpha;
+    tag("4 · TOQUE EM DISPARAR ►", W - MR, Math.min(g.base - 40, H * 0.5), C, "right", "rgba(8,13,24,0.94)");
+    ctx.restore();
+  }
+  /* destaque do elemento que está sendo controlado (entra e sai suavemente) */
+  function drawGrab(g, now) {
+    if (!grab || grab.k <= 0.01) return;
+    const hd = handles(g), k = grab.k;
+    let x, y, r, label, below = false;
+    if (grab.kind === "height") { x = hd.carriage.x; y = hd.carriage.y; r = 20; label = "ARRASTANDO · ALTURA"; }
+    else if (grab.kind === "aim" && !grab.angleOnly) { x = hd.tip.x; y = hd.tip.y; r = 19; label = "ARRASTANDO · MIRA + VELOCIDADE"; }
+    else if (grab.kind === "aim") {
+      x = hd.pivot.sx + TUBE * U * 0.5 * Math.cos(hd.th); y = hd.pivot.sy - TUBE * U * 0.5 * Math.sin(hd.th);
+      r = TUBE * U * 0.5 + 14; label = "ARRASTANDO · MIRA";
+    } else { x = hd.target.x; y = hd.target.y; r = hd.target.R + 16; label = "ARRASTANDO · ALVO"; below = true; }
+    ctx.save();
+    ctx.globalAlpha = k;
+    ctx.strokeStyle = "#f7b866"; ctx.lineWidth = 2;
+    ctx.shadowColor = "rgba(240,161,63,0.9)"; ctx.shadowBlur = 16;
+    ctx.beginPath(); ctx.arc(x, y, r + 5 * (1 - k), 0, Math.PI * 2); ctx.stroke();
+    ctx.shadowBlur = 0;
+    // colchetes de mira (estilo instrumento) girando devagar
+    const rot = Utils.prefersReducedMotion() ? 0 : now / 900;
+    ctx.lineWidth = 1.2; ctx.strokeStyle = "rgba(247,184,102,0.7)";
+    for (let i = 0; i < 4; i++) {
+      const a = rot + i * Math.PI / 2;
+      ctx.beginPath(); ctx.arc(x, y, r + 7, a - 0.28, a + 0.28); ctx.stroke();
+    }
+    ctx.restore();
+    ctx.save(); ctx.globalAlpha = k;
+    tag(label, x, below ? y + r + 26 : y - r - 14, "#f7b866", "center", "rgba(8,13,24,0.94)");
+    ctx.restore();
+  }
+  /* pulso rápido no ponto exato do contato (caneta, dedo ou mouse) */
+  const TAP_DUR = 0.42;
+  function drawTaps() {
+    if (!taps.length) return;
+    const rm = Utils.prefersReducedMotion();
+    ctx.save();
+    taps.forEach(tp => {
+      const k = Math.min(1, tp.t / TAP_DUR);
+      const r = rm ? 12 : 5 + 17 * Utils.easeOut(k);
+      ctx.globalAlpha = 1 - k;
+      ctx.strokeStyle = tp.on ? "#f7b866" : "rgba(238,242,248,0.85)"; ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.arc(tp.x, tp.y, r, 0, Math.PI * 2); ctx.stroke();
+      if (k < 0.35) { ctx.fillStyle = tp.on ? "#f7b866" : "#eef2f8"; ctx.beginPath(); ctx.arc(tp.x, tp.y, 2.4, 0, Math.PI * 2); ctx.fill(); }
+    });
+    ctx.restore();
+  }
+
+  /* ------------- mouse / caneta / toque: arrastar no desenho (Pointer Events) -------------
+     Um único caminho para os três tipos de ponteiro. Muda só a TOLERÂNCIA da captura:
+     mouse = precisão atual · caneta = área confortável · dedo = área ainda maior. */
   function localPoint(e) {
     const r = canvas.getBoundingClientRect();
-    return { x: e.clientX - r.left, y: e.clientY - r.top };
+    // coordenadas CSS do canvas (vale com zoom do Windows, tela cheia, 4K e canvas redimensionado)
+    const kx = r.width ? W / r.width : 1, ky = r.height ? H / r.height : 1;
+    return { x: (e.clientX - r.left) * kx, y: (e.clientY - r.top) * ky };
   }
-  function pick(p) {
+  const tolFor = (type) => ALVO_CONFIG.HIT_TOLERANCE[type] || ALVO_CONFIG.HIT_TOLERANCE.touch;
+  /* qual alça está sob o ponto: { kind: "aim" | "height" | "target", angleOnly } */
+  function pick(p, type) {
     if (!canEdit()) return null;
+    const f = tolFor(type);
     const g = geom(), hd = handles(g);
-    if (Math.hypot(p.x - hd.tip.x, p.y - hd.tip.y) <= 18) return "aim";
-    if (Math.abs(p.x - hd.carriage.x) <= 16 && p.y >= hd.rail.top - 14 && p.y <= g.base) return "height";
-    if (canMoveTarget() && Math.hypot(p.x - hd.target.x, p.y - hd.target.y) <= hd.target.R + 14) return "target";
-    // tubo e arco do ângulo também servem para mirar
+    // 1) ponta da seta: ângulo + velocidade (prioridade)
+    if (Math.hypot(p.x - hd.tip.x, p.y - hd.tip.y) <= 18 * U * f) return { kind: "aim", angleOnly: false };
+    // 2) carrinho / trilho da altura (à esquerda do pivô, para não disputar com o tubo)
+    if (Math.abs(p.x - hd.carriage.x) <= 16 * U * f && p.x < hd.pivot.sx - 4 &&
+        p.y >= hd.rail.top - 14 * f && p.y <= g.base + 6 * f) return { kind: "height" };
+    // 3) alvo (só antes do 1º disparo)
+    if (canMoveTarget() && Math.hypot(p.x - hd.target.x, p.y - hd.target.y) <= hd.target.R + 14 * f) return { kind: "target" };
+    // 4) tubo e arco do ângulo: só o ângulo
     const dx = p.x - hd.pivot.sx, dy = hd.pivot.sy - p.y, d = Math.hypot(dx, dy);
-    if (d >= 12 && d <= TUBE + 30 && dx > -6) return "aim";
+    if (d >= 10 && d <= TUBE * U + 30 * U * f && dx > -6) return { kind: "aim", angleOnly: true };
     return null;
   }
   const snap = (v, step) => Math.round(v / step) * step;
+  /* O arraste é RELATIVO ao ponto de contato: encostar a caneta ao lado da alça não faz
+     o valor pular; só o movimento conta. A conversão para metros é a mesma de antes. */
   function applyDrag(p) {
     const g = geom(), hd = handles(g);
     const L = ALVO_CONFIG.LIMITS;
+    const q = { x: p.x + drag.off.x, y: p.y + drag.off.y };
     if (drag.kind === "height") {
-      const h = Utils.clamp(snap((g.base - p.y) / g.scale, L.h[2]), L.h[0], L.h[1]);
+      const h = Utils.clamp(snap((g.base - q.y) / g.scale, L.h[2]), L.h[0], L.h[1]);
       setSliders({ ...params, h: Number(h.toFixed(2)) });
     } else if (drag.kind === "aim") {
-      const dx = p.x - hd.pivot.sx, dy = hd.pivot.sy - p.y;
-      const ang = Utils.clamp(Math.round(Utils.toDeg(Math.atan2(dy, Math.max(dx, 0.001)))), L.angle[0], L.angle[1]);
-      const next = { ...params, angle: ang };
+      let ang;
+      if (drag.angleOnly) {            // girar o tubo: variação do ângulo do ponteiro em torno do pivô
+        let da = Utils.toDeg(Math.atan2(hd.pivot.sy - p.y, p.x - hd.pivot.sx)) - drag.p0;
+        if (da > 180) da -= 360; else if (da < -180) da += 360;
+        ang = drag.a0 + da;
+      } else {
+        ang = Utils.toDeg(Math.atan2(hd.pivot.sy - q.y, Math.max(q.x - hd.pivot.sx, 0.001)));
+      }
+      const next = { ...params, angle: Utils.clamp(Math.round(ang), L.angle[0], L.angle[1]) };
       if (!drag.angleOnly) {
-        const D = Math.hypot(dx, dy);
-        const k = Utils.clamp((D - TUBE - 32) / 78, 0, 1);
+        const D = Math.hypot(q.x - hd.pivot.sx, hd.pivot.sy - q.y);
+        const k = Utils.clamp((D / U - TUBE - 32) / 78, 0, 1);
         next.v = Number(Utils.clamp(snap(5 + 25 * k, L.v[2]), L.v[0], L.v[1]).toFixed(1));
       }
       setSliders(next);
     } else if (drag.kind === "target") {
-      const x = Utils.clamp(snap((p.x - g.x0) / g.scale, 0.5), 12, X_VIEW - 1.5);
-      const y = Utils.clamp(snap((g.base - p.y) / g.scale, 0.1), 0.6, 7);
+      const x = Utils.clamp(snap((q.x - g.x0) / g.scale, 0.5), 12, X_VIEW - 1.5);
+      const y = Utils.clamp(snap((g.base - q.y) / g.scale, 0.1), 0.6, 7);
       target = { x, y, r: target.r };
       syncTargetSliders();
       updateHud();
@@ -7498,50 +7860,83 @@ const AlvoModule = (() => {
     if (!findSolution(target, params.h)) {
       target = prev;
       fx.push({ kind: "msg", t: 0, text: "SEM SOLUÇÃO NESSA POSIÇÃO · O ALVO VOLTOU" });
-    } else {
-      manualTarget = true;
+    } else if (mode === "official") {
+      manualTarget = true; manualPos = { x: target.x, y: target.y };
       fx.push({ kind: "msg", t: 0, text: `ALVO POSICIONADO EM (${fmt(target.x, 1)} ; ${fmt(target.y, 1)}) m` });
+    } else {                              // no teste o alvo movido não vale para as partidas oficiais
+      fx.push({ kind: "msg", t: 0, text: `ALVO DE TESTE EM (${fmt(target.x, 1)} ; ${fmt(target.y, 1)}) m` });
     }
     syncTargetSliders(); updateHud(); draw();
   }
   function wirePointer() {
     canvas.style.touchAction = "none";
     canvas.addEventListener("pointerdown", (e) => {
+      const type = e.pointerType || "mouse";
+      if (type === "mouse" && e.button !== 0) return;
+      if (drag) return;                              // outro dedo/caneta já está controlando algo
       const p = localPoint(e);
-      let k = pick(p);
-      if (!k && canEdit() && shots.length > 0) {
-        const hd = handles(geom());
-        if (Math.hypot(p.x - hd.target.x, p.y - hd.target.y) <= hd.target.R + 14) {
-          fx.push({ kind: "msg", t: 0, text: "O ALVO SÓ PODE SER MOVIDO ANTES DO 1º DISPARO" });
-          return;
+      const hit = pick(p, type);
+      taps.push({ x: p.x, y: p.y, t: 0, on: !!hit });
+      if (taps.length > 6) taps.shift();
+      if (!hit) {
+        if (canEdit() && shots.length > 0) {
+          const hd = handles(geom());
+          if (Math.hypot(p.x - hd.target.x, p.y - hd.target.y) <= hd.target.R + 14 * tolFor(type))
+            fx.push({ kind: "msg", t: 0, text: "O ALVO SÓ PODE SER MOVIDO ANTES DO 1º DISPARO" });
         }
+        if (!looping) draw();
+        return;
       }
-      if (!k) return;
-      // tubo (perto do pivô) muda só o ângulo; a ponta da seta muda ângulo e velocidade
-      const hd = handles(geom());
-      const onTip = Math.hypot(p.x - hd.tip.x, p.y - hd.tip.y) <= 18;
-      drag = { kind: k, angleOnly: k === "aim" && !onTip, prevTarget: { ...target } };
-      hideIntro();
-      try { canvas.setPointerCapture(e.pointerId); } catch (err) { /* ok */ }
-      setHover(k);
-      applyDrag(p);
       e.preventDefault();
+      const g = geom(), hd = handles(g);
+      const anchor = hit.kind === "height" ? hd.carriage
+        : hit.kind === "target" ? hd.target
+        : hit.angleOnly ? p : hd.tip;
+      drag = {
+        kind: hit.kind, angleOnly: !!hit.angleOnly, pointerId: e.pointerId, type,
+        off: { x: anchor.x - p.x, y: anchor.y - p.y },
+        a0: params.angle, p0: Utils.toDeg(Math.atan2(hd.pivot.sy - p.y, p.x - hd.pivot.sx)),
+        prevTarget: { ...target }
+      };
+      grab = { kind: hit.kind, angleOnly: !!hit.angleOnly, k: Utils.prefersReducedMotion() ? 1 : 0.15 };
+      hideIntro();
+      markHint(hit.kind, hit.angleOnly);
+      try { canvas.setPointerCapture(e.pointerId); } catch (err) { /* ok: segue sem captura */ }
+      setHover(hit.kind);
+      draw();
     });
     canvas.addEventListener("pointermove", (e) => {
-      const p = localPoint(e);
-      if (drag) { applyDrag(p); return; }
-      const k = pick(p);
+      if (drag) {
+        if (e.pointerId !== drag.pointerId) return;
+        e.preventDefault();
+        applyDrag(localPoint(e));
+        return;
+      }
+      const type = e.pointerType || "mouse";
+      if (type === "touch") return;                  // dedo não tem "hover"
+      const hit = pick(localPoint(e), type);
+      const k = hit ? hit.kind : null;
       if (k !== hover) setHover(k);
     });
-    const end = () => {
-      if (!drag) return;
+    // fim do arraste: soltar, cancelar (gesto do sistema) ou perder a captura (hardware/navegador)
+    const end = (e) => {
+      if (!drag || (e && e.pointerId !== drag.pointerId)) return;
       const d = drag; drag = null;
       if (d.kind === "target") commitTarget(d.prevTarget);
       setHover(null);
+      if (Utils.prefersReducedMotion()) grab = null;
+      draw();
     };
     canvas.addEventListener("pointerup", end);
     canvas.addEventListener("pointercancel", end);
-    canvas.addEventListener("pointerleave", () => { if (!drag && hover) setHover(null); });
+    canvas.addEventListener("lostpointercapture", end);
+    canvas.addEventListener("pointerleave", (e) => { if (!drag && hover && e.pointerType !== "touch") setHover(null); });
+    // nada de menu de contexto (toque longo) nem arrastar nativo dentro do simulador
+    const stage = $("alvoStage");
+    stage.addEventListener("contextmenu", (e) => e.preventDefault());
+    stage.addEventListener("dragstart", (e) => e.preventDefault());
+    document.querySelectorAll("#step-alvo .alvo-controls, #step-alvo .alvo-actions").forEach(el =>
+      el.addEventListener("contextmenu", (e) => e.preventDefault()));
   }
   function syncTargetSliders() {
     const sx = $("sldAlvoTX"), sy = $("sldAlvoTY");
@@ -7568,12 +7963,18 @@ const AlvoModule = (() => {
     if (solution && solution.progress < 1) solution.progress = Math.min(1, solution.progress + dt / Utils.clamp(solution.tEnd * 0.9, 1, 2.8));
     fx.forEach(f => { f.t += dt; });
     fx = fx.filter(f => f.t < 2.6);
+    if (taps.length) { taps.forEach(tp => { tp.t += dt; }); taps = taps.filter(tp => tp.t < TAP_DUR); }
+    if (grab) {                          // destaque entra ao tocar e sai suave ao soltar
+      grab.k += ((drag ? 1 : 0) - grab.k) * Math.min(1, dt * 12);
+      if (!drag && grab.k < 0.02) grab = null;
+    }
+    if (hints && mode === "test" && testPhase === "play" && canEdit()) hints.t += dt;
     draw();
     raf = requestAnimationFrame(tick);
   }
   function startLoop() { if (looping) return; looping = true; lastTs = null; raf = requestAnimationFrame(tick); }
   function stopLoop() { looping = false; if (raf) cancelAnimationFrame(raf); raf = null; }
-  function fit() { const f = Utils.fitCanvas(canvas); ctx = f.ctx; W = f.cssW; H = f.cssH; draw(); }
+  function fit() { const f = Utils.fitCanvas(canvas); ctx = f.ctx; W = f.cssW; H = f.cssH; updateUiScale(); draw(); }
 
   /* Garante que todo alvo configurado tenha solução dentro dos controles. */
   function validatePresets() {
@@ -7591,9 +7992,14 @@ const AlvoModule = (() => {
     canvas = $("alvoCanvas");
     Utils.observeResize($("alvoStage"), fit);
     const L = ALVO_CONFIG.LIMITS;
+    const HINT_OF = { sldAlvoH: ["height"], sldAlvoA: ["aim"], sldAlvoV: ["aim", "vel"] };
     [["sldAlvoH", L.h], ["sldAlvoA", L.angle], ["sldAlvoV", L.v]].forEach(([id, [mn, mx, st]]) => {
       const s = $(id); s.min = mn; s.max = mx; s.step = st;
-      s.addEventListener("input", () => { hideIntro(); readSliders(); draw(); });
+      s.addEventListener("input", () => {
+        hideIntro(); readSliders();
+        if (hints) HINT_OF[id].forEach(k => { hints.seen[k] = true; });
+        draw();
+      });
     });
     // botões − / + ao lado de cada controle (ajuste fino)
     document.querySelectorAll("#step-alvo .step-btn").forEach(b => b.addEventListener("click", () => {
@@ -7618,7 +8024,20 @@ const AlvoModule = (() => {
       s.addEventListener("change", () => { if (canMoveTarget()) commitTarget(prev || { ...target }); });
     });
     $("btnAlvoFire").addEventListener("click", fire);
-    $("btnAlvoNew").addEventListener("click", newGame);
+    $("btnAlvoNew").addEventListener("click", () => { testArmed = false; newGame(); });
+    $("btnAlvoPenTest").addEventListener("click", openTest);
+    // comandos dos cartões do teste (conteúdo recriado a cada fase: delegação)
+    $("alvoTest").addEventListener("click", (e) => {
+      const b = e.target.closest("[data-act]");
+      if (!b) return;
+      const act = b.dataset.act;
+      if (act === "start" || act === "retry") startTest();
+      else if (act === "official" || act === "skip") startOfficial();
+    });
+    // tipo de ponteiro: escuta em toda a etapa (fase de captura), sem impedir nada
+    $("step-alvo").addEventListener("pointerdown", noteInput, true);
+    // tela touch: áreas de toque maiores desde o início (não muda o layout; mouse continua igual)
+    if (navigator.maxTouchPoints > 0) $("step-alvo").classList.add("touch-mode");
     $("btnAlvoShuffle").addEventListener("click", () => { manualTarget = false; newGame(); });
     $("btnAlvoSolve").addEventListener("click", showSolution);
     $("btnAlvoResetStats").addEventListener("click", resetStats);
@@ -7627,6 +8046,9 @@ const AlvoModule = (() => {
     }));
     wirePointer();
     validatePresets();
+    const T = ALVO_CONFIG.TEST.target;
+    testTarget = findSolution(T, ALVO_CONFIG.TEST.start.h) ? { x: T.x, y: T.y, r: T.r }
+      : { ...ALVO_CONFIG.TARGET_PRESETS[0], r: radiusFor("facil") };
     loadStats(); renderStats(false);
     newGame();
     fit();
@@ -7637,13 +8059,21 @@ const AlvoModule = (() => {
       else if (pausedByVisibility) startLoop();
     });
     StepManager.onModeChange(() => { updateHud(); draw(); });
-    StepManager.onEnter("alvo", () => { entered = true; loadStats(); renderStats(false); startLoop(); fit(); });
-    StepManager.onLeave("alvo", () => { entered = false; stopLoop(); });
-    // Espaço = DISPARAR · R = nova partida
-    StepManager.registerActiveSim("alvo", { toggle: fire, reset: newGame });
+    StepManager.onEnter("alvo", () => {
+      entered = true; loadStats(); renderStats(false);
+      // novo visitante: partida oficial ainda intocada → começa pelo teste da caneta
+      if (testArmed && mode === "official" && state === "ready" && !flight && shots.length === 0) openTest();
+      startLoop(); fit();
+    });
+    StepManager.onLeave("alvo", () => { entered = false; stopLoop(); if (drag) { drag = null; grab = null; } });
+    // Espaço = ação principal (iniciar teste · disparar · começar desafio) · R = recomeça o teste ou nova partida
+    StepManager.registerActiveSim("alvo", {
+      toggle: primaryAction,
+      reset: () => { if (mode === "test") startTest(); else { testArmed = false; newGame(); } }
+    });
   }
 
-  function fullReset() { manualTarget = false; newGame(); }
+  function fullReset() { manualTarget = false; manualPos = null; testArmed = true; newGame(); }
 
   return { init, fullReset, simulate, findSolution };
 })();
