@@ -6550,6 +6550,60 @@ const AlvoModule = (() => {
   }
   function hideIntro() { $("alvoIntro").hidden = true; }
 
+  /* Os cartões de resultado e de fim de partida nunca podem cobrir o alvo (nem o lançador):
+     cada um testa algumas posições no palco e fica na primeira livre. */
+  function placeOverlays() {
+    const res = $("alvoResult"), ban = $("alvoBanner"), stage = $("alvoStage");
+    if (!ctx || W < 120) return;
+    if (getComputedStyle(res).position !== "absolute") return;      // celular: cartões ficam abaixo do desenho
+    const sr = stage.getBoundingClientRect(), cr = canvas.getBoundingClientRect();
+    const ox = cr.left - sr.left, oy = cr.top - sr.top, SW = stage.clientWidth, SH = stage.clientHeight;
+    const g = geom(), hd = handles(g);
+    const R = hd.target.R;
+    const obst = [
+      // alvo + rótulo acima dele
+      { l: ox + hd.target.x - R - 16, t: oy + hd.target.y - R - 38, r: ox + hd.target.x + R + 16, b: oy + hd.target.y + R + 14 },
+      // lançador, trilho e seta
+      { l: 0, t: oy + Math.min(hd.rail.top, hd.tip.y) - 24, r: ox + Math.max(hd.tip.x, hd.pivot.sx + TUBE * U) + 24, b: oy + g.base }
+    ];
+    const hit = (a, b) => a.l < b.r && a.r > b.l && a.t < b.b && a.b > b.t;
+    const area = (a, b) => Math.max(0, Math.min(a.r, b.r) - Math.max(a.l, b.l)) * Math.max(0, Math.min(a.b, b.b) - Math.max(a.t, b.t));
+    const TOP = 56, M = 12;
+    const place = (el, cands) => {
+      if (el.hidden) return null;
+      el.style.right = "auto"; el.style.marginLeft = "0px";
+      const w = el.offsetWidth, h = el.offsetHeight;
+      let best = null, bestA = Infinity;
+      for (const c of cands) {
+        const box = { l: Utils.clamp(c.l, M, SW - w - M), t: Utils.clamp(c.t, TOP, Math.max(TOP, SH - h - 28)) };
+        box.r = box.l + w; box.b = box.t + h;
+        const a = obst.reduce((sum, o) => sum + area(box, o), 0);
+        if (a < bestA) { best = box; bestA = a; }
+        if (!obst.some(o => hit(box, o))) break;
+      }
+      el.style.left = `${best.l}px`; el.style.top = `${best.t}px`;
+      return best;
+    };
+    const tgtBox = obst[0];
+    const rw = res.offsetWidth || 290;
+    const placedRes = place(res, [
+      { l: SW - rw - M, t: TOP },                 // canto superior direito (padrão)
+      { l: tgtBox.l - rw - 16, t: TOP },          // à esquerda do alvo
+      { l: SW - rw - M, t: tgtBox.b + 10 },       // abaixo do alvo
+      { l: (SW - rw) / 2, t: TOP },               // centro
+      { l: M + 230, t: TOP }                      // à esquerda, depois do lançador
+    ]);
+    if (placedRes) obst.push(placedRes);
+    const bw = ban.offsetWidth || 390;
+    place(ban, [
+      { l: (SW - 316 - bw) / 2, t: 68 },          // posição padrão
+      { l: (SW - bw) / 2, t: 68 },
+      { l: tgtBox.l - bw - 16, t: 68 },
+      { l: tgtBox.r + 16, t: 68 },
+      { l: (SW - bw) / 2, t: tgtBox.b + 10 }
+    ]);
+  }
+
   const CHECK = `<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M4.5 8.2l2.3 2.3 4.7-4.9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
   /* Resultado de cada tentativa: onde passou e uma PISTA (nunca a resposta). */
@@ -6581,6 +6635,7 @@ const AlvoModule = (() => {
         (state === "lost" ? "" : `<div class="ar-hint"><b>PISTA</b>${hint}</div>`) + data;
     }
     el.hidden = false;
+    placeOverlays();
   }
   function showBanner(kind) {
     const el = $("alvoBanner");
@@ -6600,6 +6655,7 @@ const AlvoModule = (() => {
         `<div id="alvoSolText"></div>`;
     }
     el.hidden = false;
+    placeOverlays();
   }
 
   /* ------------------------------ partida ------------------------------ */
@@ -6806,6 +6862,7 @@ const AlvoModule = (() => {
     solution = { ...simulate(sol.h, sol.angle, sol.v, target), color: SOL_COLOR, n: "S", progress: 0 };
     if (box) box.innerHTML = `<div class="alvo-sol">Esta é uma das soluções possíveis:<br>altura = <b>${fmt(sol.h, 1)} m</b> · ângulo = <b>${fmt(sol.angle, 0)}°</b> · velocidade = <b>${fmt(sol.v, 1)} m/s</b></div>`;
     $("btnAlvoSolve").hidden = true;
+    placeOverlays();
     if (Utils.prefersReducedMotion()) solution.progress = 1;
   }
 
@@ -7591,7 +7648,7 @@ const AlvoModule = (() => {
   }
   function startLoop() { if (looping) return; looping = true; lastTs = null; raf = requestAnimationFrame(tick); }
   function stopLoop() { looping = false; if (raf) cancelAnimationFrame(raf); raf = null; }
-  function fit() { const f = Utils.fitCanvas(canvas); ctx = f.ctx; W = f.cssW; H = f.cssH; updateUiScale(); draw(); }
+  function fit() { const f = Utils.fitCanvas(canvas); ctx = f.ctx; W = f.cssW; H = f.cssH; updateUiScale(); draw(); placeOverlays(); }
 
   /* Garante que todo alvo configurado tenha solução dentro dos controles. */
   function validatePresets() {
