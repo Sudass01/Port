@@ -1033,6 +1033,43 @@ details.adv[open]{ padding-bottom:10px; }
 .log-done b{ font-family: var(--font-mono); font-size:.84rem; color: var(--text); font-weight:600; }
 .log-done span{ font-size:.82rem; color: var(--cls); }
 .log-readout .v b{ color: var(--cls); }
+/* janela baixa (notebook com a barra do navegador): tudo cabe sem rolar */
+@media (max-height: 700px) and (min-width: 901px){
+  #logStage{ gap:4px; padding-top:8px; padding-bottom:8px; }
+  #logStage .log-board{ gap:4px; }
+  #logStage .log-row{ padding-top:11px; }
+  #logStage .lnode{ padding: 3px 9px; gap:2px; }
+  #logStage .ln-v b{ font-size:1.35rem; }
+  #logStage .troops{ gap: 2px 4px; margin:1px 0; }
+  #logStage .troops i{ width:7px; height:9px; }
+  #logStage .troops i::before{ left:2px; width:3px; height:3px; }
+  #logStage .troops i::after{ top:4px; width:7px; height:5px; }
+  #logStage .blocks i, #logStage .stock i{ width:8px; height:8px; }
+  #logStage .stock .col{ gap:2px; }
+  #logStage .ration{ width:38px; margin:1px 0; }
+  #logStage .days i{ height:16px; min-width:20px; }
+  #logStage .log-hero{ padding: 3px 12px; }
+  #logStage .lh-big b{ font-size:2.6rem; }
+  #logStage .lh-big span{ font-size:1.1rem; }
+  #logStage .lh-conv{ font-size:.95rem; }
+  #logStage .lh-sub{ font-size:.74rem; }
+  #logStage .log-model{ display:none; }          /* a palavra "estimativa" continua no cartão C */
+  [data-mode="presentation"] #step-logistica .log-lead{ display:none; }
+  [data-mode="presentation"] #step-logistica .log-formula{ margin-top:0; }
+  [data-mode="presentation"] #step-logistica .log-formula .dim{ display:none; }
+  [data-mode="presentation"] #step-logistica .group > h3{ margin-bottom:2px; }
+  [data-mode="presentation"] #step-logistica .log-done{ margin-top:5px; padding: 5px 9px; }
+  [data-mode="presentation"] #step-abastecer .lead{ font-size:.72rem !important; line-height:1.32; }
+  [data-mode="presentation"] #step-abastecer .group{ padding: 4px 10px; }
+  [data-mode="presentation"] #step-abastecer .panel{ gap:4px; }
+  [data-mode="presentation"] #step-abastecer .qtext{ margin: 3px 0 5px; font-size:.84rem; }
+  [data-mode="presentation"] #step-abastecer .qopt{ padding: 5px 10px; }
+  [data-mode="presentation"] #step-abastecer .view-switch{ margin-top:4px !important; }
+  [data-mode="presentation"] #step-abastecer .panel > .group:first-child > h3{ display:none; }
+  [data-mode="presentation"] #step-abastecer .sup-total{ margin-top:5px; }
+  [data-mode="presentation"] #step-abastecer .sup-total div{ padding: 2px 7px; }
+  [data-mode="presentation"] #step-abastecer .sup-total b{ font-size:.92rem; }
+}
 /* TV Full HD / 4K: cartões e números maiores para leitura à distância */
 @media (min-width: 1600px) and (min-height: 950px){
   #logStage .log-board{ gap: 24px; }
@@ -2180,9 +2217,9 @@ select.sel{
             <p class="lead" style="font-size:.84rem;">Na 1ª Guerra Mundial, milhões de soldados viviam em trincheiras. Tudo chegava por uma longa cadeia de transporte, e os últimos metros eram feitos <b>a pé, à noite</b>. Planejar quanto enviar era um problema de <b>matemática</b>.</p>
           </div>
           <div class="group">
-            <h3><span class="sn">1</span>Tamanho do setor <span class="h3-aside" id="supUnit">≈ 1 batalhão</span></h3>
-            <div class="row"><label for="sldSupN">Soldados</label><span class="val mono" id="valSupN">1.000</span></div>
-            <input type="range" id="sldSupN" min="200" max="5000" step="100" value="1000" />
+            <h3><span class="sn">1</span>Tamanho do setor <span class="h3-aside" id="supUnit">algumas companhias</span></h3>
+            <div class="row"><label for="sldSupN">Soldados</label><span class="val mono" id="valSupN">500</span></div>
+            <input type="range" id="sldSupN" min="200" max="5000" step="100" value="500" />
             <div class="view-switch sup-switch" role="group" aria-label="Situação do dia" style="margin-top:7px;">
               <button id="btnSupCalm" aria-pressed="true">Dia calmo</button>
               <button id="btnSupAtk" aria-pressed="false">Dia de ataque</button>
@@ -2214,7 +2251,7 @@ select.sel{
               <li>Perto da frente, <b>ferrovias estreitas (60 cm)</b> e grupos de carregadores levavam a carga pelas trincheiras de comunicação.</li>
               <li>Cavalos e mulas puxavam carroças e peças; a <b>forragem</b> dos animais era uma das cargas mais volumosas enviadas à França.</li>
             </ul>
-            <p class="note" style="margin-top:6px;">Modelo simplificado: 1,8 kg de comida, 4,5 L de água (≈ 1 galão), cartuchos de ≈ 25 g e outros suprimentos (sacos de areia, arame, velas, remédios) por soldado por dia. Os consumos de cartuchos e de outros suprimentos são cenários hipotéticos para comparar um dia calmo e um dia de ataque. Caminhão de 3 t; cada carregador leva ≈ 20 kg por viagem.</p>
+            <p class="note" style="margin-top:6px;">Modelo simplificado: 1,2 kg de comida (a mesma estimativa da etapa Logística), 4,5 L de água (≈ 1 galão), cartuchos de ≈ 25 g e outros suprimentos (sacos de areia, arame, velas, remédios) por soldado por dia. Os consumos de cartuchos e de outros suprimentos são cenários hipotéticos para comparar um dia calmo e um dia de ataque. Caminhão de 3 t; cada carregador leva ≈ 20 kg por viagem.</p>
           </details>
         </div>
       </div>
@@ -5944,8 +5981,8 @@ const BlackHoleModule = (() => {
    porcentagem; divisão arredondada para cima (caminhões, viagens, latas).
    Valores por soldado são um MODELO simplificado (ver "Fatos históricos e hipóteses"). */
 const SUPPLY_CONFIG = {
-  soldiersDefault: 1000,
-  foodKg: 1.8,                 // 1 ração de campanha ≈ 1,8 kg (≈ 4.000 kcal)
+  soldiersDefault: LOG_CONFIG.DEFAULTS.S,   // 500: o mesmo cenário da etapa Logística
+  foodKg: LOG_CONFIG.DEFAULTS.C,   // comida por soldado/dia: o MESMO valor da etapa Logística (1,2 kg)
   waterL: 4.5,                 // ≈ 1 galão por soldado por dia (1 L de água ≈ 1 kg)
   canL: 9,                     // lata de gasolina de 2 galões ≈ 9 L
   cartridgeG: 25,              // cartucho .303 ≈ 25 g
