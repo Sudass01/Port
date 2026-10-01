@@ -1305,6 +1305,20 @@ select.sel{
   touch-action: manipulation;
 }
 .at-skip:hover{ color: var(--text-dim); }
+.at-links{ display:flex; justify-content:center; flex-wrap:wrap; gap:0 6px; }
+.ovl.alvo-diag{
+  top:56px; left:14px; z-index:4; width: min(380px, calc(100% - 28px)); padding: 12px 14px;
+  border-color: var(--radar-soft); touch-action:none;
+}
+.ovl.alvo-diag::before{ border-color: var(--radar); }
+.ad-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; font-family: var(--font-mono); font-size:.68rem; letter-spacing:.18em; color: var(--radar); }
+.btn.ad-close{ min-height:40px; padding: 6px 12px; font-family: var(--font-mono); font-size:.66rem; letter-spacing:.14em; }
+.ad-tip{ margin: 6px 0 8px; font-size:.82rem; color: var(--text-dim); }
+.ad-grid{ display:grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size:.76rem; }
+.ad-grid span{ color: var(--text-dimmer); }
+.ad-grid b{ font-family: var(--font-mono); font-weight:500; color: var(--text); text-align:right; font-variant-numeric: tabular-nums; }
+.ad-verdict{ margin-top:9px; padding: 7px 9px; border-left:2px solid var(--radar); background: rgba(82,216,164,.06); font-size:.8rem; line-height:1.45; color: var(--text); }
+.ad-verdict:empty{ display:none; }
 .at-skip:focus-visible{ outline: 2px solid var(--traj); outline-offset: 2px; border-radius: 4px; }
 
 /* ===================== ETAPA 8 — CONCLUSÃO ===================== */
@@ -1587,6 +1601,7 @@ select.sel{
   .alvo-test-wrap, .alvo-test-wrap.at-top{ position:static; order:3; display:block; padding: 0 8px 8px; }
   .alvo-test-wrap[hidden]{ display:none; }
   .ovl.alvo-test{ width:auto; }
+  .ovl.alvo-diag{ position:static; order:0; width:auto; margin: 8px; }
 }
 
 /* ===================== Movimento reduzido ===================== */
@@ -2246,6 +2261,13 @@ select.sel{
           <div class="ovl alvo-result" id="alvoResult" hidden></div>
           <!-- vitória / fim das tentativas -->
           <div class="ovl alvo-banner" id="alvoBanner" hidden></div>
+          <!-- diagnóstico de entrada (link "a caneta não responde?" ou tecla D) -->
+          <div class="ovl alvo-diag" id="alvoDiag" hidden>
+            <div class="ad-head"><span>DIAGNÓSTICO DA CANETA</span><button class="btn ad-close" data-diag-close>FECHAR</button></div>
+            <p class="ad-tip">Toque nesta caixa com a caneta e depois com o dedo.</p>
+            <div class="ad-grid"></div>
+            <p class="ad-verdict"></p>
+          </div>
           <!-- rodada de teste da caneta (não conta nas estatísticas) -->
           <div class="alvo-test-wrap" id="alvoTestWrap" hidden>
             <div class="ovl alvo-test" id="alvoTest" role="dialog" aria-live="polite"></div>
@@ -6854,7 +6876,7 @@ const AlvoModule = (() => {
   let hints = null;                     // dicas no desenho durante o teste: { t, seen: {height, aim, vel, target} }
   let manualPos = null;                 // posição do alvo colocada à mão (só partidas oficiais)
   // entrada: último pointerType e se já houve caneta (só em memória)
-  const input = { last: null, pen: false, session: null };
+  const input = { last: null, pen: false, touch: false, session: null };
   let taps = [];                        // pulso no ponto de contato: { x, y, t, on }
   let grab = null;                      // destaque do elemento controlado: { kind, angleOnly, k }
   let entered = false, looping = false, raf = null, lastTs = null, pausedByVisibility = null;
@@ -7108,7 +7130,9 @@ const AlvoModule = (() => {
 
   /* ----------------------- rodada de teste da caneta ----------------------- */
   const PEN_ICON = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M11.3 1.8l2.9 2.9-8.3 8.3-3.6.7.7-3.6z M9.8 3.3l2.9 2.9" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>`;
-  const INPUT_LABEL = { pen: "CANETA DETECTADA ✓", touch: "TOQUE DETECTADO ✓", mouse: "PONTEIRO DETECTADO ✓" };
+  /* Muitas TVs interativas (ex.: Samsung Flip, caneta passiva) enviam a caneta ao computador
+     como TOQUE ou até como MOUSE: tudo funciona igual, só o rótulo muda. */
+  const INPUT_LABEL = { pen: "CANETA DETECTADA ✓", touch: "CANETA/TOQUE DETECTADO ✓", mouse: "PONTEIRO DETECTADO ✓" };
   function detectText() { return input.session ? INPUT_LABEL[input.session] || INPUT_LABEL.touch : "Toque em INICIAR TESTE com a caneta"; }
   /* cartão inicial "TESTE DA CANETA" (pausa/descarta a partida em andamento) */
   function openTest() {
@@ -7151,7 +7175,8 @@ const AlvoModule = (() => {
         `<ol class="at-steps"><li><b>1</b>Arraste o lançador</li><li><b>2</b>Ajuste a mira</li><li><b>3</b>Ajuste a velocidade</li><li><b>4</b>Toque em DISPARAR</li></ol>` +
         det +
         `<div class="at-actions"><button class="btn lg primary-traj cta" data-act="start">INICIAR TESTE</button></div>` +
-        `<button class="at-skip" data-act="skip">pular o teste e ir direto ao desafio</button>`;
+        `<div class="at-links"><button class="at-skip" data-act="skip">pular o teste e ir direto ao desafio</button>` +
+        `<button class="at-skip" data-act="diag">a caneta não responde?</button></div>`;
     } else {
       wrap.classList.add("at-top");
       el.className = "ovl alvo-test done";
@@ -7177,8 +7202,8 @@ const AlvoModule = (() => {
       b.textContent = detectText();
       b.classList.toggle("pending", !input.session);
     } else {
-      b.hidden = !input.pen;
-      b.textContent = "CANETA ATIVA";
+      b.hidden = !input.pen && !input.touch;
+      b.textContent = input.pen ? "CANETA ATIVA" : "CANETA/TOQUE ATIVO";
       b.classList.remove("pending");
     }
     const d = $("alvoTestDetect");
@@ -7189,6 +7214,7 @@ const AlvoModule = (() => {
     const type = e.pointerType || "mouse";
     input.last = type;
     if (type === "pen") input.pen = true;
+    if (type === "touch") input.touch = true;
     if (mode === "test") input.session = type;
     const sec = $("step-alvo");
     sec.dataset.input = type;
@@ -7870,9 +7896,9 @@ const AlvoModule = (() => {
   }
   function wirePointer() {
     canvas.style.touchAction = "none";
-    canvas.addEventListener("pointerdown", (e) => {
+    const onDown = (e) => {
       const type = e.pointerType || "mouse";
-      if (type === "mouse" && e.button !== 0) return;
+      if (type === "mouse" && e.button > 0) return;   // só botão principal (alguns drivers mandam -1/undefined)
       if (drag) return;                              // outro dedo/caneta já está controlando algo
       const p = localPoint(e);
       const hit = pick(p, type);
@@ -7901,11 +7927,11 @@ const AlvoModule = (() => {
       grab = { kind: hit.kind, angleOnly: !!hit.angleOnly, k: Utils.prefersReducedMotion() ? 1 : 0.15 };
       hideIntro();
       markHint(hit.kind, hit.angleOnly);
-      try { canvas.setPointerCapture(e.pointerId); } catch (err) { /* ok: segue sem captura */ }
+      if (e.capture) e.capture();
       setHover(hit.kind);
       draw();
-    });
-    canvas.addEventListener("pointermove", (e) => {
+    };
+    const onMove = (e) => {
       if (drag) {
         if (e.pointerId !== drag.pointerId) return;
         e.preventDefault();
@@ -7917,7 +7943,7 @@ const AlvoModule = (() => {
       const hit = pick(localPoint(e), type);
       const k = hit ? hit.kind : null;
       if (k !== hover) setHover(k);
-    });
+    };
     // fim do arraste: soltar, cancelar (gesto do sistema) ou perder a captura (hardware/navegador)
     const end = (e) => {
       if (!drag || (e && e.pointerId !== drag.pointerId)) return;
@@ -7927,16 +7953,97 @@ const AlvoModule = (() => {
       if (Utils.prefersReducedMotion()) grab = null;
       draw();
     };
-    canvas.addEventListener("pointerup", end);
-    canvas.addEventListener("pointercancel", end);
-    canvas.addEventListener("lostpointercapture", end);
-    canvas.addEventListener("pointerleave", (e) => { if (!drag && hover && e.pointerType !== "touch") setHover(null); });
+
+    if (window.PointerEvent) {
+      // caminho normal: Pointer Events unificam mouse, caneta e toque
+      canvas.addEventListener("pointerdown", (e) => {
+        e.capture = () => { try { canvas.setPointerCapture(e.pointerId); } catch (err) { /* ok: segue sem captura */ } };
+        onDown(e);
+      });
+      canvas.addEventListener("pointermove", onMove);
+      canvas.addEventListener("pointerup", end);
+      canvas.addEventListener("pointercancel", end);
+      canvas.addEventListener("lostpointercapture", end);
+      canvas.addEventListener("pointerleave", (e) => { if (!drag && hover && e.pointerType !== "touch") setHover(null); });
+    } else {
+      // navegador antigo sem Pointer Events (ex.: navegador embutido de algumas TVs):
+      // toque e mouse traduzidos para o MESMO caminho; só um dos dois é ligado por vez
+      const fromTouch = (e, t) => ({ clientX: t.clientX, clientY: t.clientY, pointerType: "touch", pointerId: "t" + t.identifier, button: 0, preventDefault: () => e.preventDefault() });
+      const fromMouse = (e) => ({ clientX: e.clientX, clientY: e.clientY, pointerType: "mouse", pointerId: "m", button: e.button, preventDefault: () => e.preventDefault() });
+      canvas.addEventListener("touchstart", (e) => { e.preventDefault(); onDown(fromTouch(e, e.changedTouches[0])); }, { passive: false });
+      canvas.addEventListener("touchmove", (e) => {
+        e.preventDefault();
+        for (let i = 0; i < e.changedTouches.length; i++) onMove(fromTouch(e, e.changedTouches[i]));
+      }, { passive: false });
+      const tEnd = (e) => { for (let i = 0; i < e.changedTouches.length; i++) end({ pointerId: "t" + e.changedTouches[i].identifier }); };
+      canvas.addEventListener("touchend", tEnd);
+      canvas.addEventListener("touchcancel", tEnd);
+      canvas.addEventListener("mousedown", (e) => onDown(fromMouse(e)));
+      window.addEventListener("mousemove", (e) => { if (drag || entered) onMove(fromMouse(e)); });
+      window.addEventListener("mouseup", () => end({ pointerId: "m" }));
+    }
     // nada de menu de contexto (toque longo) nem arrastar nativo dentro do simulador
     const stage = $("alvoStage");
     stage.addEventListener("contextmenu", (e) => e.preventDefault());
     stage.addEventListener("dragstart", (e) => e.preventDefault());
     document.querySelectorAll("#step-alvo .alvo-controls, #step-alvo .alvo-actions").forEach(el =>
       el.addEventListener("contextmenu", (e) => e.preventDefault()));
+  }
+
+  /* ---------------- diagnóstico de entrada (para configurar a TV no estande) ----------------
+     Mostra o que o NAVEGADOR realmente recebe: sem nenhum evento, o problema está no
+     cabo/Windows; com "touch" ou "mouse", a TV está mandando a caneta assim. */
+  const diag = { on: false, counts: { pointer: 0, touch: 0, mouse: 0 }, last: null, raf: 0 };
+  function diagRecord(e) {
+    const k = e.type.indexOf("pointer") === 0 ? "pointer" : e.type.indexOf("touch") === 0 ? "touch" : "mouse";
+    if (k === "touch") diag.touchAt = Date.now();
+    else if (k === "mouse" && Date.now() - (diag.touchAt || 0) < 800) return;   // "mouse" falso gerado pelo toque
+    if (/down|start/.test(e.type)) diag.counts[k]++;
+    if (k === "pointer") {
+      diag.last = { type: e.type, pointerType: e.pointerType || "(vazio)", id: e.pointerId, primary: e.isPrimary,
+        button: e.button, buttons: e.buttons, pressure: e.pressure, w: e.width, h: e.height, tiltX: e.tiltX, tiltY: e.tiltY };
+    } else if (!window.PointerEvent || !diag.last) {
+      diag.last = { type: e.type, pointerType: k === "touch" ? "touch (evento legado)" : "mouse (evento legado)" };
+    }
+    if (diag.on && !diag.raf) diag.raf = requestAnimationFrame(() => { diag.raf = 0; renderDiag(); });
+  }
+  function diagVerdict() {
+    const c = diag.counts, l = diag.last;
+    if (!c.pointer && !c.touch && !c.mouse) return "Nenhum toque chegou ao navegador ainda. Toque nesta caixa com a caneta.";
+    if (!l) return "";
+    const pt = String(l.pointerType);
+    if (pt === "pen") return "A caneta chega como CANETA. Tudo certo.";
+    if (pt.indexOf("touch") === 0) return "A TV envia a caneta como TOQUE (normal em caneta passiva). Funciona igual: a área de captura já é a maior.";
+    if (pt.indexOf("mouse") === 0 && navigator.maxTouchPoints === 0)
+      return "O Windows não vê uma tela touch: a TV está agindo como MOUSE (ou o cabo USB de toque não está ligado). Funciona com um ponto só.";
+    if (pt.indexOf("mouse") === 0) return "Este toque chegou como MOUSE. Se foi a caneta, a TV está em modo mouse; funciona, mas com um ponto só.";
+    return "";
+  }
+  function renderDiag() {
+    const el = $("alvoDiag");
+    if (!el || el.hidden) return;
+    const l = diag.last || {}, c = diag.counts;
+    const f = (v, d) => (typeof v === "number" ? fmt(v, d) : v === undefined ? "—" : String(v));
+    const rows = [
+      ["Pointer Events", window.PointerEvent ? "sim" : "NÃO (modo compatível)"],
+      ["pontos de toque (Windows)", String(navigator.maxTouchPoints || 0)],
+      ["tela", `${window.innerWidth}×${window.innerHeight} · escala ${fmt(window.devicePixelRatio || 1, 2)}`],
+      ["toques recebidos", `pointer ${c.pointer} · touch ${c.touch} · mouse ${c.mouse}`],
+      ["último evento", l.type || "—"],
+      ["pointerType", l.pointerType || "—"],
+      ["botão / buttons", l.type ? `${f(l.button, 0)} / ${f(l.buttons, 0)}` : "—"],
+      ["pressão", f(l.pressure, 2)],
+      ["contato (px)", l.w !== undefined ? `${fmt(l.w, 1)} × ${fmt(l.h, 1)}` : "—"],
+      ["inclinação", l.tiltX !== undefined ? `${f(l.tiltX, 0)}° / ${f(l.tiltY, 0)}°` : "—"]
+    ];
+    el.querySelector(".ad-grid").innerHTML = rows.map(([k, v]) => `<span>${k}</span><b>${v}</b>`).join("");
+    el.querySelector(".ad-verdict").textContent = diagVerdict();
+  }
+  function toggleDiag(force) {
+    const el = $("alvoDiag");
+    diag.on = typeof force === "boolean" ? force : el.hidden;
+    el.hidden = !diag.on;
+    renderDiag();
   }
   function syncTargetSliders() {
     const sx = $("sldAlvoTX"), sy = $("sldAlvoTY");
@@ -8031,11 +8138,26 @@ const AlvoModule = (() => {
       const b = e.target.closest("[data-act]");
       if (!b) return;
       const act = b.dataset.act;
+      if (act === "diag") { toggleDiag(true); return; }
       if (act === "start" || act === "retry") startTest();
       else if (act === "official" || act === "skip") startOfficial();
     });
     // tipo de ponteiro: escuta em toda a etapa (fase de captura), sem impedir nada
-    $("step-alvo").addEventListener("pointerdown", noteInput, true);
+    if (window.PointerEvent) $("step-alvo").addEventListener("pointerdown", noteInput, true);
+    else {
+      let lastTouch = 0;   // sem Pointer Events: o toque gera um "mouse" falso logo depois; ignora
+      $("step-alvo").addEventListener("touchstart", () => { lastTouch = Date.now(); noteInput({ pointerType: "touch" }); }, { capture: true, passive: true });
+      $("step-alvo").addEventListener("mousedown", () => { if (Date.now() - lastTouch > 800) noteInput({ pointerType: "mouse" }); }, true);
+    }
+    // diagnóstico: registra o que chega (sem bloquear nada); abre pelo link do cartão ou tecla D
+    ["pointerdown", "pointermove", "touchstart", "mousedown"].forEach(t =>
+      document.addEventListener(t, (e) => { if (entered && (t !== "pointermove" || diag.on)) diagRecord(e); }, { capture: true, passive: true }));
+    $("alvoDiag").addEventListener("click", (e) => { if (e.target.closest("[data-diag-close]")) toggleDiag(false); });
+    document.addEventListener("keydown", (e) => {
+      if (!entered || e.ctrlKey || e.metaKey || e.altKey || Utils.isEditableTarget(document.activeElement)) return;
+      if (e.key === "d" || e.key === "D") toggleDiag();
+      else if (e.key === "Escape" && diag.on) toggleDiag(false);
+    });
     // tela touch: áreas de toque maiores desde o início (não muda o layout; mouse continua igual)
     if (navigator.maxTouchPoints > 0) $("step-alvo").classList.add("touch-mode");
     $("btnAlvoShuffle").addEventListener("click", () => { manualTarget = false; newGame(); });
@@ -8065,7 +8187,7 @@ const AlvoModule = (() => {
       if (testArmed && mode === "official" && state === "ready" && !flight && shots.length === 0) openTest();
       startLoop(); fit();
     });
-    StepManager.onLeave("alvo", () => { entered = false; stopLoop(); if (drag) { drag = null; grab = null; } });
+    StepManager.onLeave("alvo", () => { entered = false; stopLoop(); if (drag) { drag = null; grab = null; } toggleDiag(false); });
     // Espaço = ação principal (iniciar teste · disparar · começar desafio) · R = recomeça o teste ou nova partida
     StepManager.registerActiveSim("alvo", {
       toggle: primaryAction,
