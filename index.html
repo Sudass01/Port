@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Além do Visível — localizar, prever, classificar, abastecer e descobrir com matemática</title>
-<meta name="description" content="Apresentação interativa do grupo de Matemática para o SESI Day: localizar, prever, classificar, abastecer e descobrir com matemática." />
+<title>Além do Visível — localizar, prever, planejar, abastecer e descobrir com matemática</title>
+<meta name="description" content="Apresentação interativa do grupo de Matemática para o SESI Day: localizar, prever, planejar, abastecer e descobrir com matemática." />
 <!-- Fontes: Space Grotesk (títulos) + Inter (interface) + IBM Plex Mono (números).
      Sem internet, os fallbacks definidos no CSS assumem; nada deixa de funcionar. -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -20,7 +20,7 @@
      Carregadas do Google Fonts quando há internet; sem internet, os
      fallbacks do sistema mantêm a interface bonita e 100% funcional.
    · cores de capítulo: LOCALIZAR verde · PREVER âmbar
-     · CLASSIFICAR violeta · DESCOBRIR azul profundo/branco/violeta
+     · PLANEJAR violeta · DESCOBRIR azul profundo/branco/violeta
    · --sesi: vermelho institucional, usado só como detalhe
    · --ch: cor do capítulo atual (definida em #app[data-ch])
    =================================================================== */
@@ -54,9 +54,6 @@
   --desc-deep: #0b1433;
   --sup: #d6c08a;
   --sup-soft: rgba(214, 192, 138, 0.28);
-  --gA: #5ec8f8;
-  --gB: #b79cff;
-  --gC: #e58fd0;
   --c30: #5ec8f8;
   --c45: #f0a13f;
   --c60: #e58fd0;
@@ -506,7 +503,6 @@ kbd{
 .corner-tick.br{ bottom:8px; right:8px; border-bottom:1px solid; border-right:1px solid; }
 #radarStage .corner-tick{ border-color: var(--radar-soft); }
 #trajStage .corner-tick{ border-color: var(--traj-soft); }
-#sortStage .corner-tick{ border-color: var(--cls-soft); }
 #bhStage .corner-tick{ border-color: var(--desc-glow); }
 /* scanlines quase invisíveis nas telas "de máquina" */
 .radar-main::after{
@@ -915,76 +911,153 @@ details.adv[open]{ padding-bottom:10px; }
 .compare-table td.a{ color: var(--radar); }
 .compare-table td.b{ color: var(--traj); }
 
-/* ===================== ETAPA 5 — SEPARAÇÃO (CLASSIFICAR) ===================== */
-#sortStage{ display:flex; flex-direction:column; }
-.sort-main{ position:relative; flex: 1 1 auto; min-height:0; }
-.sort-main canvas{ display:block; width:100%; height:100%; }
-.sort-pipe{
-  position:absolute; z-index:2; top:12px; left:14px;
-  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
-  font-family: var(--font-mono); font-weight:700; letter-spacing:.1em;
-  font-size: clamp(.86rem, 1.35vw, 1.12rem);
-  pointer-events:none;
+/* ===================== ETAPA 3 — LOGÍSTICA DE ALIMENTOS (PLANEJAR) ===================== */
+/* Q = S × C × D. Os cartões começam apagados e acendem em sequência durante o cálculo;
+   o grande momento é a conversão para toneladas. Cor do capítulo: violeta (--cls). */
+#logStage{
+  display:flex; flex-direction:column; gap: clamp(8px, 1.4vh, 14px);
+  padding: 14px clamp(14px, 1.6vw, 22px) 26px;
+  background: radial-gradient(ellipse at 70% 85%, rgba(183,156,255,.07), transparent 60%), linear-gradient(180deg, rgba(255,255,255,.018), transparent 40%), var(--bg-1);
 }
-.sort-pipe span{
-  color: var(--text-dim); padding: 3px 8px; border:1px solid var(--line-strong); border-radius: var(--r-xs);
-  background: rgba(6,10,19,.65);
-  transition: color .25s var(--ease), border-color .25s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease);
+#logStage .corner-tick{ border-color: var(--cls-soft); }
+.log-cap{ display:flex; align-items:baseline; gap: 10px 16px; flex-wrap:wrap; margin-bottom:2px; }
+.lc-k{ font-family: var(--font-mono); font-size:.64rem; letter-spacing:.2em; color: var(--cls); }
+.lc-f{ font-family: var(--font-mono); font-size: clamp(.9rem, 1.2vw, 1.1rem); font-weight:600; color: var(--text); letter-spacing:.04em; }
+.lc-f i{ font-style:normal; color: var(--cls); }
+.lc-live{
+  margin-left:auto; font-family: var(--font-mono); font-size: clamp(.8rem, 1.05vw, 1rem); color: var(--text-dim);
+  padding: 4px 10px; border:1px solid var(--line-strong); border-radius: var(--r-sm); background: rgba(6,10,19,.6);
+  font-variant-numeric: tabular-nums; transition: color .3s var(--ease), border-color .3s var(--ease);
 }
-.sort-pipe i{ font-style:normal; color: var(--text-dimmer); }
-.sort-pipe span.on{ color: var(--text); border-color: var(--cls); background: rgba(183,156,255,.14); box-shadow: 0 0 14px var(--cls-soft); }
-.sort-pipe span.done{ color: var(--cls); border-color: var(--cls-soft); }
-.ovl.sort-read{ top:12px; right:12px; width: 238px; }
-.sr-food{ font-family: var(--font-display); font-size:1.05rem; font-weight:600; color: var(--text); margin-bottom:2px; }
-.sr-food small{ font-size:.7rem; font-weight:400; color: var(--text-dimmer); margin-left:6px; font-family: var(--font-mono); }
-.sr-cmp{ margin-top:7px; padding-top:6px; border-top:1px dashed var(--line-strong); font-family: var(--font-mono); font-size:.86rem; color: var(--text); min-height: 1.5em; }
-.sr-cmp b{ font-weight:700; }
-.sr-idle{ font-size:.76rem; color: var(--text-dimmer); }
-.ovl.sort-q{
-  top: 54px; left: 25%; width: min(370px, 42%);
-  border-color: var(--cls); box-shadow: 0 0 0 3px var(--cls-soft), 0 10px 24px rgba(0,0,0,.4);
-  text-align:center; animation: feedbackPop .4s var(--ease) both;
+#logStage[data-phase="run"] .lc-live, #logStage[data-phase="done"] .lc-live{ color: var(--text); border-color: var(--cls-soft); }
+.log-board{ flex: 1 1 auto; min-height:0; display:flex; flex-direction:column; gap: clamp(8px, 1.6vh, 16px); justify-content:center; }
+.log-row{ position:relative; display:grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1.1fr); align-items:stretch; gap: clamp(6px, .9vw, 12px); padding-top:14px; }
+.lr-tag{ position:absolute; top:0; left:2px; font-family: var(--font-mono); font-size:.58rem; letter-spacing:.2em; color: var(--text-dimmer); }
+.lnode{
+  position:relative; display:flex; flex-direction:column; align-items:flex-start; gap:4px; min-width:0;
+  padding: clamp(8px, 1.1vh, 12px) clamp(10px, 1vw, 14px);
+  border:1px solid var(--line-strong); border-radius: var(--r-sm);
+  background: linear-gradient(180deg, rgba(12,19,34,.9), rgba(7,12,22,.85));
+  box-shadow: var(--inner-hi);
+  opacity:.42; filter: saturate(.4);
+  transition: opacity .45s var(--ease), filter .45s var(--ease), border-color .45s var(--ease), box-shadow .45s var(--ease), transform .45s var(--ease-out);
 }
-.sort-q .qt{ font-size:.7rem; color: var(--cls); font-weight:600; letter-spacing:.04em; }
-.sort-q .qm{ font-size: 1.05rem; font-weight:650; margin: 4px 0; }
-.sort-q .qr{ font-family: var(--font-mono); font-size:.8rem; color: var(--text-dim); }
-.rule-box{ display:flex; flex-direction:column; gap:4px; }
-.rule-line{
-  display:grid; grid-template-columns: 26px 1fr auto; align-items:center; gap:8px;
-  padding: 5px 8px; border:1px solid var(--line); border-radius: var(--radius);
-  font-family: var(--font-mono); font-size: .96rem; color: var(--text);
-  transition: border-color .25s var(--ease), background .25s var(--ease), box-shadow .25s var(--ease);
+.lnode::before{ content:""; position:absolute; left:-1px; top:-1px; width:10px; height:10px; border-left:1px solid var(--cls); border-top:1px solid var(--cls); opacity:0; transition: opacity .45s var(--ease); }
+.lnode.on{ opacity:1; filter:none; border-color: var(--cls-soft); }
+.lnode.on::before{ opacity:1; }
+.lnode.focus{ border-color: var(--cls); box-shadow: var(--inner-hi), 0 0 0 3px var(--cls-soft), 0 0 26px -6px var(--cls-soft); transform: translateY(-2px); }
+.lnode.res.on{ background: linear-gradient(180deg, rgba(183,156,255,.10), rgba(7,12,22,.85)); }
+.lnode.ghost{ align-self:center; }
+.ln-k{ font-family: var(--font-mono); font-size: clamp(.58rem, .78vw, .7rem); letter-spacing:.16em; color: var(--text-dim); }
+.ln-k b{ display:inline-block; min-width:1.4em; color: var(--cls); font-weight:700; }
+.ln-v{ display:flex; align-items:baseline; gap:6px; line-height:1; }
+.ln-v b{ font-family: var(--font-display); font-weight:700; font-size: clamp(1.5rem, min(2.7vw, 4.6vh), 2.6rem); color: var(--text); font-variant-numeric: tabular-nums; letter-spacing:.01em; }
+.lnode.res .ln-v b{ color: #d9cbff; }
+.ln-v small{ font-family: var(--font-mono); font-size: clamp(.72rem, .95vw, .9rem); color: var(--text-dim); }
+.ln-u{ font-family: var(--font-mono); font-size: clamp(.58rem, .74vw, .68rem); letter-spacing:.06em; color: var(--text-dimmer); margin-top:auto; }
+.lop{
+  align-self:center; font-family: var(--font-mono); font-size: clamp(1.3rem, 2vw, 1.9rem); font-weight:600;
+  color: var(--text-dimmer); transition: color .35s var(--ease), text-shadow .35s var(--ease), transform .35s var(--ease-out);
 }
-.rule-line .rg{
-  width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-  font-weight:700; font-size:.82rem; color:#0a0f1e; background: var(--gc);
+.lop.on{ color: var(--cls); text-shadow: 0 0 16px var(--cls-soft); transform: scale(1.15); }
+/* soldados: cada ícone representa um grupo de soldados */
+.troops{ display:grid; grid-template-columns: repeat(10, auto); gap: 3px 5px; justify-content:start; margin: 3px 0 2px; }
+.troops i{ position:relative; width:8px; height:12px; opacity:.28; transition: opacity .3s var(--ease) var(--d, 0s); }
+.troops i::before{ content:""; position:absolute; left:2px; top:0; width:4px; height:4px; border-radius:50%; background: currentColor; }
+.troops i::after{ content:""; position:absolute; left:0; top:5px; width:8px; height:7px; border-radius: 3px 3px 1px 1px; background: currentColor; }
+.troops{ color: var(--text-dimmer); }
+.lnode.on .troops{ color: #cbbcff; }
+.troops i.lit{ opacity:1; }
+/* ração (caixa) */
+.ration{ width: clamp(46px, 4.4vw, 64px); height:auto; margin: 4px 0 2px; fill: rgba(183,156,255,.08); stroke: var(--text-dimmer); stroke-width:1.4; stroke-linejoin:round; transition: stroke .45s var(--ease), fill .45s var(--ease); }
+.lnode.on .ration{ stroke: var(--cls); fill: rgba(183,156,255,.16); }
+/* blocos de 100 kg (por dia) e estoque (dias × blocos) */
+.blocks{ display:flex; flex-wrap:wrap; gap:4px; margin: 4px 0 2px; max-width: 100%; }
+.blocks i, .stock i{
+  display:block; width: clamp(9px, min(1vw, 1.7vh), 14px); height: clamp(9px, min(1vw, 1.7vh), 14px); border-radius:2px;
+  border:1px solid var(--line-strong); background: rgba(255,255,255,.02);
+  transition: background .25s var(--ease) var(--d, 0s), border-color .25s var(--ease) var(--d, 0s), box-shadow .25s var(--ease) var(--d, 0s);
 }
-.rule-line .rn{ font-family: var(--font-sans); font-size:.72rem; color: var(--text-dimmer); }
-.rule-line[data-g="A"]{ --gc: var(--gA); }
-.rule-line[data-g="B"]{ --gc: var(--gB); }
-.rule-line[data-g="C"]{ --gc: var(--gC); }
-.rule-line.hit{ border-color: var(--gc); background: rgba(255,255,255,.05); box-shadow: 0 0 12px rgba(183,156,255,.25); }
-.pipe-small{ font-family: var(--font-mono); font-size:.72rem; color: var(--cls); letter-spacing:.06em; }
-.sort-stats{ display:flex; flex-direction:column; gap:5px; }
-.st-total{ display:flex; justify-content:space-between; align-items:baseline; font-size:.74rem; color: var(--text-dim); }
-.st-total b{ font-family: var(--font-mono); font-size:1.25rem; font-weight:600; color: var(--text); font-variant-numeric: tabular-nums; }
-.st-row{ display:grid; grid-template-columns: 64px 1fr 92px; align-items:center; gap:8px; font-size:.78rem; }
-.st-row .sl2{ color: var(--text-dim); }
-.st-row .sl2 b{ color: var(--gc); font-family: var(--font-mono); }
-.st-row[data-g="A"]{ --gc: var(--gA); }
-.st-row[data-g="B"]{ --gc: var(--gB); }
-.st-row[data-g="C"]{ --gc: var(--gC); }
-.st-bar{ height:10px; border-radius: var(--r-xs); background: repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 1px, transparent 1px 10%), rgba(255,255,255,.04); overflow:hidden; }
-.st-bar i{ display:block; height:100%; width:0; background: linear-gradient(90deg, rgba(255,255,255,.0), rgba(255,255,255,.25)), var(--gc); box-shadow: 0 0 8px var(--gc); transition: width .6s var(--ease-out); }
-.st-row .sv{ font-family: var(--font-mono); color: var(--text); text-align:right; white-space:nowrap; font-variant-numeric: tabular-nums; }
-.st-row .sv small{ color: var(--text-dimmer); }
-.st-extra{ font-family: var(--font-mono); font-size:.74rem; color: var(--text-dim); margin-top:2px; }
-.sort-table-wrap{ max-height: 190px; overflow:auto; }
-.sort-table td .gdot{ display:inline-block; width:18px; height:18px; line-height:18px; text-align:center; border-radius:50%; color:#0a0f1e; font-weight:700; font-size:.7rem; }
-.food-chips{ display:flex; flex-wrap:wrap; gap:5px; }
-.food-chips .chip{ font-family: var(--font-sans); }
-.crit-switch button[aria-pressed="true"]{ background: var(--cls-soft); }
-.qrule{ display:inline-block; margin-top:3px; font-family: var(--font-mono); font-size:.8rem; color: var(--text-dim); font-weight:400; }
+.blocks i.lit, .stock i.lit{ background: linear-gradient(180deg, #d4c4ff, #9d7ff0); border-color: transparent; box-shadow: 0 0 6px var(--cls-soft); }
+.blocks i.part, .stock i.part{ background: linear-gradient(0deg, #b79cff var(--f, 50%), rgba(255,255,255,.03) var(--f, 50%)); border-color: var(--cls-soft); }
+.days{ display:flex; flex-wrap:wrap; gap:4px; margin: 4px 0 2px; }
+.days i{
+  min-width: clamp(20px, 2vw, 28px); height: clamp(18px, 1.9vw, 24px); padding: 0 3px; border-radius:3px;
+  display:inline-flex; align-items:center; justify-content:center;
+  font-style:normal; font-family: var(--font-mono); font-size: clamp(.56rem, .72vw, .66rem); color: var(--text-dimmer);
+  border:1px solid var(--line-strong);
+  transition: color .25s var(--ease) var(--d, 0s), border-color .25s var(--ease) var(--d, 0s), background .25s var(--ease) var(--d, 0s);
+}
+.days i.lit{ color: var(--text); border-color: var(--cls); background: rgba(183,156,255,.14); }
+.days.dense i{ min-width:8px; width:8px; padding:0; font-size:0; }
+.stock{ display:flex; align-items:flex-end; gap: 4px; margin: 4px 0 2px; min-height: 20px; flex-wrap:nowrap; max-width:100%; overflow:hidden; }
+.stock .col{ display:flex; flex-direction:column-reverse; gap:3px; }
+.stock.dense{ gap:2px; }
+.stock.dense i{ width:6px; height:6px; border-radius:1px; }
+.stock.dense .col{ gap:2px; }
+/* o grande momento: toneladas */
+.log-hero{
+  position:relative; display:flex; align-items:center; justify-content:center; gap: 10px clamp(14px, 2vw, 28px); flex-wrap:wrap;
+  padding: clamp(10px, 1.8vh, 18px) 16px; border-radius: var(--r-md);
+  border:1px dashed var(--line-strong); background: rgba(6,10,19,.5);
+  opacity:.35; transition: opacity .5s var(--ease), border-color .5s var(--ease), box-shadow .6s var(--ease), background .6s var(--ease);
+}
+.log-hero.on{
+  opacity:1; border-style:solid; border-color: var(--cls);
+  background: radial-gradient(ellipse at 50% 50%, rgba(183,156,255,.16), rgba(6,10,19,.7) 70%);
+  box-shadow: 0 0 0 3px var(--cls-soft), 0 0 60px -12px var(--cls-soft);
+}
+.lh-conv{ display:flex; align-items:center; gap:10px; font-family: var(--font-mono); font-size: clamp(.95rem, 1.5vw, 1.35rem); color: var(--text-dim); font-variant-numeric: tabular-nums; }
+.lh-eq{ color: var(--cls); font-size:1.3em; }
+.lh-big{ display:flex; align-items:baseline; gap: 12px; }
+.lh-big b{
+  font-family: var(--font-display); font-weight:700; line-height:.95; letter-spacing:-.01em;
+  font-size: clamp(2.8rem, min(6.2vw, 10vh), 5.8rem); color: var(--text); font-variant-numeric: tabular-nums;
+}
+.log-hero.on .lh-big b{ color:#fff; text-shadow: 0 0 34px rgba(183,156,255,.65); }
+.lh-big span{ font-family: var(--font-display); font-weight:700; font-size: clamp(1.1rem, 2.1vw, 1.9rem); letter-spacing:.14em; color: var(--cls); }
+.lh-sub{ flex-basis:100%; text-align:center; font-size: clamp(.78rem, 1vw, .92rem); color: var(--text-dim); }
+.log-hero.pop .lh-big{ animation: logPop .7s var(--ease-out); }
+@keyframes logPop{ 0%{ transform: scale(.82); opacity:.2; } 60%{ transform: scale(1.06); opacity:1; } 100%{ transform:none; } }
+.log-model{ position:absolute; z-index:2; left:14px; bottom:8px; font-family: var(--font-mono); font-size:.58rem; letter-spacing:.12em; color: var(--text-dimmer); pointer-events:none; }
+/* painel */
+.log-lead{ font-size:.86rem; }
+.log-formula{ margin-top:7px; font-size:1.05rem; }
+.log-formula .dim{ font-size:.72rem; }
+.log-done{
+  margin-top:8px; padding: 8px 10px; border-left:2px solid var(--cls); border-radius: var(--r-xs);
+  background: rgba(183,156,255,.08); display:flex; flex-direction:column; gap:2px;
+  animation: feedbackPop .4s var(--ease-out) both;
+}
+.log-done[hidden]{ display:none; }
+.log-done b{ font-family: var(--font-mono); font-size:.84rem; color: var(--text); font-weight:600; }
+.log-done span{ font-size:.82rem; color: var(--cls); }
+.log-readout .v b{ color: var(--cls); }
+/* TV Full HD / 4K: cartões e números maiores para leitura à distância */
+@media (min-width: 1600px) and (min-height: 950px){
+  #logStage .log-board{ gap: 24px; }
+  #logStage .lnode{ padding: 14px 18px; gap:6px; }
+  .ln-v b{ font-size: 3.2rem; }
+  .ln-v small{ font-size: 1rem; }
+  .ln-k{ font-size: .78rem; }
+  .ln-u{ font-size: .74rem; }
+  .lop{ font-size: 2.3rem; }
+  .troops{ gap: 4px 6px; }
+  .troops i{ width:11px; height:16px; }
+  .troops i::before{ left:3px; width:5px; height:5px; }
+  .troops i::after{ top:6px; width:11px; height:10px; }
+  .blocks i, .stock i{ width:17px; height:17px; }
+  .days i{ min-width:34px; height:28px; font-size:.74rem; }
+  .ration{ width:76px; }
+  .lh-big b{ font-size: 7rem; }
+  .lh-big span{ font-size: 2.3rem; }
+  .lh-conv{ font-size: 1.5rem; }
+  .lh-sub{ font-size: 1.05rem; }
+  #logStage .log-hero{ padding: 20px 18px; }
+}
+
+/* tabela com rolagem (usada no Desafio do alvo) */
+.res-table-wrap{ max-height: 190px; overflow:auto; }
 
 /* ===================== ETAPA 6 — 1ª GUERRA: DISTRIBUIÇÃO DE SUPRIMENTOS (ABASTECER) ===================== */
 .chapter.sup{ color: var(--sup); box-shadow: 0 0 14px var(--sup-soft); }
@@ -1464,11 +1537,6 @@ select.sel{
   .pillar{ padding: 10px 12px 10px; gap:6px; }
   .p-ico{ width:28px; height:28px; }
   .pillar-ex{ font-size:.72rem; padding-top:5px; }
-  .rule-line{ padding: 3px 8px; font-size:.9rem; }
-  .rule-line .rg{ width:21px; height:21px; font-size:.76rem; }
-  .ovl.sort-read{ width: 220px; }
-  .sort-q .qm{ font-size:.98rem; }
-  .st-row{ font-size:.74rem; }
   .bh-left{ right: 305px; gap:8px; }
   .bh-node{ font-size:.68rem; padding: 3px 8px; }
   .ovl.bh-calc{ width: 280px; }
@@ -1479,25 +1547,22 @@ select.sel{
   #step-schwarzschild .lead{ font-size:.78rem !important; line-height:1.42; }
   [data-mode="presentation"] #step-schwarzschild .group{ padding: 6px 10px; }
   [data-mode="presentation"] #step-schwarzschild .bh-legend{ line-height:1.4; }
-  /* separação no modo apresentação: tudo cabe sem rolagem, mesmo com a resposta aberta */
-  [data-mode="presentation"] #step-separacao .panel{ gap:4px; }
-  [data-mode="presentation"] #step-separacao .group{ padding: 5px 10px; }
-  [data-mode="presentation"] #step-separacao .qcard{ padding: 6px 10px; }
-  [data-mode="presentation"] #step-separacao .st-row, [data-mode="presentation"] #step-separacao .st-total{ line-height:1.25; }
-  [data-mode="presentation"] #step-separacao .group > h3{ margin-bottom:3px; }
-  [data-mode="presentation"] #step-separacao .rule-box{ gap:3px; }
-  [data-mode="presentation"] #step-separacao .rule-line{ padding: 1px 8px; }
-  [data-mode="presentation"] #step-separacao .note{ font-size:.68rem; line-height:1.35; }
-  [data-mode="presentation"] #step-separacao .btn.lg{ padding: 8px 12px; }
-  [data-mode="presentation"] #step-separacao .qtext{ margin: 4px 0 6px; }
-  [data-mode="presentation"] #step-separacao .qopt{ padding: 6px 11px; }
-  [data-mode="presentation"] #step-separacao .qfeedback{ font-size:.76rem; line-height:1.34; margin-top:5px; }
-  [data-mode="presentation"] #step-separacao .sort-stats{ gap:2px; }
-  [data-mode="presentation"] #step-separacao .st-total b{ font-size:1.1rem; }
-  [data-mode="presentation"] #step-separacao .rule-line .rg{ width:18px; height:18px; font-size:.7rem; }
-  [data-mode="presentation"] #step-separacao .rule-line{ font-size:.88rem; }
-  [data-mode="presentation"] #step-separacao .qactions{ margin-top:6px; }
-  [data-mode="presentation"] #step-separacao .st-bar{ height:8px; }
+  /* logística no modo apresentação: tudo cabe sem rolagem, mesmo com a pergunta aberta */
+  [data-mode="presentation"] #step-logistica .panel{ gap:5px; }
+  [data-mode="presentation"] #step-logistica .group{ padding: 6px 10px; }
+  [data-mode="presentation"] #step-logistica .qcard{ padding: 6px 10px; }
+  [data-mode="presentation"] #step-logistica .qtext{ margin: 4px 0 6px; font-size:.84rem; }
+  [data-mode="presentation"] #step-logistica .qopt{ padding: 6px 10px; }
+  [data-mode="presentation"] #step-logistica .qfeedback{ font-size:.78rem; line-height:1.35; margin-top:5px; }
+  [data-mode="presentation"] #step-logistica .qactions{ margin-top:6px; }
+  [data-mode="presentation"] #step-logistica .btn.lg{ padding: 8px 12px; }
+  [data-mode="presentation"] #step-logistica .log-formula{ font-size:.96rem; padding: 6px 10px; line-height:1.5; }
+  [data-mode="presentation"] #step-logistica .log-lead{ font-size:.8rem; line-height:1.4; }
+  #logStage{ gap:6px; padding-top:10px; padding-bottom:24px; }
+  #logStage .log-board{ gap:8px; }
+  #logStage .lnode{ padding: 6px 10px; gap:3px; }
+  #logStage .log-hero{ padding: 6px 14px; }
+  #logStage .troops i{ height:11px; }
   [data-mode="presentation"] #step-schwarzschild .btn.lg{ padding: 8px 12px; }
   [data-mode="presentation"] #step-schwarzschild .panel{ gap:5px; }
   [data-mode="presentation"] #step-abastecer .panel{ gap:5px; }
@@ -1519,7 +1584,6 @@ select.sel{
   .bh-info .bi-verdict{ font-size:.72rem; }
   .bh-formula{ font-size:1.12rem; padding: 3px 0; }
   .bh-legend{ font-size:.72rem; line-height:1.5; }
-  [data-mode="exploration"] .panel .rule-line{ padding:2px 8px; font-size:.82rem; }
   [data-mode="exploration"] .panel .chip{ padding:4px 7px; font-size:.72rem; }
   /* modo exploração: controles mais compactos (pode rolar se precisar) */
   [data-mode="exploration"] .panel .group{ padding:5px 10px; }
@@ -1575,17 +1639,19 @@ select.sel{
   .ovl.eq{ position:static; order:3; width:auto; margin: 8px; }
   .guide-panel{ grid-template-columns: 1fr; max-height:none; }
   .pillars{ grid-template-columns: 1fr; }
-  .sort-main, .bh-main{ flex: none; height:auto; }
-  .sort-main canvas{ height: 54vh; min-height: 340px; }
+  .bh-main{ flex: none; height:auto; }
+  .log-row{ grid-template-columns: 1fr; padding-top:16px; }
+  .lop{ justify-self:center; }
+  .lnode.ghost{ align-self:stretch; }
+  .lc-live{ margin-left:0; }
+  .log-model{ position:static; order:9; margin-top:4px; }
   .bh-main canvas{ height: 52vh; min-height: 320px; }
-  .sort-pipe{ position:static; padding: 10px 10px 0; }
-  .ovl.sort-read, .ovl.sort-q, .ovl.bh-calc, .ovl.bh-info{ position:static; width:auto; margin: 8px; transform:none; }
+  .ovl.bh-calc, .ovl.bh-info{ position:static; width:auto; margin: 8px; transform:none; }
   .bh-left{ position:static; padding: 10px 12px 0; }
   .bh-chain{ flex-direction:row; flex-wrap:wrap; align-items:center; }
   .bh-arrow{ padding-left:0; }
   .bh-scale{ position:static; display:block; margin: 0 8px 8px; }
-  .sort-main, .bh-main{ display:flex; flex-direction:column; }
-  .sort-pipe{ order:-1; }
+  .bh-main{ display:flex; flex-direction:column; }
   .bh-left{ order:-1; }
   #supStage{ display:flex; flex-direction:column; }
   #supCanvas{ height: min(60vh, 110vw); min-height: 340px; order:2; }
@@ -1628,8 +1694,10 @@ select.sel{
   .hero-q.in{ animation:none; }
   .pillar, .concl-statement, .concl-foot, .c5-w, .c5-a{ animation:none; opacity:1; }
   .ico-drop, .ico-ring{ animation:none; }
-  .sort-q, .bh-caption .cap1{ animation:none; }
-  .st-bar i, .sort-pipe span, .rule-line, .bh-node, .bh-arrow{ transition:none; }
+  .bh-caption .cap1{ animation:none; }
+  .bh-node, .bh-arrow{ transition:none; }
+  .lnode, .lop, .log-hero, .troops i, .blocks i, .stock i, .days i{ transition:none; }
+  .log-hero.pop .lh-big, .log-done{ animation:none; }
   .calc .cl, .calc .cs{ animation:none; opacity:1; }
   .ico-sweep, .ico-arc, .ico-blink{ animation:none; }
   .ico-arc{ stroke-dashoffset:0; }
@@ -1683,13 +1751,13 @@ select.sel{
       <li><span>1:55–2:15</span><span>Pergunta do radar</span></li>
       <li><span>2:15–3:45</span><span>Trajetória: parábola e 30° / 45° / 60°</span></li>
       <li><span>3:45–4:15</span><span>Perguntas 30° × 60°</span></li>
-      <li><span>4:15–5:25</span><span>Separação: medir → comparar → classificar</span></li>
+      <li><span>4:15–5:25</span><span>Logística: soldados × consumo × dias → suprimentos</span></li>
       <li><span>5:25–6:25</span><span>1ª Guerra: comida, água, cartuchos e suprimentos</span></li>
       <li><span>6:25–7:55</span><span>Schwarzschild: massa → rₛ = 2GM/c²</span></li>
       <li><span>7:55–8:35</span><span>Conclusão: Além do Visível</span></li>
       <li><span>livre</span><span>Desafio do alvo: visitantes (3 tentativas)</span></li>
     </ol>
-    <p class="note" style="margin-top:6px;">Se o tempo for mais curto, encurte a separação (poucos alimentos) e mostre só um preset em Schwarzschild.</p>
+    <p class="note" style="margin-top:6px;">Se o tempo for mais curto, pule a pergunta da logística e mostre só um preset em Schwarzschild.</p>
     <p class="note" style="margin-top:10px;">Os atalhos ficam desligados enquanto você digita em um campo ou mexe em um controle deslizante.</p>
   </div>
 
@@ -1707,15 +1775,15 @@ select.sel{
               <div class="triad">
                 <span class="tw loc intro-el" id="introW2" data-text="LOCALIZAR.">LOCALIZAR.</span>
                 <span class="tw prev intro-el" id="introW3" data-text="PREVER.">PREVER.</span>
-                <span class="tw cls intro-el" id="introW4" data-text="CLASSIFICAR.">CLASSIFICAR.</span>
+                <span class="tw cls intro-el" id="introW4" data-text="PLANEJAR.">PLANEJAR.</span>
                 <span class="tw sup intro-el" id="introW6" data-text="ABASTECER.">ABASTECER.</span>
                 <span class="tw desc intro-el" id="introW5" data-text="DESCOBRIR.">DESCOBRIR.</span>
               </div>
               <p class="hero-line intro-el" id="introLine">Cinco problemas diferentes. Uma linguagem em comum: a matemática.</p>
               <div class="hero-rule intro-el" id="introRule"></div>
               <h1 class="hero-title intro-el" id="introTitle">Além do Visível</h1>
-              <p class="hero-sub intro-el" id="introSub">A matemática por trás de radares, trajetórias, classificações, suprimentos e da gravidade.</p>
-              <p class="hero-q intro-el" id="introQ">Como a matemática transforma informações que não conseguimos ver diretamente em algo que podemos entender, localizar, prever, classificar, abastecer e até descobrir?</p>
+              <p class="hero-sub intro-el" id="introSub">A matemática por trás de radares, trajetórias, planejamento de alimentos, suprimentos e da gravidade.</p>
+              <p class="hero-q intro-el" id="introQ">Como a matemática transforma informações que não conseguimos ver diretamente em algo que podemos entender, localizar, prever, planejar, abastecer e até descobrir?</p>
               <div class="hero-actions intro-el" id="introCta">
                 <button class="hero-cta cta" id="btnStart">Começar</button>
                 <span class="hero-hint">ou pressione <kbd>►</kbd></span>
@@ -1729,7 +1797,7 @@ select.sel{
         <div class="guide-panel" hidden>
           <div><h4>Fala sugerida</h4>
             <p>"Oi, a gente é o grupo de Matemática e o nosso trabalho se chama Além do Visível."</p>
-            <p>"Olha essas cinco palavras: localizar, prever, classificar, abastecer e descobrir. São problemas bem diferentes, mas todos resolvidos com matemática."</p></div>
+            <p>"Olha essas cinco palavras: localizar, prever, planejar, abastecer e descobrir. São problemas bem diferentes, mas todos resolvidos com matemática."</p></div>
           <div><h4>Pergunta para o público</h4><p>"Vocês já pensaram em como um radar sabe onde está um avião que ninguém consegue ver?" (não precisa esperar resposta)</p></div>
           <div><h4>O que demonstrar</h4><p>Deixe a animação terminar. Leia a pergunta do quadro e clique em Começar.</p></div>
           <div><h4>Conceito matemático</h4><p>Matemática como ferramenta para transformar dados em informação.</p></div>
@@ -1955,89 +2023,137 @@ select.sel{
       </div>
     </section>
 
-    <!-- ======================= ETAPA 5: SEPARAÇÃO (CLASSIFICAR) ======================= -->
-    <section class="step" id="step-separacao" data-step-name="Separação" data-order="3" data-num="03" data-word="CLASSIFICAR" data-ch="cls">
+    <!-- ======================= ETAPA 3: LOGÍSTICA DE ALIMENTOS (PLANEJAR) ======================= -->
+    <section class="step" id="step-logistica" data-step-name="Logística" data-order="3" data-num="03" data-word="PLANEJAR" data-ch="cls">
       <div class="step-head" data-num="03">
-        <h2><span class="chapter cls" data-num="03">CLASSIFICAR</span>Separação de alimentos: como transformar medidas em decisões?</h2>
-        <span class="kicker">medidas → matemática → classificação · valores simulados</span>
+        <h2><span class="chapter cls" data-num="03">PLANEJAR</span>Logística de alimentos: quanto é necessário para manter um exército?</h2>
+        <span class="kicker">soldados × consumo diário × dias → quantidade total</span>
       </div>
       <div class="step-body">
-        <div class="stage" id="sortStage">
-          <div class="sort-main">
-            <canvas id="sortCanvas" aria-label="Esteira de separação de alimentos"></canvas>
-            <div class="sort-pipe" id="sortPipe" aria-hidden="true">
-              <span data-s="medir">MEDIR</span><i>→</i><span data-s="comparar">COMPARAR</span><i>→</i><span data-s="classificar">CLASSIFICAR</span>
-            </div>
-            <div class="ovl sort-read" id="sortRead" aria-live="polite"></div>
-            <div class="ovl sort-q" id="sortQ" hidden></div>
+        <div class="stage log-stage" id="logStage" data-phase="idle">
+          <div class="log-cap">
+            <span class="lc-k">CÁLCULO DE SUPRIMENTOS</span>
+            <span class="lc-f">Q = <i>S</i> × <i>C</i> × <i>D</i></span>
+            <span class="lc-live" id="logLive" aria-live="polite">Pronto para calcular</span>
           </div>
+
+          <div class="log-board">
+            <!-- linha 1: por dia -->
+            <div class="log-row">
+              <span class="lr-tag">POR DIA</span>
+              <div class="lnode" id="lnS">
+                <span class="ln-k"><b>S</b> SOLDADOS</span>
+                <span class="ln-v"><b id="lvS">500</b></span>
+                <div class="troops" id="logTroops" aria-hidden="true"></div>
+                <span class="ln-u" id="logTroopsLeg">cada ▪ = 10 soldados</span>
+              </div>
+              <span class="lop" id="lop1">×</span>
+              <div class="lnode" id="lnC">
+                <span class="ln-k"><b>C</b> CONSUMO</span>
+                <span class="ln-v"><b id="lvC">1,2</b><small>kg</small></span>
+                <svg class="ration" viewBox="0 0 64 40" aria-hidden="true">
+                  <rect x="6" y="12" width="52" height="24" rx="2"/>
+                  <path d="M6 12l6-8h40l6 8M32 4v32M6 24h52"/>
+                </svg>
+                <span class="ln-u">por soldado, por dia (estimativa)</span>
+              </div>
+              <span class="lop" id="lop2">=</span>
+              <div class="lnode res" id="lnP">
+                <span class="ln-k">ALIMENTOS POR DIA</span>
+                <span class="ln-v"><b id="lvP">?</b><small>kg/dia</small></span>
+                <div class="blocks day" id="logDayBlocks" aria-hidden="true"></div>
+                <span class="ln-u" id="logCalc1">S × C</span>
+              </div>
+            </div>
+
+            <!-- linha 2: período -->
+            <div class="log-row">
+              <span class="lr-tag">PERÍODO</span>
+              <div class="lnode ghost" id="lnP2">
+                <span class="ln-k">POR DIA</span>
+                <span class="ln-v"><b id="lvP2">?</b><small>kg/dia</small></span>
+              </div>
+              <span class="lop" id="lop3">×</span>
+              <div class="lnode" id="lnD">
+                <span class="ln-k"><b>D</b> DIAS</span>
+                <span class="ln-v"><b id="lvD">7</b><small>dias</small></span>
+                <div class="days" id="logDays" aria-hidden="true"></div>
+              </div>
+              <span class="lop" id="lop4">=</span>
+              <div class="lnode res" id="lnQ">
+                <span class="ln-k"><b>Q</b> TOTAL</span>
+                <span class="ln-v"><b id="lvQ">?</b><small>kg</small></span>
+                <div class="stock" id="logStock" aria-hidden="true"></div>
+                <span class="ln-u" id="logStockLeg">cada ▪ = 100 kg</span>
+              </div>
+            </div>
+
+            <!-- o grande momento: kg → toneladas -->
+            <div class="log-hero" id="logHero">
+              <div class="lh-conv"><span id="logConv">4.200 kg ÷ 1.000</span><span class="lh-eq">=</span></div>
+              <div class="lh-big"><b id="lvT">4,2</b><span>TONELADAS</span></div>
+              <div class="lh-sub" id="logHeroSub">de alimentos para 500 soldados durante 7 dias</div>
+            </div>
+          </div>
+
+          <span class="log-model">ESTIMATIVA DIDÁTICA · 1,2 kg por soldado por dia não é um valor histórico exato</span>
           <span class="corner-tick tl"></span><span class="corner-tick tr"></span>
           <span class="corner-tick bl"></span><span class="corner-tick br"></span>
         </div>
+
         <div class="panel">
           <div class="group">
-            <h3>Regra de classificação <span class="h3-aside" id="sortRuleVar">x = diâmetro</span></h3>
-            <div class="rule-box" id="sortRule"></div>
-            <p class="note" style="margin-top:5px;">Cada linha é uma condição matemática (desigualdade). O alimento vai para o grupo cuja condição é verdadeira.</p>
+            <h3>O problema</h3>
+            <p class="lead log-lead">Quanto alimento é preciso para manter <b id="logProbS">500 soldados</b> durante <b id="logProbD">7 dias</b>?</p>
+            <div class="math-box log-formula">Q = S × C × D<br><span class="dim">Q quantidade total · S soldados · C kg por soldado/dia · D dias</span></div>
           </div>
           <div class="group">
-            <h3>Esteira <span class="h3-aside pipe-small">MEDIR → COMPARAR → CLASSIFICAR</span></h3>
-            <button class="btn lg primary-cls wide cta" id="btnSortStart">Iniciar separação</button>
+            <button class="btn lg primary-cls wide cta" id="btnLogRun">CALCULAR SUPRIMENTOS</button>
             <div class="btnrow" style="margin-top:6px;">
-              <button class="btn" id="btnSortNext" style="flex:1;">Próximo alimento</button>
-              <button class="btn" id="btnSortReset">Reiniciar</button>
+              <button class="btn" id="btnLogReset" style="flex:1;">Reiniciar cálculo</button>
+            </div>
+            <div class="log-done" id="logDone" hidden>
+              <b id="logDoneLine">500 soldados · 7 dias · 4,2 toneladas de alimentos</b>
+              <span>Em uma guerra, logística também é matemática.</span>
             </div>
           </div>
-          <div class="qcard present-only" id="qSort"></div>
+          <div class="qcard present-only" id="qLog"></div>
 
           <!-- ===== modo exploração ===== -->
           <div class="group explore-only">
-            <h3>Critério e limites</h3>
-            <div class="view-switch crit-switch" role="group" aria-label="Critério de classificação">
-              <button id="btnCritD" aria-pressed="true">Diâmetro (cm)</button>
-              <button id="btnCritM" aria-pressed="false">Massa (g)</button>
-            </div>
-            <div class="row"><label for="sldLim1">Limite 1 (A | B)</label><span class="val mono" id="valLim1">6,0 cm</span></div>
-            <input type="range" id="sldLim1" min="4" max="10" step="0.1" value="6" />
-            <div class="row"><label for="sldLim2">Limite 2 (B | C)</label><span class="val mono" id="valLim2">8,0 cm</span></div>
-            <input type="range" id="sldLim2" min="4" max="10" step="0.1" value="8" />
-            <p class="note" id="sortLimNote" style="margin-top:4px;">Mude os limites: os alimentos já analisados são reclassificados na hora.</p>
+            <h3>Altere o cenário <span class="h3-aside">o resultado muda na hora</span></h3>
+            <div class="row"><label for="sldLogS">Soldados (S)</label><span class="val mono" id="valLogS">500</span></div>
+            <input type="range" id="sldLogS" min="100" max="5000" step="100" value="500" />
+            <div class="row"><label for="sldLogC">Consumo diário (C)</label><span class="val mono" id="valLogC">1,2 kg</span></div>
+            <input type="range" id="sldLogC" min="0.5" max="2.5" step="0.1" value="1.2" />
+            <div class="row"><label for="sldLogD">Dias (D)</label><span class="val mono" id="valLogD">7</span></div>
+            <input type="range" id="sldLogD" min="1" max="30" step="1" value="7" />
           </div>
           <div class="group explore-only">
-            <h3>Escolher alimento <span class="h3-aside">entra na esteira</span></h3>
-            <div class="food-chips" id="sortFoodChips"></div>
-            <div class="row" style="margin-top:6px;"><label>Velocidade da esteira</label>
-              <div class="btnrow" id="sortSpeedBtns">
-                <button class="btn chip" data-speed="1" aria-pressed="true">1×</button>
-                <button class="btn chip" data-speed="2" aria-pressed="false">2×</button>
-                <button class="btn chip" data-speed="4" aria-pressed="false">4×</button>
-              </div>
-            </div>
-          </div>
-          <div class="group">
-            <h3>Estatística da separação</h3>
-            <div class="sort-stats" id="sortStats"></div>
-          </div>
-          <div class="group explore-only">
-            <h3>Tabela de dados <span class="h3-aside">mais recente no topo</span></h3>
-            <div class="sort-table-wrap"><table class="res-table sort-table" id="sortTable"></table></div>
+            <h3>Contas</h3>
+            <div class="readout log-readout" id="logReadout"></div>
           </div>
           <details class="adv explore-only">
-            <summary>Sobre o modelo (valores simulados)</summary>
-            <p class="note" style="margin-top:8px;">Os alimentos e as medidas são simulados. A massa é estimada pelo volume (esfera ou elipsoide) vezes uma densidade típica, só para gerar números plausíveis. Para batata e limão, o "diâmetro" é a maior medida. Máquinas reais de separação usam sensores (câmeras, balanças, luz) e regras parecidas: medir, comparar com limites e decidir.</p>
+            <summary>Sobre a estimativa</summary>
+            <p class="note" style="margin-top:8px;">1,2 kg por soldado por dia é uma estimativa usada nesta demonstração, não um valor histórico exato para todas as tropas. O consumo real variava com o exército, o clima, o tipo de ração e a época. A ideia é mostrar o raciocínio: com um modelo simples, a matemática dá a ordem de grandeza da carga que precisava ser planejada e transportada.</p>
           </details>
         </div>
       </div>
-      <div class="guide" data-guide-for="separacao">
+      <div class="guide" data-guide-for="logistica">
         <button class="guide-btn" data-guide-toggle>▸ Guia do grupo <span class="gtime">4:15–5:25</span></button>
         <div class="guide-panel" hidden>
           <div><h4>Fala sugerida</h4>
-            <p>"Até agora usamos matemática para localizar e prever. Mas ela também pode ser usada para tomar decisões. Aqui, cada alimento possui medidas, e nós criamos regras matemáticas para decidir em qual grupo ele será colocado."</p>
-            <p>"No fim, a gente conta quantos foram para cada grupo e transforma isso em porcentagem."</p></div>
-          <div><h4>Pergunta para o público</h4><p>"Se esse alimento mede 7,4 centímetros e o Grupo B vai de 6 até 8, para onde ele deve ir?" A esteira para sozinha no 3º alimento. Clique na resposta da maioria e em Testar.</p></div>
-          <div><h4>O que demonstrar</h4><p>Iniciar separação → medir → aplicar o intervalo → separar. Aponte a frase MEDIR → COMPARAR → CLASSIFICAR e, no fim, as porcentagens.</p></div>
-          <div><h4>Conceito matemático</h4><p>Intervalos, desigualdades (x &lt; 6, 6 ≤ x ≤ 8, x &gt; 8), porcentagem e classificação.</p><p>No modo Exploração: a decisão depende da regra escolhida.</p></div>
-          <div><h4>Tempo</h4><p>~1 min 10 s (com a pergunta)</p></div>
+            <p>"Agora eu vou explicar como calculamos a quantidade de comida necessária para os soldados durante uma semana."</p>
+            <p>"Nesse cálculo, consideramos 500 soldados e estimamos que cada soldado precisaria de aproximadamente 1,2 kg de alimentos por dia."</p>
+            <p>"Primeiro, multiplicamos a quantidade de soldados pela quantidade de comida que cada um consome por dia: 500 vezes 1,2 dá 600 kg de alimentos por dia."</p>
+            <p>"Como estamos calculando para 7 dias, multiplicamos os 600 kg por 7: 600 vezes 7 dá 4.200 kg."</p>
+            <p>"Portanto, para alimentar os 500 soldados durante uma semana, seriam necessários aproximadamente 4.200 kg de alimentos, ou seja, 4,2 toneladas de comida."</p>
+            <p>"Esse cálculo mostra o tamanho da logística em uma guerra: não bastava transportar soldados e equipamentos, era preciso garantir uma grande quantidade de alimentos para mantê-los durante os combates."</p></div>
+          <div><h4>O que demonstrar</h4>
+            <p>1. Mostre os 500 soldados. 2. Clique em <b>Calcular suprimentos</b>. 3. Aponte 500 × 1,2 = 600 kg/dia. 4. Aponte 600 × 7 = 4.200 kg. 5. Destaque o resultado final: 4,2 toneladas. 6. Feche ligando o resultado à logística da guerra.</p></div>
+          <div><h4>Pergunta para o público (opcional)</h4><p>"Se dobrássemos para 1.000 soldados, com o mesmo consumo e os mesmos 7 dias, o que aconteceria?" Resposta: 8,4 t. Dobrou o número de soldados, dobrou a comida (proporcionalidade direta). Pule se faltar tempo.</p></div>
+          <div><h4>Conceito matemático</h4><p>Multiplicação, proporcionalidade (dobrar S dobra Q), conversão de unidades (kg → toneladas: ÷ 1.000) e modelagem matemática de uma situação real (Q = S × C × D).</p><p>No modo Exploração: mude soldados, consumo e dias e veja o total mudar.</p></div>
+          <div><h4>Tempo</h4><p>~1 min a 1 min 20 s</p></div>
         </div>
       </div>
     </section>
@@ -2191,7 +2307,7 @@ select.sel{
             <div class="mini-flows">
               <div class="mini-flow" style="--mc: var(--radar);"><b>RADAR</b><span>tempo + sinal → matemática → posição</span></div>
               <div class="mini-flow" style="--mc: var(--traj);"><b>TRAJETÓRIA</b><span>velocidade + ângulo → matemática → movimento previsto</span></div>
-              <div class="mini-flow" style="--mc: var(--cls);"><b>SEPARAÇÃO</b><span>medidas → matemática → classificação</span></div>
+              <div class="mini-flow" style="--mc: var(--cls);"><b>LOGÍSTICA</b><span>soldados + consumo + tempo → matemática → suprimentos</span></div>
               <div class="mini-flow" style="--mc: var(--sup);"><b>1ª GUERRA</b><span>soldados × consumo → matemática → distribuição</span></div>
               <div class="mini-flow now" style="--mc: #cbbcff;"><b>SCHWARZSCHILD</b><span>massa + constantes físicas → matemática → previsão de uma propriedade extrema da gravidade</span></div>
             </div>
@@ -2327,7 +2443,7 @@ select.sel{
           </div>
           <div class="group explore-only">
             <h3>Tentativas desta partida <span class="h3-aside" id="alvoTargetInfo">alvo —</span></h3>
-            <div class="sort-table-wrap"><table class="res-table" id="alvoTable"></table></div>
+            <div class="res-table-wrap"><table class="res-table" id="alvoTable"></table></div>
           </div>
           <div class="group explore-only">
             <h3>Estatística do evento <span class="h3-aside">salva neste computador</span></h3>
@@ -2358,10 +2474,10 @@ select.sel{
       </div>
       <div class="step-body one">
         <div class="concl">
-          <div class="c5-words" aria-label="Localizar, prever, classificar, abastecer, descobrir">
+          <div class="c5-words" aria-label="Localizar, prever, planejar, abastecer, descobrir">
             <b class="c5-w">LOCALIZAR</b><i class="c5-a">→</i>
             <b class="c5-w">PREVER</b><i class="c5-a">→</i>
-            <b class="c5-w">CLASSIFICAR</b><i class="c5-a">→</i>
+            <b class="c5-w">PLANEJAR</b><i class="c5-a">→</i>
             <b class="c5-w">ABASTECER</b><i class="c5-a">→</i>
             <b class="c5-w">DESCOBRIR</b>
           </div>
@@ -2384,11 +2500,11 @@ select.sel{
             </article>
             <article class="pillar p-cls">
               <div class="pillar-top">
-                <svg class="p-ico" viewBox="0 0 40 40" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 12h36" stroke-opacity=".6"/><path d="M4 22v14h9V22M15.5 22v14h9V22M27 22v14h9V22" stroke-opacity=".7"/><circle class="ico-drop" cx="20" cy="30" r="3.2" fill="currentColor" stroke="none"/></svg>
-                <h3 class="pillar-word">SEPARAÇÃO</h3>
+                <svg class="p-ico" viewBox="0 0 40 40" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 37h36" stroke-opacity=".6"/><rect x="5" y="27" width="9" height="9" rx="1" stroke-opacity=".75"/><rect x="15.5" y="27" width="9" height="9" rx="1" stroke-opacity=".75"/><rect x="26" y="27" width="9" height="9" rx="1" stroke-opacity=".75"/><rect x="10" y="17" width="9" height="9" rx="1" stroke-opacity=".75"/><rect class="ico-drop" x="21" y="17" width="9" height="9" rx="1" fill="currentColor" stroke="none"/></svg>
+                <h3 class="pillar-word">LOGÍSTICA</h3>
               </div>
-              <p class="pillar-txt">medidas → classificação</p>
-              <p class="pillar-ex" id="exCls">—</p>
+              <p class="pillar-txt">soldados × consumo × dias → suprimentos</p>
+              <p class="pillar-ex" id="exLog">—</p>
             </article>
             <article class="pillar p-sup">
               <div class="pillar-top">
@@ -2421,7 +2537,7 @@ select.sel{
         <button class="guide-btn" data-guide-toggle>▸ Guia do grupo <span class="gtime">7:55–8:35</span></button>
         <div class="guide-panel" hidden>
           <div><h4>Fala sugerida</h4>
-            <p>"Localizar, prever, classificar, abastecer e descobrir. Parecem assuntos que não têm nada a ver."</p>
+            <p>"Localizar, prever, planejar, abastecer e descobrir. Parecem assuntos que não têm nada a ver."</p>
             <p>"Mas em todos eles a matemática pega um dado e transforma em conhecimento. A matemática nos permite entender até aquilo que não conseguimos enxergar diretamente. Isso é estar além do visível. Obrigado!"</p></div>
           <div><h4>Pergunta para o público</h4><p>"Qual dos cinco vocês acharam mais legal?"</p></div>
           <div><h4>O que demonstrar</h4><p>Espere as cinco palavras e os cinco cartões aparecerem. Leia a frase final e o título. Depois, troque para o modo Exploração e deixe quem quiser mexer.</p></div>
@@ -2534,7 +2650,7 @@ select.sel{
    Organização: Utils → Physics → CONFIG → StepManager → Visibility →
                 Scramble → HeroBG → IntroModule →
                 makeQuiz → RadarModule → TrajectoryModule →
-                ChallengesModule → SortModule → BlackHoleModule →
+                ChallengesModule → LogisticsModule → SupplyModule → BlackHoleModule →
                 AlvoModule → ConclusionModule → Init
    ===================================================================== */
 
@@ -3153,7 +3269,7 @@ const HeroBG = (() => {
 })();
 
 /* ========================= SEQUÊNCIA DE ABERTURA ========================= */
-/* LOCALIZAR. → PREVER. → CLASSIFICAR. → ABASTECER. → DESCOBRIR. →
+/* LOCALIZAR. → PREVER. → PLANEJAR. → ABASTECER. → DESCOBRIR. →
    frase → título → pergunta → botão */
 const IntroModule = (() => {
   let timers = [];
@@ -4971,877 +5087,271 @@ const ChallengesModule = (() => {
   return { init, fullReset };
 })();
 
-/* ======================= SEPARAÇÃO (CLASSIFICAR) ======================= */
-/* Esteira: cada alimento entra, passa pelo sensor (MEDIR), o valor medido é
-   comparado com dois limites (COMPARAR) e ele cai no grupo certo (CLASSIFICAR).
-   Regra (x = valor medido):  A se x < L1 · B se L1 ≤ x ≤ L2 · C se x > L2.
-   Os dados são simulados; a lógica de decisão é a mesma de máquinas reais. */
-const SortModule = (() => {
-  const GROUPS = ["A", "B", "C"];
-  const GC = { A: "#5ec8f8", B: "#b79cff", C: "#e58fd0" };
-  /* s = razão entre a menor e a maior medida (1 = redondo). rho em g/cm³. */
-  const FOODS = {
-    maca:    { name: "Maçã",    dMin: 5.6, dMax: 8.6,  rho: 0.80, s: 0.95 },
-    laranja: { name: "Laranja", dMin: 6.0, dMax: 9.4,  rho: 0.87, s: 1.00 },
-    tomate:  { name: "Tomate",  dMin: 4.6, dMax: 8.0,  rho: 0.95, s: 0.86 },
-    batata:  { name: "Batata",  dMin: 5.5, dMax: 10.5, rho: 1.08, s: 0.62 },
-    limao:   { name: "Limão",   dMin: 4.4, dMax: 7.0,  rho: 0.95, s: 0.78 }
-  };
-  /* Critérios: diâmetro (cm) ou massa (g) */
-  const CRIT = {
-    d: { label: "diâmetro", de: "do diâmetro", unit: "cm", dig: 1, min: 4, max: 10, step: 0.1, gap: 0.2, def: [6, 8], domain: [3, 11], tick: 1 },
-    m: { label: "massa", de: "da massa", unit: "g", dig: 0, min: 30, max: 300, step: 5, gap: 10, def: [100, 180], domain: [0, 320], tick: 40 }
-  };
-  /* Lote da apresentação: 20 alimentos, sempre na mesma ordem.
-     Com a regra padrão (6 cm e 8 cm): A = 5, B = 11, C = 4. */
-  const SEQ = [
-    ["maca", 7.2], ["tomate", 5.2], ["laranja", 7.4], ["batata", 9.3], ["limao", 5.6],
-    ["maca", 6.8], ["laranja", 8.6], ["tomate", 6.4], ["limao", 6.3], ["maca", 5.7],
-    ["batata", 7.7], ["laranja", 7.9], ["tomate", 4.9], ["maca", 8.3], ["maca", 6.1],
-    ["limao", 5.8], ["tomate", 7.0], ["batata", 10.1], ["batata", 6.6], ["maca", 7.5]
-  ].map(([type, d]) => ({ type, d }));
-  const Q_INDEX = 2;              // 3º alimento: a pergunta para o público (7,4 cm)
-  const MEASURE_T = 1.25, COMPARE_T = 0.95, DROP_T = 0.6;
+/* ======================= LOGÍSTICA DE ALIMENTOS (PLANEJAR) ======================= */
+/* Q = S × C × D  →  quantidade total = soldados × kg por soldado/dia × dias.
+   1,2 kg por soldado por dia é uma ESTIMATIVA desta demonstração, não um valor
+   histórico exato. Os cartões acendem em sequência; o grande momento é kg → t. */
+const LOG_CONFIG = {
+  DEFAULTS: { S: 500, C: 1.2, D: 7 },
+  LIMITS: { S: [100, 5000, 100], C: [0.5, 2.5, 0.1], D: [1, 30, 1] }   // [mín, máx, passo]
+};
 
-  let crit = "d";
-  let lim = { d: CRIT.d.def.slice(), m: CRIT.m.def.slice() };
-  let items = [];      // alimentos na esteira ou caindo
-  let records = [];    // alimentos já medidos: { n, type, d, m, landed }
-  let manual = [];     // fila de "próximo alimento" / escolhidos
-  let seqIndex = 0, nextN = 1, seqQDone = false;
-  let autoRun = false, paused = false, loteDone = false, speedMul = 1;
-  let beltOffsetIn = 0, beltOffsetOut = 0;   // esteira de entrada (para no sensor) e de saída
-  const flashes = { A: 0, B: 0, C: 0 };
-  let readItem = null;
-  let questionPending = false, questionAsked = false, questionCb = null;
-  let quiz = null;
-  let entered = false, looping = false, raf = null, lastTs = null, pausedByVisibility = null;
-  let canvas, ctx = null, W = 0, H = 0;
-  let lastReadHTML = "", lastPipe = "", lastRuleHit = "";
-
+const LogisticsModule = (() => {
   const $ = (id) => document.getElementById(id);
   const fmt = Utils.fmt;
+  let v = { ...LOG_CONFIG.DEFAULTS };
+  let phase = "idle";          // idle | run | done
+  let timers = [];
+  let quiz = null;
 
-  function massOf(type, d) {
-    const f = FOODS[type];
-    return Math.round(f.rho * Math.PI / 6 * d * (f.s * d) * (f.s * d));
+  /* ------------------------------ contas ------------------------------ */
+  const r1 = (x) => Math.round(x * 1000) / 1000;           // tira o ruído do ponto flutuante
+  const perDay = () => r1(v.S * v.C);
+  const total = () => r1(v.S * v.C * v.D);
+  /* menor número de casas que mostra o valor exato (4,2 · 8,4 · 0,35 · 375) */
+  function exactDigits(x, maxD) {
+    let d = 0;
+    while (d < maxD && Math.abs(x * Math.pow(10, d) - Math.round(x * Math.pow(10, d))) > 1e-6) d++;
+    return d;
   }
-  function valueOf(rec) { return crit === "d" ? rec.d : rec.m; }
-  function classifyV(v, l) { l = l || lim[crit]; return v < l[0] ? "A" : v <= l[1] ? "B" : "C"; }
-  function groupOf(rec) { return classifyV(valueOf(rec)); }
-  function fmtV(v) { return `${fmt(v, CRIT[crit].dig)} ${CRIT[crit].unit}`; }
-  /* limites: "6" em vez de "6,0" quando é inteiro */
-  function fmtL(v) { return CRIT[crit].dig === 0 || Math.abs(v - Math.round(v)) < 1e-9 ? fmt(v, 0) : fmt(v, 1); }
-  function ineq(v, g) {
-    const [a, b] = lim[crit], vs = fmt(v, CRIT[crit].dig);
-    if (g === "A") return `${vs} &lt; ${fmtL(a)}`;
-    if (g === "B") return `${fmtL(a)} ≤ ${vs} ≤ ${fmtL(b)}`;
-    return `${vs} &gt; ${fmtL(b)}`;
-  }
-  function ruleInline() {
-    const [a, b] = lim[crit];
-    return `A: x &lt; ${fmtL(a)} · B: ${fmtL(a)} ≤ x ≤ ${fmtL(b)} · C: x &gt; ${fmtL(b)} (${CRIT[crit].unit})`;
-  }
+  const fmtExact = (x, maxD) => fmt(x, exactDigits(x, maxD));
+  const fmtKg = (x) => fmtExact(x, 1);
+  const fmtT = (x) => fmtExact(x, 3);
+  const fmtC = (x) => fmt(x, 1);
+  const dayWord = (d) => d === 1 ? "dia" : "dias";
 
-  /* --------------------------- geometria --------------------------- */
-  function geom() {
-    const w = W, h = H;
-    const ppc = Utils.clamp(Math.min(w / 125, h / 72), 3.4, 7.4);   // pixels por centímetro
-    const beltY = Math.round(h * (w < 600 ? 0.34 : 0.42));
-    const gateHalf = 5.4 * ppc + 14;
-    const sensorX = Math.max(w * 0.24, gateHalf + 24);
-    const binW = Math.min(Utils.clamp(w * 0.15, 70, 160), w * 0.165);
-    const lineY = h - 30;
-    return {
-      w, h, ppc, beltY, gateHalf, sensorX, binW,
-      bins: { A: w * 0.50, B: w * 0.68, C: w * 0.86 },
-      binTop: beltY + 34, binBot: lineY - 74, lineY,
-      lx0: w * 0.06, lx1: w * 0.94,
-      gateTop: Math.max(beltY - 118, 64)
+  /* ------------------------------ visual ------------------------------ */
+  /* soldados: um ícone = 10 (ou 50) soldados, para caber na tela */
+  function troopUnit() { return v.S <= 1000 ? 10 : 50; }
+  /* blocos: um bloco = 100 kg (ou mais), no máximo 8 blocos por dia */
+  function blockUnit() {
+    const units = [100, 200, 500, 1000, 2000, 5000];
+    for (const u of units) if (perDay() / u <= 8) return u;
+    return units[units.length - 1];
+  }
+  function buildGrids() {
+    const tu = troopUnit(), nT = Math.round(v.S / tu);
+    const tr = $("logTroops");
+    tr.style.gridTemplateColumns = `repeat(${nT > 50 ? 20 : 10}, auto)`;
+    tr.innerHTML = Array.from({ length: nT }, (_, i) => `<i style="--d:${(i * 0.7 / nT).toFixed(3)}s"></i>`).join("");
+    $("logTroopsLeg").textContent = `cada ícone = ${tu} soldados`;
+
+    const bu = blockUnit(), per = perDay() / bu, full = Math.floor(per + 1e-9), frac = r1(per - full);
+    const blockHtml = (delay) => {
+      let h = "";
+      for (let k = 0; k < full; k++) h += `<i style="--d:${delay(k).toFixed(3)}s"></i>`;
+      if (frac > 0.01) h += `<i data-f="${Math.round(frac * 100)}" style="--d:${delay(full).toFixed(3)}s"></i>`;
+      return h;
     };
-  }
-  function radii(it, g) {
-    const rx = it.d * g.ppc / 2;
-    return { rx, ry: rx * FOODS[it.type].s };
-  }
-  function beltSpeed() { return Utils.clamp(W * 0.17, 80, 230); }
+    $("logDayBlocks").innerHTML = blockHtml(k => 0.3 + k * 0.1);
+    const nPer = full + (frac > 0.01 ? 1 : 0), step = Math.min(0.06, 1.1 / Math.max(1, nPer * v.D));
+    const st = $("logStock");
+    st.classList.toggle("dense", v.D > 10 || nPer > 6);
+    st.innerHTML = Array.from({ length: v.D }, (_, c) => `<span class="col">${blockHtml(k => (c * nPer + k) * step)}</span>`).join("");
+    $("logStockLeg").textContent = `cada bloco = ${fmt(bu, 0)} kg`;
 
-  /* ------------------------------ fluxo ------------------------------ */
-  function spawn(entry) {
-    const g = geom();
-    const it = { n: nextN++, type: entry.type, d: entry.d, m: massOf(entry.type, entry.d), phase: "in", t: 0, isQ: !!entry.isQ };
-    it.x = -radii(it, g).rx - 6;
-    items.push(it);
+    const dd = $("logDays");
+    dd.classList.toggle("dense", v.D > 10);
+    const dStep = Math.min(0.16, 1.1 / v.D);
+    dd.innerHTML = Array.from({ length: v.D }, (_, i) => `<i style="--d:${(i * dStep).toFixed(3)}s">D${i + 1}</i>`).join("");
   }
-  function canSpawn() {
-    const g = geom();
-    return items.every(i => i.phase !== "in" || (i.x - radii(i, g).rx) > 34);
-  }
-  function seqEntry() {
-    if (seqIndex === Q_INDEX && seqQDone) seqIndex++;          // a pergunta já usou esse alimento
-    if (seqIndex >= SEQ.length) return null;
-    const e = { ...SEQ[seqIndex], isQ: seqIndex === Q_INDEX };
-    seqIndex++;
-    return e;
-  }
-  function randomEntry(type) {
-    const keys = Object.keys(FOODS);
-    type = type || keys[Math.floor(Math.random() * keys.length)];
-    const f = FOODS[type];
-    const d = Math.round((f.dMin + Math.random() * (f.dMax - f.dMin)) * 10) / 10;
-    return { type, d };
-  }
-  function measuring() { return items.some(i => i.phase === "measure" || i.phase === "compare"); }
-
-  function classifyItem(it) {
-    const rec = { n: it.n, type: it.type, d: it.d, m: it.m, landed: false };
-    records.push(rec);
-    it.rec = rec;
-    it.group = groupOf(rec);
-    refreshData();
-  }
-  function slotInfo(g) {
-    const cols = 4;
-    const slotW = (g.binW - 14) / cols;
-    const rowH = Math.max(12, slotW * 0.82);
-    const rows = Math.max(1, Math.floor((g.binBot - g.binTop - 40) / rowH));
-    return { cols, slotW, rowH, rows };
-  }
-  function slotPos(group, idx, g) {
-    const s = slotInfo(g);
-    const k = Math.min(idx, s.cols * s.rows - 1);
-    const col = k % s.cols, row = Math.floor(k / s.cols);
-    return { x: g.bins[group] - g.binW / 2 + 7 + s.slotW * (col + 0.5), y: g.binBot - 5 - s.rowH * (row + 0.5) };
-  }
-  function landedIn(group) { return records.filter(r => r.landed && groupOf(r) === group); }
-  function startDrop(it, g) {
-    it.group = groupOf(it.rec);
-    it.phase = "drop"; it.t = 0;
-    const { ry } = radii(it, g);
-    it.x0 = it.x; it.y0 = g.beltY - ry;
-    const p = slotPos(it.group, landedIn(it.group).length, g);
-    it.tx = p.x; it.ty = p.y;
-    flashes[it.group] = 0.6;
-  }
-  function land(it) {
-    it.rec.landed = true;
-    it.phase = "landed";
-    items = items.filter(i => i !== it);
-    if (it.isQ && questionCb) {
-      const cb = questionCb; questionCb = null;
-      cb({ group: groupOf(it.rec), v: valueOf(it.rec) });
-    }
-    refreshData();
-  }
-
-  function step(dt) {
-    const g = geom();
-    const sdt = dt * speedMul;
-    // entrada de novos alimentos
-    if (!paused && !questionPending && canSpawn()) {
-      if (manual.length) spawn(manual.shift());
-      else if (autoRun) { const e = seqEntry(); if (e) spawn(e); }
-    }
-    /* A esteira de entrada para enquanto o sensor mede; a de saída continua
-       levando os alimentos já classificados até o grupo certo. */
-    const movingIn = !paused && !questionPending && !measuring() && items.some(i => i.phase === "in");
-    const movingOut = !paused && items.some(i => i.phase === "route");
-    const v = beltSpeed() * sdt;
-    if (movingIn) beltOffsetIn += v;
-    if (movingOut) beltOffsetOut += v;
-    items.slice().forEach(it => {
-      if (it.phase === "in") {
-        if (movingIn) it.x += v;
-        if (it.x >= g.sensorX) {
-          it.x = g.sensorX;
-          if (it.isQ && StepManager.isPresentation() && !questionAsked && !questionCb) {
-            questionPending = true; questionAsked = true; showQuestion();
-          } else if (!questionPending) {
-            it.phase = "measure"; it.t = 0; readItem = it;
-          }
-        }
-      } else if (it.phase === "measure") {
-        it.t += sdt;
-        if (it.t >= MEASURE_T) { it.phase = "compare"; it.t = 0; }
-      } else if (it.phase === "compare") {
-        it.t += sdt;
-        if (it.t >= COMPARE_T) { classifyItem(it); it.phase = "route"; it.t = 0; }
-      } else if (it.phase === "route") {
-        it.group = groupOf(it.rec);   // se a regra mudar no caminho, o destino muda
-        if (movingOut) it.x += v;
-        if (it.x >= g.bins[it.group]) startDrop(it, g);
-      } else if (it.phase === "drop") {
-        it.t += sdt;
-        if (it.t >= DROP_T) land(it);
-      }
-    });
-    GROUPS.forEach(k => { flashes[k] = Math.max(0, flashes[k] - dt); });
-    if (autoRun && !manual.length && !items.length && seqEntryDone()) {
-      autoRun = false; loteDone = true; updateButtons();
-    }
-  }
-  function seqEntryDone() { return seqIndex >= SEQ.length; }
-
-  /* ------------------------------ ações ------------------------------ */
-  function newLote() {
-    items = []; records = []; manual = [];
-    seqIndex = 0; nextN = 1; seqQDone = false;
-    loteDone = false; readItem = null;
-    questionPending = false; questionAsked = false;
-    if (questionCb) { questionCb = null; if (quiz) quiz.reset(); }
-    hideQuestion();
-    refreshData();
-  }
-  function startOrPause() {
-    if (loteDone) { newLote(); autoRun = true; paused = false; }
-    else if (!autoRun) { autoRun = true; paused = false; }
-    else paused = !paused;
-    updateButtons();
-  }
-  function nextFood() {
-    if (loteDone) newLote();
-    if (manual.length >= 3) return;
-    const e = seqEntry();
-    manual.push(e || randomEntry());
-    paused = false;
-    updateButtons();
-  }
-  function chooseFood(type) {
-    if (loteDone) newLote();
-    if (manual.length >= 3) return;
-    manual.push(randomEntry(type === "rand" ? null : type));
-    paused = false;
-    updateButtons();
-  }
-  function resetSim() {
-    autoRun = false; paused = false;
-    newLote();
-    updateButtons();
-    draw();
-  }
-  function updateButtons() {
-    const b = $("btnSortStart");
-    let txt;
-    if (loteDone) txt = "Nova separação";
-    else if (!autoRun) txt = (seqIndex === 0 && !records.length && !items.length) ? "Iniciar separação" : "Continuar separação";
-    else txt = paused ? "Continuar separação" : "Pausar esteira";
-    b.textContent = txt;
-    b.setAttribute("aria-pressed", String(autoRun && !paused));
-    $("btnSortNext").disabled = manual.length >= 3;
-  }
-
-  /* Pergunta para o público: o 3º alimento (7,4 cm) para antes do sensor. */
-  function showQuestion() {
-    const q = SEQ[Q_INDEX];
-    const v = crit === "d" ? q.d : massOf(q.type, q.d);
-    const el = $("sortQ");
-    el.innerHTML =
-      `<div class="qt">PERGUNTA PARA O PÚBLICO · a esteira parou</div>` +
-      `<div class="qm">Um alimento ${crit === "d" ? "mede" : "tem"} ${fmtV(v)}.</div>` +
-      `<div class="qr">${ruleInline()}</div>` +
-      `<div class="qm" style="font-size:.9rem; font-weight:500;">Em qual grupo ele será colocado? Escolham no cartão ao lado e apertem Testar.</div>`;
-    el.hidden = false;
-  }
-  function hideQuestion() { const el = $("sortQ"); if (el) el.hidden = true; }
-  function runQuestionTest(done) {
-    questionCb = done;
-    questionAsked = true;
-    if (questionPending) { questionPending = false; hideQuestion(); }
-    else if (!items.some(i => i.isQ)) {
-      if (seqIndex <= Q_INDEX) seqQDone = true;       // o alimento da pergunta entra agora
-      manual.unshift({ ...SEQ[Q_INDEX], isQ: true });
-    }
-    paused = false;
-    updateButtons();
-  }
-
-  /* ------------------------ regra, estatística, tabela ------------------------ */
-  function buildRule() {
-    const [a, b] = lim[crit], u = CRIT[crit].unit;
-    $("sortRule").innerHTML =
-      `<div class="rule-line" data-g="A"><span class="rg">A</span><span>x &lt; ${fmtL(a)} ${u}</span><span class="rn">Grupo A</span></div>` +
-      `<div class="rule-line" data-g="B"><span class="rg">B</span><span>${fmtL(a)} ≤ x ≤ ${fmtL(b)} ${u}</span><span class="rn">Grupo B</span></div>` +
-      `<div class="rule-line" data-g="C"><span class="rg">C</span><span>x &gt; ${fmtL(b)} ${u}</span><span class="rn">Grupo C</span></div>`;
-    $("sortRuleVar").textContent = `x = ${CRIT[crit].label} (${u})`;
-    lastRuleHit = "";
-  }
-  function buildStats() {
-    $("sortStats").innerHTML =
-      `<div class="st-total"><span>TOTAL ANALISADO</span><b id="stTotal">0</b></div>` +
-      GROUPS.map(k => `<div class="st-row" data-g="${k}"><span class="sl2">Grupo <b>${k}</b></span>` +
-        `<span class="st-bar"><i id="stBar${k}"></i></span><span class="sv" id="stVal${k}">0</span></div>`).join("") +
-      `<div class="st-extra explore-only" id="stExtra"></div>`;
-  }
-  function refreshData() {
-    const n = records.length;
-    const cnt = { A: 0, B: 0, C: 0 };
-    records.forEach(r => cnt[groupOf(r)]++);
-    // números animados (o valor final é exatamente o mesmo de antes)
-    Tween.to($("stTotal"), "n", n, (v) => { $("stTotal").textContent = String(Math.round(v)); });
-    GROUPS.forEach(k => {
-      const pct = n ? cnt[k] / n * 100 : 0;
-      $(`stBar${k}`).style.width = `${pct}%`;
-      const el = $(`stVal${k}`);
-      if (!n) { Tween.set(el, "c", 0); Tween.set(el, "p", 0); el.innerHTML = "0"; return; }
-      Tween.to(el, "c", cnt[k], (v) => {
-        const c = Math.round(v), p = (el._tw.p ? el._tw.p.v : pct);
-        el.innerHTML = `${c} <small>·</small> ${fmt(p, 0)}%`;
-      });
-      Tween.to(el, "p", pct, (v, end) => {
-        const c = end ? cnt[k] : Math.round(el._tw.c ? el._tw.c.v : cnt[k]);
-        el.innerHTML = `${c} <small>·</small> ${fmt(v, 0)}%`;
-      });
-    });
-    if (n) {
-      const mean = records.reduce((s, r) => s + valueOf(r), 0) / n;
-      const top = GROUPS.reduce((a, k) => cnt[k] > cnt[a] ? k : a, "A");
-      $("stExtra").innerHTML = `média ${CRIT[crit].de}: ${fmtV(mean)}<br>${top} = ${cnt[top]}/${n} = ${fmt(cnt[top] / n * 100, 0)}% (contagem ÷ total × 100)`;
-    } else {
-      $("stExtra").textContent = "Nenhum alimento analisado ainda.";
-    }
-    // tabela (mais recente no topo)
-    let html = `<tr><th>#</th><th>alimento</th><th>massa</th><th>diâmetro</th><th>grupo</th></tr>`;
-    if (!n) html += `<tr class="empty"><td colspan="5">A tabela é preenchida quando os alimentos passam pelo sensor.</td></tr>`;
-    records.slice().reverse().forEach(r => {
-      const gk = groupOf(r);
-      html += `<tr><td>${r.n}</td><td>${FOODS[r.type].name}</td><td>${fmt(r.m, 0)} g</td><td>${fmt(r.d, 1)} cm</td>` +
-        `<td><span class="gdot" style="background:${GC[gk]}">${gk}</span></td></tr>`;
-    });
-    $("sortTable").innerHTML = html;
-  }
-
-  /* cartão do sensor, frase MEDIR → COMPARAR → CLASSIFICAR e destaque da regra */
-  function phaseIndex(it) {
-    if (!it) return -1;
-    return { measure: 0, compare: 1, route: 2, drop: 2, landed: 3 }[it.phase] ?? -1;
-  }
-  function updateOverlays() {
-    const it = readItem;
-    const pi = phaseIndex(it);
-    // frase
-    const pipeKey = String(pi);
-    if (pipeKey !== lastPipe) {
-      lastPipe = pipeKey;
-      document.querySelectorAll("#sortPipe span").forEach((s, k) => {
-        s.classList.toggle("on", k === pi);
-        s.classList.toggle("done", pi >= 0 && k < pi || pi === 3);
-      });
-    }
-    // regra
-    const hit = pi >= 1 && it ? (it.rec ? groupOf(it.rec) : classifyV(crit === "d" ? it.d : it.m)) : "";
-    if (hit !== lastRuleHit) {
-      lastRuleHit = hit;
-      document.querySelectorAll("#sortRule .rule-line").forEach(l => l.classList.toggle("hit", l.dataset.g === hit));
-    }
-    // cartão do sensor
-    let html;
-    if (!it) {
-      html = `<div class="ovl-title">Sensor</div><div class="sr-idle">Aguardando alimento na esteira…<br>Cada alimento será medido, comparado com a regra e separado.</div>`;
-    } else {
-      const k = pi === 0 ? Utils.easeOut(it.t / (MEASURE_T * 0.8)) : 1;
-      const dShown = it.d * k, mShown = it.m * k;
-      const v = crit === "d" ? it.d : it.m;
-      const g = pi >= 1 ? (it.rec ? groupOf(it.rec) : classifyV(v)) : null;
-      html = `<div class="ovl-title">Sensor · ${pi === 0 ? "medindo…" : pi === 1 ? "comparando com a regra" : "classificado"}</div>` +
-        `<div class="sr-food">${FOODS[it.type].name}<small>#${it.n}</small></div>` +
-        `<div class="readout" style="margin-top:4px;">` +
-        `<span class="lbl">massa</span><span class="v">${fmt(mShown, 0)} g</span>` +
-        `<span class="lbl">diâmetro</span><span class="v">${fmt(dShown, 1)} cm</span></div>` +
-        `<div class="sr-cmp">${g ? `x = ${fmtV(v)}: <b style="color:${GC[g]}">${ineq(v, g)}</b> → <b style="color:${GC[g]}">Grupo ${g}</b>` : `x = ${CRIT[crit].label} → ?`}</div>`;
-    }
-    if (html !== lastReadHTML) { $("sortRead").innerHTML = html; lastReadHTML = html; }
-  }
-
-  /* ------------------------------ desenho ------------------------------ */
-  function drawFood(type, cx, cy, rx, ry, alpha) {
-    ctx.save();
-    ctx.globalAlpha = alpha == null ? 1 : alpha;
-    const hl = (r) => {
-      const gr = ctx.createRadialGradient(cx - rx * 0.35, cy - ry * 0.4, 1, cx - rx * 0.35, cy - ry * 0.4, r);
-      gr.addColorStop(0, "rgba(255,255,255,0.35)"); gr.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.fillStyle = gr; ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2); ctx.fill();
-    };
-    const body = (c0, c1) => {
-      const gr = ctx.createRadialGradient(cx - rx * 0.3, cy - ry * 0.3, rx * 0.1, cx, cy, Math.max(rx, ry));
-      gr.addColorStop(0, c0); gr.addColorStop(1, c1);
-      ctx.fillStyle = gr;
-    };
-    if (type === "maca") {
-      body("#f0646a", "#8e1d2a");
-      ctx.beginPath();
-      ctx.moveTo(cx, cy - ry * 0.72);
-      ctx.bezierCurveTo(cx + rx * 0.55, cy - ry * 1.12, cx + rx * 1.12, cy - ry * 0.5, cx + rx * 0.95, cy + ry * 0.22);
-      ctx.bezierCurveTo(cx + rx * 0.8, cy + ry * 0.95, cx + rx * 0.25, cy + ry * 1.05, cx, cy + ry * 0.9);
-      ctx.bezierCurveTo(cx - rx * 0.25, cy + ry * 1.05, cx - rx * 0.8, cy + ry * 0.95, cx - rx * 0.95, cy + ry * 0.22);
-      ctx.bezierCurveTo(cx - rx * 1.12, cy - ry * 0.5, cx - rx * 0.55, cy - ry * 1.12, cx, cy - ry * 0.72);
-      ctx.fill();
-      hl(rx * 0.8);
-      ctx.strokeStyle = "#6b4a2a"; ctx.lineWidth = Math.max(1, rx * 0.08);
-      ctx.beginPath(); ctx.moveTo(cx, cy - ry * 0.7); ctx.quadraticCurveTo(cx + rx * 0.05, cy - ry * 1.05, cx + rx * 0.14, cy - ry * 1.18); ctx.stroke();
-      ctx.fillStyle = "#4fae5c";
-      ctx.beginPath(); ctx.ellipse(cx + rx * 0.34, cy - ry * 1.02, rx * 0.24, ry * 0.1, -0.5, 0, Math.PI * 2); ctx.fill();
-    } else if (type === "laranja") {
-      body("#ffc164", "#d9700f");
-      ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = "rgba(150,70,0,0.25)";
-      for (let k = 0; k < 9; k++) {
-        const a = k * 2.4, rr = 0.25 + (k % 3) * 0.22;
-        ctx.beginPath(); ctx.arc(cx + Math.cos(a) * rx * rr, cy + Math.sin(a) * ry * rr, Math.max(0.6, rx * 0.035), 0, Math.PI * 2); ctx.fill();
-      }
-      hl(rx * 0.8);
-      ctx.fillStyle = "#5b8f2e"; ctx.beginPath(); ctx.arc(cx + rx * 0.05, cy - ry * 0.92, Math.max(1.2, rx * 0.09), 0, Math.PI * 2); ctx.fill();
-    } else if (type === "tomate") {
-      body("#ff6f5c", "#a8231a");
-      ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2); ctx.fill();
-      hl(rx * 0.75);
-      ctx.fillStyle = "#3f9a45";
-      for (let k = 0; k < 5; k++) {
-        const a = -Math.PI / 2 + (k - 2) * 0.55;
-        ctx.beginPath(); ctx.ellipse(cx + Math.cos(a) * rx * 0.2, cy - ry * 0.82 + Math.sin(a + Math.PI / 2) * 1, rx * 0.2, rx * 0.06, a, 0, Math.PI * 2); ctx.fill();
-      }
-    } else if (type === "batata") {
-      body("#d4a877", "#86592f");
-      ctx.beginPath();
-      for (let k = 0; k <= 24; k++) {
-        const a = k / 24 * Math.PI * 2;
-        const wob = 1 + 0.05 * Math.sin(a * 3 + 1) + 0.03 * Math.cos(a * 5);
-        const px = cx + Math.cos(a) * rx * wob, py = cy + Math.sin(a) * ry * wob;
-        if (k === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-      }
-      ctx.closePath(); ctx.fill();
-      ctx.fillStyle = "rgba(90,55,25,0.55)";
-      [[-0.45, -0.2], [0.2, 0.25], [0.55, -0.3], [-0.1, 0.45]].forEach(([fx, fy]) => {
-        ctx.beginPath(); ctx.ellipse(cx + fx * rx, cy + fy * ry, Math.max(0.8, rx * 0.05), Math.max(0.6, ry * 0.05), 0, 0, Math.PI * 2); ctx.fill();
-      });
-      hl(rx * 0.7);
-    } else if (type === "limao") {
-      body("#fff18a", "#d2ae00");
-      ctx.beginPath();
-      ctx.moveTo(cx - rx, cy);
-      ctx.quadraticCurveTo(cx - rx * 0.9, cy - ry * 1.05, cx, cy - ry);
-      ctx.quadraticCurveTo(cx + rx * 0.9, cy - ry * 1.05, cx + rx, cy);
-      ctx.quadraticCurveTo(cx + rx * 0.9, cy + ry * 1.05, cx, cy + ry);
-      ctx.quadraticCurveTo(cx - rx * 0.9, cy + ry * 1.05, cx - rx, cy);
-      ctx.fill();
-      hl(rx * 0.7);
-    }
-    ctx.restore();
-  }
-
-  function drawBelt(g) {
-    const y = g.beltY, th = 12;
-    ctx.save();
-    // corpo da esteira com leve relevo metálico
-    const bg = ctx.createLinearGradient(0, y, 0, y + th);
-    bg.addColorStop(0, "#1c2740"); bg.addColorStop(0.5, "#111a2c"); bg.addColorStop(1, "#0b1220");
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, y, g.w, th);
-    // trilho lateral (estrutura da máquina)
-    ctx.fillStyle = "rgba(215,226,245,0.05)";
-    ctx.fillRect(0, y + th + 1, g.w, 3);
-    ctx.strokeStyle = "rgba(215,226,245,0.35)"; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(0, y + 0.5); ctx.lineTo(g.w, y + 0.5); ctx.stroke();
-    ctx.strokeStyle = "rgba(215,226,245,0.10)";
-    ctx.beginPath(); ctx.moveTo(0, y + th + 0.5); ctx.lineTo(g.w, y + th + 0.5); ctx.stroke();
-    // listras que andam com cada trecho da esteira
-    const split = g.sensorX + g.gateHalf + 6;
-    [[0, split, beltOffsetIn], [split, g.w, beltOffsetOut]].forEach(([x0, x1, bo]) => {
-      ctx.save();
-      ctx.beginPath(); ctx.rect(x0, y + 1, x1 - x0, th - 1); ctx.clip();
-      ctx.strokeStyle = "rgba(215,226,245,0.09)"; ctx.lineWidth = 2;
-      const off = bo % 22;
-      for (let x = x0 - 22 + off; x < x1 + 22; x += 22) { ctx.beginPath(); ctx.moveTo(x, y + th); ctx.lineTo(x + 8, y); ctx.stroke(); }
-      ctx.restore();
-    });
-    ctx.strokeStyle = "rgba(215,226,245,0.35)"; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(split, y); ctx.lineTo(split, y + th); ctx.stroke();
-    ctx.restore();
-    // roletes
-    ctx.save();
-    ctx.strokeStyle = "rgba(215,226,245,0.22)"; ctx.lineWidth = 1;
-    for (let x = 20; x < g.w; x += 64) {
-      ctx.beginPath(); ctx.arc(x, y + th + 7, 5, 0, Math.PI * 2); ctx.stroke();
-      const a = (x < split ? beltOffsetIn : beltOffsetOut) / 5;
-      ctx.beginPath(); ctx.moveTo(x, y + th + 7); ctx.lineTo(x + 5 * Math.cos(a), y + th + 7 + 5 * Math.sin(a)); ctx.stroke();
-    }
-    ctx.restore();
-  }
-
-  function drawGate(g) {
-    const it = items.find(i => i.phase === "measure" || i.phase === "compare");
-    const xL = g.sensorX - g.gateHalf, xR = g.sensorX + g.gateHalf, top = g.gateTop;
-    ctx.save();
-    // postes e viga
-    ctx.strokeStyle = "rgba(215,226,245,0.35)"; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(xL, g.beltY); ctx.lineTo(xL, top); ctx.lineTo(xR, top); ctx.lineTo(xR, g.beltY); ctx.stroke();
-    ctx.fillStyle = "rgba(215,226,245,0.55)"; ctx.font = Utils.monoFont(10); ctx.textAlign = "center";
-    ctx.fillText("SENSOR", g.sensorX, top - 8);
-    const active = !!it;
-    ctx.fillStyle = active ? "#b79cff" : "#52d8a4";
-    ctx.shadowColor = active ? "rgba(183,156,255,0.9)" : "rgba(82,216,164,0.8)"; ctx.shadowBlur = 8;
-    ctx.beginPath(); ctx.arc(g.sensorX, top, 3.5, 0, Math.PI * 2); ctx.fill();
-    ctx.shadowBlur = 0;
-    // balança sob a esteira
-    const sw = g.gateHalf * 1.5, sy = g.beltY + 24;
-    ctx.strokeStyle = "rgba(215,226,245,0.25)"; ctx.lineWidth = 1;
-    ctx.strokeRect(g.sensorX - sw / 2, sy, sw, 20);
-    ctx.fillStyle = "rgba(215,226,245,0.4)"; ctx.font = Utils.monoFont(9); ctx.textAlign = "left";
-    ctx.fillText("balança", g.sensorX - sw / 2, sy + 32);
-    let mTxt = "— g";
-    if (it) {
-      const k = it.phase === "measure" ? Utils.easeOut(it.t / (MEASURE_T * 0.8)) : 1;
-      mTxt = `${fmt(it.m * k, 0)} g`;
-    }
-    ctx.fillStyle = it ? "#d9ccff" : "rgba(215,226,245,0.45)"; ctx.font = Utils.monoFont(12); ctx.textAlign = "center";
-    ctx.fillText(mTxt, g.sensorX, sy + 14);
-
-    if (it) {
-      const { rx, ry } = radii(it, g);
-      const cy = g.beltY - ry;
-      const t = it.phase === "measure" ? it.t : MEASURE_T + it.t;
-      // varredura do laser
-      if (t < 0.85) {
-        const sx = xL + (xR - xL) * (t / 0.85);
-        ctx.strokeStyle = "rgba(183,156,255,0.85)"; ctx.lineWidth = 1.5;
-        ctx.shadowColor = "rgba(183,156,255,0.9)"; ctx.shadowBlur = 10;
-        ctx.beginPath(); ctx.moveTo(sx, top + 4); ctx.lineTo(sx, g.beltY); ctx.stroke();
-        ctx.shadowBlur = 0;
-        // feixe descendo sobre o alimento (plano de leitura)
-        const k = Utils.clamp(t / 0.85, 0, 1);
-        const yy = cy - ry - 4 + (2 * ry + 4) * k;
-        const lg = ctx.createLinearGradient(0, yy - 14, 0, yy);
-        lg.addColorStop(0, "rgba(183,156,255,0)"); lg.addColorStop(1, "rgba(183,156,255,0.28)");
-        ctx.fillStyle = lg; ctx.fillRect(it.x - rx - 8, yy - 14, 2 * rx + 16, 14);
-        ctx.strokeStyle = "rgba(217,204,255,0.95)"; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(it.x - rx - 8, yy); ctx.lineTo(it.x + rx + 8, yy); ctx.stroke();
-      }
-      // cantoneiras de leitura em volta do alimento
-      {
-        const pad = 7, bx0 = it.x - rx - pad, bx1 = it.x + rx + pad, by0 = cy - ry - pad, by1 = cy + ry + Math.min(pad, 3);
-        ctx.strokeStyle = "rgba(183,156,255,0.8)"; ctx.lineWidth = 1.2;
-        [[bx0, by0, 1, 1], [bx1, by0, -1, 1], [bx0, by1, 1, -1], [bx1, by1, -1, -1]].forEach(([x, y, dx, dy]) => {
-          ctx.beginPath(); ctx.moveTo(x + dx * 6, y); ctx.lineTo(x, y); ctx.lineTo(x, y + dy * 6); ctx.stroke();
-        });
-      }
-      // resumo da leitura: SCAN COMPLETE → medida → classe
-      if (it.phase === "compare") {
-        const v = crit === "d" ? it.d : it.m;
-        const gk = classifyV(v);
-        const a = Utils.clamp(it.t / 0.25, 0, 1);
-        const tx = xR + 12, ty = top + 6;
-        ctx.save(); ctx.globalAlpha = a;
-        ctx.fillStyle = "rgba(8,12,24,0.88)"; ctx.strokeStyle = "rgba(183,156,255,0.55)"; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.rect(tx, ty, 150, 50); ctx.fill(); ctx.stroke();
-        ctx.fillStyle = "#b79cff"; ctx.fillRect(tx, ty, 2, 50);
-        ctx.textAlign = "left";
-        ctx.font = `600 10px ` + getComputedStyle(document.body).getPropertyValue("--font-mono");
-        ctx.fillStyle = "#d9ccff"; ctx.fillText("SCAN COMPLETE", tx + 9, ty + 14);
-        ctx.font = Utils.monoFont(10.5); ctx.fillStyle = "#eef2f8";
-        ctx.fillText(`${CRIT[crit].label.toUpperCase()}: ${fmtV(v)}`, tx + 9, ty + 29);
-        ctx.fillStyle = GC[gk]; ctx.font = `700 11px ` + getComputedStyle(document.body).getPropertyValue("--font-mono");
-        ctx.fillText(`CLASSE: ${gk}`, tx + 9, ty + 43);
-        ctx.restore();
-      }
-      // braços do paquímetro fechando até as bordas do alimento
-      const p = Utils.easeOut(t / 0.7);
-      const aL = xL + (it.x - rx - xL) * p, aR = xR + (it.x + rx - xR) * p;
-      ctx.strokeStyle = "rgba(217,204,255,0.9)"; ctx.lineWidth = 1.4;
-      ctx.beginPath(); ctx.moveTo(aL, top + 10); ctx.lineTo(aL, cy); ctx.lineTo(aL + 5, cy); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(aR, top + 10); ctx.lineTo(aR, cy); ctx.lineTo(aR - 5, cy); ctx.stroke();
-      // cota com o valor medido
-      if (p > 0.92) {
-        const dy = Math.max(top + 22, cy - ry - 16);
-        const k = it.phase === "measure" ? Utils.easeOut(it.t / (MEASURE_T * 0.8)) : 1;
-        ctx.strokeStyle = "#d9ccff"; ctx.fillStyle = "#d9ccff"; ctx.lineWidth = 1;
-        Utils.arrow(ctx, it.x, dy, it.x - rx, dy, 5);
-        Utils.arrow(ctx, it.x, dy, it.x + rx, dy, 5);
-        ctx.font = `700 ${Utils.clamp(g.ppc * 2.2, 12, 16)}px ` + getComputedStyle(document.body).getPropertyValue("--font-mono");
-        ctx.textAlign = "center";
-        ctx.fillStyle = "#ffffff";
-        ctx.fillText(`${fmt(it.d * k, 1)} cm`, it.x, dy - 7);
-      }
-    }
-    ctx.restore();
-  }
-
-  function drawBins(g) {
-    const u = CRIT[crit].unit, [a, b] = lim[crit];
-    const ruleTxt = { A: `x < ${fmtL(a)} ${u}`, B: `${fmtL(a)} ≤ x ≤ ${fmtL(b)}`, C: `x > ${fmtL(b)} ${u}` };
-    const n = records.length;
-    GROUPS.forEach(k => {
-      const bx = g.bins[k], L = bx - g.binW / 2, R = bx + g.binW / 2;
-      const c = GC[k];
-      const fl = flashes[k];
-      ctx.save();
-      // saída na esteira (seta para baixo)
-      ctx.strokeStyle = c; ctx.globalAlpha = 0.35 + fl; ctx.setLineDash([3, 4]); ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(bx, g.beltY + 14); ctx.lineTo(bx, g.binTop - 2); ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.globalAlpha = 1;
-      // porta da esteira (abre quando um alimento cai neste grupo)
-      const open = Math.min(1, fl / 0.35);
-      ctx.strokeStyle = c; ctx.globalAlpha = 0.5 + 0.5 * open; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(bx - 14, g.beltY + 14); ctx.lineTo(bx - 14 + 12 * Math.cos(open * 1.2), g.beltY + 14 + 12 * Math.sin(open * 1.2)); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(bx + 14, g.beltY + 14); ctx.lineTo(bx + 14 - 12 * Math.cos(open * 1.2), g.beltY + 14 + 12 * Math.sin(open * 1.2)); ctx.stroke();
-      ctx.globalAlpha = 1;
-      // caixa (preenchimento em degradê, mais forte no fundo)
-      const bgr = ctx.createLinearGradient(0, g.binTop, 0, g.binBot);
-      bgr.addColorStop(0, "rgba(255,255,255,0)"); bgr.addColorStop(1, "rgba(255,255,255,0.05)");
-      ctx.fillStyle = c; ctx.globalAlpha = 0.05 + fl * 0.25;
-      ctx.beginPath(); ctx.moveTo(L, g.binTop); ctx.lineTo(L + 6, g.binBot); ctx.lineTo(R - 6, g.binBot); ctx.lineTo(R, g.binTop); ctx.closePath(); ctx.fill();
-      ctx.globalAlpha = 1; ctx.fillStyle = bgr; ctx.fill();
-      // marcas de nível na lateral
-      ctx.strokeStyle = c; ctx.globalAlpha = 0.25; ctx.lineWidth = 1;
-      for (let yy = g.binTop + 44; yy < g.binBot - 6; yy += 14) { ctx.beginPath(); ctx.moveTo(R - 7, yy); ctx.lineTo(R - 3, yy); ctx.stroke(); }
-      ctx.globalAlpha = 0.75; ctx.strokeStyle = c; ctx.lineWidth = 1.4;
-      if (fl > 0) { ctx.shadowColor = c; ctx.shadowBlur = 14 * fl / 0.6; }
-      ctx.beginPath(); ctx.moveTo(L, g.binTop); ctx.lineTo(L + 6, g.binBot); ctx.lineTo(R - 6, g.binBot); ctx.lineTo(R, g.binTop); ctx.stroke();
-      ctx.shadowBlur = 0; ctx.globalAlpha = 1;
-      ctx.textAlign = "center";
-      const small = g.w < 600;
-      ctx.fillStyle = c; ctx.font = `700 ${small ? 11 : 13}px ` + getComputedStyle(document.body).getPropertyValue("--font-mono");
-      ctx.fillText(small ? k : `GRUPO ${k}`, bx, g.binTop + 16);
-      if (!small) {
-        ctx.fillStyle = "rgba(238,242,248,0.8)"; ctx.font = Utils.monoFont(10.5);
-        ctx.fillText(ruleTxt[k], bx, g.binTop + 30);
-      }
-      // alimentos já separados
-      const inBin = landedIn(k);
-      const s = slotInfo(g);
-      const cap = s.cols * s.rows;
-      inBin.slice(0, cap).forEach((r, i) => {
-        const p = slotPos(k, i, g);
-        const rx = Math.min(r.d * g.ppc / 2 * 0.62, s.slotW * 0.46);
-        drawFood(r.type, p.x, p.y, rx, rx * FOODS[r.type].s);
-      });
-      if (inBin.length > cap) { ctx.fillStyle = "rgba(238,242,248,0.8)"; ctx.font = Utils.monoFont(10); ctx.fillText(`+${inBin.length - cap}`, R - 16, g.binTop + 44); }
-      // contagem e porcentagem
-      const cnt = records.filter(r => groupOf(r) === k).length;
-      ctx.fillStyle = "#eef2f8"; ctx.font = `700 ${g.w < 600 ? 10 : 13}px ` + getComputedStyle(document.body).getPropertyValue("--font-mono");
-      ctx.fillText(n ? `${cnt} · ${fmt(cnt / n * 100, 0)}%` : "0", bx, g.binBot + 16);
-      ctx.restore();
+  /* acende os elementos de uma grade (a transição usa o --d de cada um) */
+  function light(id) {
+    document.querySelectorAll(`#${id} i`).forEach(i => {
+      if (i.dataset.f) { i.classList.add("part"); i.style.setProperty("--f", `${i.dataset.f}%`); }
+      else i.classList.add("lit");
     });
   }
+  function nodes(on) { ["lnS", "lnC", "lnP", "lnP2", "lnD", "lnQ"].forEach(id => $(id).classList.toggle("on", on)); }
+  function ops(on) { ["lop1", "lop2", "lop3", "lop4"].forEach(id => $(id).classList.toggle("on", on)); }
+  function focus(id) { document.querySelectorAll("#logStage .lnode").forEach(n => n.classList.toggle("focus", n.id === id)); }
+  function live(t) { $("logLive").textContent = t; }
+  function count(id, to, fmtFn, dur) {
+    const el = $(id);
+    Tween.set(el, "n", 0);
+    Tween.to(el, "n", to, (x) => { el.textContent = fmtFn(x); }, { dur });
+  }
+  /* textos fixos e contas (sem animação) */
+  function renderTexts(show) {
+    const P = perDay(), Q = total(), T = Q / 1000;
+    $("lvS").textContent = fmt(v.S, 0);
+    $("lvC").textContent = fmtC(v.C);
+    $("lvD").textContent = String(v.D);
+    $("lvD").nextElementSibling.textContent = dayWord(v.D);
+    $("lvP").textContent = show ? fmtKg(P) : "?";
+    $("lvP2").textContent = show ? fmtKg(P) : "?";
+    $("lvQ").textContent = show ? fmtKg(Q) : "?";
+    $("lvT").textContent = show ? fmtT(T) : "?";
+    $("logConv").textContent = `${show ? fmtKg(Q) : "?"} kg ÷ 1.000`;
+    $("logCalc1").textContent = show ? `${fmt(v.S, 0)} × ${fmtC(v.C)} = ${fmtKg(P)}` : "S × C";
+    $("logHeroSub").textContent = `de alimentos para ${fmt(v.S, 0)} soldados durante ${v.D} ${dayWord(v.D)}`;
+    $("logProbS").textContent = `${fmt(v.S, 0)} soldados`;
+    $("logProbD").textContent = `${v.D} ${dayWord(v.D)}`;
+    $("logDoneLine").textContent = `${fmt(v.S, 0)} soldados · ${v.D} ${dayWord(v.D)} · ${fmtT(T)} toneladas de alimentos`;
+    renderReadout();
+  }
+  function renderReadout() {
+    const P = perDay(), Q = total();
+    $("logReadout").innerHTML =
+      `<span class="lbl">Por dia · S × C</span><span class="v">${fmt(v.S, 0)} × ${fmtC(v.C)} = <b>${fmtKg(P)} kg</b></span>` +
+      `<span class="lbl">Período · S × C × D</span><span class="v">${fmt(v.S, 0)} × ${fmtC(v.C)} × ${v.D} = <b>${fmtKg(Q)} kg</b></span>` +
+      `<span class="lbl">Em toneladas · Q ÷ 1.000</span><span class="v">${fmtKg(Q)} ÷ 1.000 = <b>${fmtT(Q / 1000)} t</b></span>`;
+  }
+  function setButtons() {
+    const b = $("btnLogRun");
+    b.disabled = phase === "run";
+    b.textContent = phase === "run" ? "CALCULANDO…" : phase === "done" ? "CALCULAR DE NOVO" : "CALCULAR SUPRIMENTOS";
+  }
+  function clearTimers() { timers.forEach(clearTimeout); timers = []; }
 
-  function drawNumberLine(g) {
-    const C = CRIT[crit], [lo, hi] = C.domain, [a, b] = lim[crit];
-    const X = (v) => g.lx0 + (Utils.clamp(v, lo, hi) - lo) / (hi - lo) * (g.lx1 - g.lx0);
-    const y = g.lineY;
-    ctx.save();
-    // intervalos coloridos
-    ctx.lineWidth = 5; ctx.globalAlpha = 0.6;
-    [["A", lo, a], ["B", a, b], ["C", b, hi]].forEach(([k, v0, v1]) => {
-      ctx.strokeStyle = GC[k]; ctx.beginPath(); ctx.moveTo(X(v0), y); ctx.lineTo(X(v1), y); ctx.stroke();
+  /* ------------------------------ estados ------------------------------ */
+  function reset() {
+    clearTimers();
+    phase = "idle";
+    $("logStage").dataset.phase = "idle";
+    buildGrids(); renderTexts(false);
+    nodes(false); ops(false); focus(null);
+    $("logHero").classList.remove("on", "pop");
+    $("logDone").hidden = true;
+    live("Pronto para calcular");
+    setButtons();
+  }
+  /* estado final completo (sem animação) */
+  function finish(pop) {
+    clearTimers();
+    phase = "done";
+    $("logStage").dataset.phase = "done";
+    buildGrids(); renderTexts(true);
+    nodes(true); ops(true); focus(null);
+    ["logTroops", "logDayBlocks", "logStock", "logDays"].forEach(id => {
+      document.querySelectorAll(`#${id} i`).forEach(i => { i.style.setProperty("--d", "0s"); });
+      light(id);
     });
-    ctx.globalAlpha = 1;
-    // marcas
-    ctx.strokeStyle = "rgba(215,226,245,0.45)"; ctx.lineWidth = 1; ctx.fillStyle = "rgba(215,226,245,0.5)";
-    ctx.font = Utils.monoFont(10); ctx.textAlign = "center";
-    ctx.textAlign = "center";
-    for (let v = lo; v <= hi + 1e-9; v += C.tick) {
-      ctx.beginPath(); ctx.moveTo(X(v), y + 3); ctx.lineTo(X(v), y + 7); ctx.stroke();
-      ctx.fillText(fmt(v, 0), X(v), y + 18);
-    }
-    ctx.textAlign = "left"; ctx.fillStyle = "rgba(215,226,245,0.5)";
-    ctx.fillText(g.w < 600 ? `x = ${C.label} (${C.unit})` : `reta numérica e gráfico de pontos · x = ${C.label} (${C.unit})`, g.lx0, y - 68);
-    ctx.textAlign = "center";
-    // gráfico de pontos (cada alimento medido é um ponto)
-    const bins = {};
-    const bw = (hi - lo) / 60;
-    records.forEach(r => {
-      const v = valueOf(r), key = Math.round((v - lo) / bw);
-      const st = bins[key] = (bins[key] || 0) + 1;
-      if (st > 6) return;
-      ctx.fillStyle = GC[groupOf(r)];
-      ctx.beginPath(); ctx.arc(X(lo + key * bw), y - 8 - (st - 1) * 7, 2.8, 0, Math.PI * 2); ctx.fill();
+    const hero = $("logHero");
+    hero.classList.add("on");
+    if (pop && !Utils.prefersReducedMotion()) { hero.classList.remove("pop"); void hero.offsetWidth; hero.classList.add("pop"); }
+    $("logDone").hidden = false;
+    live(`${fmtKg(total())} kg = ${fmtT(total() / 1000)} t`);
+    setButtons();
+  }
+  /* animação passo a passo: S → C → S×C → D → (S×C)×D → toneladas */
+  function run() {
+    if (phase === "run") { finish(true); return; }
+    reset();
+    if (Utils.prefersReducedMotion()) { finish(false); return; }
+    phase = "run";
+    $("logStage").dataset.phase = "run";
+    setButtons();
+    const P = perDay(), Q = total(), T = Q / 1000, S = v.S, C = v.C, D = v.D;
+    const dDays = Math.min(1400, D * 170);
+    const at = (ms, fn) => timers.push(setTimeout(fn, ms));
+    at(0, () => {
+      $("lnS").classList.add("on"); focus("lnS");
+      live(`${fmt(S, 0)} soldados`);
+      count("lvS", S, x => fmt(Math.round(x), 0), 700);
+      light("logTroops");
     });
-    // limites (fechados do lado do grupo B)
-    [a, b].forEach(v => {
-      ctx.strokeStyle = "rgba(238,242,248,0.55)"; ctx.setLineDash([3, 3]);
-      ctx.beginPath(); ctx.moveTo(X(v), y - 50); ctx.lineTo(X(v), y); ctx.stroke(); ctx.setLineDash([]);
-      ctx.fillStyle = GC.B; ctx.beginPath(); ctx.arc(X(v), y, 4, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = "#eef2f8"; ctx.font = `700 11px ` + getComputedStyle(document.body).getPropertyValue("--font-mono");
-      ctx.textAlign = "center"; ctx.fillText(fmtL(v), X(v), y - 52);
+    at(1100, () => {
+      $("lnC").classList.add("on"); focus("lnC");
+      live(`cada um: ${fmtC(C)} kg por dia`);
     });
-    // marcador do alimento atual
-    const it = readItem;
-    const pi = phaseIndex(it);
-    if (it && pi >= 1) {
-      const v = valueOf(it.rec || it);
-      const k = it.phase === "compare" ? Utils.easeOut(it.t / 0.45) : 1;
-      const my = y - 48 + 38 * k;
-      const gk = classifyV(v);
-      ctx.fillStyle = GC[gk]; ctx.shadowColor = GC[gk]; ctx.shadowBlur = 10;
-      ctx.beginPath(); ctx.moveTo(X(v), my); ctx.lineTo(X(v) - 6, my - 10); ctx.lineTo(X(v) + 6, my - 10); ctx.closePath(); ctx.fill();
-      ctx.shadowBlur = 0;
-      ctx.font = `700 11px ` + getComputedStyle(document.body).getPropertyValue("--font-mono");
-      ctx.fillText(fmt(v, C.dig), X(v), my - 14);
-    }
-    ctx.restore();
-    ctx.textAlign = "left";
+    at(2000, () => {
+      $("lop1").classList.add("on"); $("lop2").classList.add("on");
+      $("lnP").classList.add("on"); focus("lnP");
+      live(`${fmt(S, 0)} × ${fmtC(C)} = ${fmtKg(P)} kg/dia`);
+      count("lvP", P, x => fmtKg(Math.round(x)), 900);
+      $("logCalc1").textContent = `${fmt(S, 0)} × ${fmtC(C)} = ${fmtKg(P)}`;
+      light("logDayBlocks");
+    });
+    at(3300, () => {
+      $("lnP2").classList.add("on"); $("lvP2").textContent = fmtKg(P);
+      $("lnD").classList.add("on"); focus("lnD");
+      live(`período: ${D} ${dayWord(D)}`);
+      light("logDays");
+    });
+    const tQ = 3300 + dDays + 200;
+    at(tQ, () => {
+      $("lop3").classList.add("on"); $("lop4").classList.add("on");
+      $("lnQ").classList.add("on"); focus("lnQ");
+      live(`${fmtKg(P)} × ${D} = ${fmtKg(Q)} kg`);
+      count("lvQ", Q, x => fmtKg(Math.round(x)), 1200);
+      light("logStock");
+    });
+    const tT = tQ + 1700;
+    at(tT, () => {
+      focus(null);
+      $("logConv").textContent = `${fmtKg(Q)} kg ÷ 1.000`;
+      const hero = $("logHero");
+      hero.classList.add("on", "pop");
+      live(`${fmtKg(Q)} kg ÷ 1.000 = ${fmtT(T)} t`);
+      const dT = exactDigits(T, 3);
+      count("lvT", T, x => fmt(x, dT), 900);
+    });
+    at(tT + 1100, () => { finish(false); });
   }
 
-  function draw() {
-    if (!ctx) return;
-    ctx.clearRect(0, 0, W, H);
-    if (W < 120 || H < 120) return;   // etapa ainda escondida
-    const g = geom();
-    drawBins(g);
-    drawNumberLine(g);
-    drawBelt(g);
-    // alimentos (sombra + corpo)
-    items.forEach(it => {
-      const { rx, ry } = radii(it, g);
-      if (it.phase === "drop") {
-        const k = Utils.clamp(it.t / DROP_T, 0, 1);
-        const x = it.x0 + (it.tx - it.x0) * Utils.easeOut(k);
-        const y = it.y0 + (it.ty - it.y0) * k * k;
-        const target = Math.min(it.d * g.ppc / 2 * 0.62, slotInfo(g).slotW * 0.46);
-        const s = rx + (target - rx) * k;
-        drawFood(it.type, x, y, s, s * FOODS[it.type].s);
-      } else {
-        ctx.save(); ctx.fillStyle = "rgba(0,0,0,0.35)";
-        ctx.beginPath(); ctx.ellipse(it.x, g.beltY - 1, rx * 0.8, 2.5, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
-        drawFood(it.type, it.x, g.beltY - ry, rx, ry);
-        if (it.isQ && questionPending) {
-          ctx.save(); ctx.strokeStyle = "#b79cff"; ctx.lineWidth = 1.5; ctx.setLineDash([4, 3]);
-          ctx.beginPath(); ctx.arc(it.x, g.beltY - ry, Math.max(rx, ry) + 8, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
-        }
-      }
-    });
-    drawGate(g);
-    // entrada da esteira
-    ctx.save(); ctx.fillStyle = "rgba(215,226,245,0.45)"; ctx.font = Utils.monoFont(10);
-    ctx.fillText("entrada ►", 8, g.beltY + 42); ctx.restore();
-  }
-
-  /* ------------------------------ loop ------------------------------ */
-  function tick(now) {
-    if (!looping) return;
-    if (lastTs === null) lastTs = now;
-    const dt = Math.min(0.1, (now - lastTs) / 1000);
-    lastTs = now;
-    step(dt);
-    updateOverlays();
-    draw();
-    raf = requestAnimationFrame(tick);
-  }
-  function startLoop() { if (looping) return; looping = true; lastTs = null; raf = requestAnimationFrame(tick); }
-  function stopLoop() { looping = false; if (raf) cancelAnimationFrame(raf); raf = null; }
-  function fit() { const f = Utils.fitCanvas(canvas); ctx = f.ctx; W = f.cssW; H = f.cssH; draw(); }
-
-  /* ---------------------------- controles ---------------------------- */
+  /* ------------------------------ controles ------------------------------ */
+  function setValues(nv) { v = { ...v, ...nv }; syncSliders(); }
   function syncSliders() {
-    const C = CRIT[crit];
-    ["sldLim1", "sldLim2"].forEach((id, i) => {
-      const s = $(id);
-      s.min = C.min; s.max = C.max; s.step = C.step; s.value = lim[crit][i];
-    });
-    $("valLim1").textContent = `${fmtL(lim[crit][0])} ${C.unit}`;
-    $("valLim2").textContent = `${fmtL(lim[crit][1])} ${C.unit}`;
+    $("sldLogS").value = v.S; $("sldLogC").value = v.C; $("sldLogD").value = v.D;
+    $("valLogS").textContent = fmt(v.S, 0);
+    $("valLogC").textContent = `${fmtC(v.C)} kg`;
+    $("valLogD").textContent = String(v.D);
   }
-  function onLimitInput(which) {
-    const C = CRIT[crit];
-    let a = parseFloat($("sldLim1").value), b = parseFloat($("sldLim2").value);
-    if (b - a < C.gap) {
-      if (which === 1) b = Math.min(C.max, a + C.gap); else a = Math.max(C.min, b - C.gap);
-      if (b - a < C.gap) { if (which === 1) a = b - C.gap; else b = a + C.gap; }
-    }
-    lim[crit] = [Math.round(a / C.step) * C.step, Math.round(b / C.step) * C.step].map(v => Number(v.toFixed(2)));
-    ruleChanged();
-  }
-  function setCrit(c) {
-    crit = c;
-    $("btnCritD").setAttribute("aria-pressed", String(c === "d"));
-    $("btnCritM").setAttribute("aria-pressed", String(c === "m"));
-    $("sortLimNote").textContent = c === "d"
-      ? "Mude os limites: os alimentos já analisados são reclassificados na hora."
-      : "Agora o critério é a massa. O mesmo alimento pode mudar de grupo!";
-    ruleChanged();
-  }
-  function ruleChanged() {
-    syncSliders();
-    buildRule();
-    refreshData();
-    lastReadHTML = ""; lastPipe = "";
-    if (quiz && !questionCb) quiz.reset();
-    if (!$("sortQ").hidden) showQuestion();
-    draw();
-  }
-  function buildFoodChips() {
-    const box = $("sortFoodChips");
-    box.innerHTML = "";
-    Object.keys(FOODS).concat(["rand"]).forEach(k => {
-      const b = document.createElement("button");
-      b.className = "btn chip";
-      b.textContent = k === "rand" ? "Aleatório" : FOODS[k].name;
-      b.addEventListener("click", () => chooseFood(k));
-      box.appendChild(b);
-    });
-  }
-  function setSpeed(v) {
-    speedMul = v;
-    document.querySelectorAll("#sortSpeedBtns .chip").forEach(b => b.setAttribute("aria-pressed", String(Number(b.dataset.speed) === v)));
-  }
-
-  function init() {
-    canvas = $("sortCanvas");
-    Utils.observeResize($("sortStage"), fit);
-    buildRule(); buildStats(); buildFoodChips(); syncSliders();
-    $("btnSortStart").addEventListener("click", startOrPause);
-    $("btnSortNext").addEventListener("click", nextFood);
-    $("btnSortReset").addEventListener("click", resetSim);
-    $("btnCritD").addEventListener("click", () => setCrit("d"));
-    $("btnCritM").addEventListener("click", () => setCrit("m"));
-    $("sldLim1").addEventListener("input", () => onLimitInput(1));
-    $("sldLim2").addEventListener("input", () => onLimitInput(2));
-    document.querySelectorAll("#sortSpeedBtns .chip").forEach(b => b.addEventListener("click", () => setSpeed(Number(b.dataset.speed))));
-
-    quiz = makeQuiz("qSort", [{
-      get text() {
-        const q = SEQ[Q_INDEX];
-        const v = crit === "d" ? q.d : massOf(q.type, q.d);
-        return `Um alimento ${crit === "d" ? "mede" : "tem"} ${fmtV(v)}. Em qual grupo ele será colocado?<br><span class="qrule">${ruleInline()}</span>`;
-      },
-      options: [{ v: "A", label: "Grupo A" }, { v: "B", label: "Grupo B" }, { v: "C", label: "Grupo C" }],
-      get correct() { const q = SEQ[Q_INDEX]; return classifyV(crit === "d" ? q.d : massOf(q.type, q.d)); },
-      testLabel: "Testar na esteira",
-      test(done) { runQuestionTest(done); },
-      explain(answer, r) {
-        return `O sensor mediu x = ${fmtV(r.v)}. A condição <b>${ineq(r.v, r.group)}</b> é verdadeira, então a esteira mandou o alimento para o <b>Grupo ${r.group}</b>. ` +
-          `Medir → comparar → classificar: quem decide é a regra matemática.`;
-      }
-    }]);
-
-    refreshData(); updateButtons(); updateOverlays();
-    fit();
-
-    Visibility.subscribe((hidden) => {
-      if (!entered) return;
-      if (hidden) { pausedByVisibility = looping; stopLoop(); }
-      else if (pausedByVisibility) startLoop();
-    });
-    StepManager.onModeChange(() => {
-      if (!StepManager.isPresentation() && questionPending) { questionPending = false; hideQuestion(); }
-      refreshData(); draw();
-    });
-    StepManager.onEnter("separacao", () => { entered = true; startLoop(); fit(); });
-    StepManager.onLeave("separacao", () => { entered = false; stopLoop(); });
-    StepManager.registerActiveSim("separacao", { toggle: startOrPause, reset: resetSim });
-  }
-
-  function fullReset() {
-    lim = { d: CRIT.d.def.slice(), m: CRIT.m.def.slice() };
-    setSpeed(1);
-    crit = "m"; setCrit("d");
-    resetSim();
+  function restartDemo() {
+    setValues(LOG_CONFIG.DEFAULTS);
+    reset();
     if (quiz) quiz.reset();
   }
 
-  /* exemplo para a conclusão, sempre com a regra padrão (6 cm e 8 cm) */
+  function init() {
+    const L = LOG_CONFIG.LIMITS;
+    [["sldLogS", "S", L.S], ["sldLogC", "C", L.C], ["sldLogD", "D", L.D]].forEach(([id, key, [mn, mx, st]]) => {
+      const s = $(id); s.min = mn; s.max = mx; s.step = st;
+      s.addEventListener("input", () => {
+        const val = key === "C" ? Math.round(parseFloat(s.value) * 10) / 10 : parseInt(s.value, 10);
+        setValues({ [key]: val });
+        finish(false);              // exploração: resultado na hora
+      });
+    });
+    $("btnLogRun").addEventListener("click", run);
+    $("btnLogReset").addEventListener("click", restartDemo);
+    quiz = makeQuiz("qLog", [{
+      text: "Se dobrássemos para 1.000 soldados, com o mesmo consumo e os mesmos 7 dias, o que aconteceria com a quantidade de alimentos?",
+      options: [{ v: "igual", label: "Continuaria 4,2 t" }, { v: "dobro", label: "Iria para 8,4 t" }, { v: "quadruplo", label: "Iria para 16,8 t" }],
+      correct: "dobro",
+      testLabel: "Testar com 1.000 soldados",
+      test(done) {
+        setValues({ S: 1000, C: LOG_CONFIG.DEFAULTS.C, D: LOG_CONFIG.DEFAULTS.D });
+        finish(true);
+        timers.push(setTimeout(() => done({}), Utils.prefersReducedMotion() ? 0 : 700));
+      },
+      explain() {
+        return `1.000 × 1,2 × 7 = 8.400 kg = <b>8,4 t</b>. Dobrou o número de soldados → <b>dobrou a quantidade de alimentos</b>: proporcionalidade direta.`;
+      }
+    }]);
+    // "Refazer" na pergunta volta ao cenário padrão (500 soldados)
+    $("qLog").addEventListener("click", (e) => {
+      if (e.target.closest(".qreset")) { setValues(LOG_CONFIG.DEFAULTS); if (phase !== "idle") finish(false); else reset(); }
+    });
+    syncSliders();
+    reset();
+
+    StepManager.onModeChange(() => {
+      if (StepManager.isPresentation()) restartDemo();      // apresentação: sempre o cenário 500 · 1,2 · 7
+      else finish(false);                                    // exploração: contas visíveis e controles ativos
+    });
+    StepManager.onLeave("logistica", () => { if (phase === "run") finish(false); });
+    // Espaço = calcular (ou pular a animação) · R = reiniciar cálculo
+    StepManager.registerActiveSim("logistica", { toggle: run, reset: restartDemo });
+  }
+
+  function fullReset() { restartDemo(); }
+
+  /* exemplo da conclusão, sempre com os valores padrão */
   function example() {
-    const q = SEQ[Q_INDEX], def = CRIT.d.def;
-    return `${fmt(q.d, 1)} cm → ${fmt(def[0], 0)} ≤ ${fmt(q.d, 1)} ≤ ${fmt(def[1], 0)} → Grupo ${classifyV(q.d, def)}`;
+    const d = LOG_CONFIG.DEFAULTS, Q = d.S * d.C * d.D;
+    return `${fmt(d.S, 0)} × ${fmtC(d.C)} × ${d.D} = ${fmtKg(Math.round(Q))} kg = ${fmtT(Math.round(Q) / 1000)} t`;
   }
 
   return { init, fullReset, example };
@@ -8210,7 +7720,7 @@ const ConclusionModule = {
     document.getElementById("exLoc").textContent = `Δt = ${Utils.fmt(dt * 1e6, 3)} µs → d = ${Utils.fmt(Physics.distanceFromRoundTrip(dt), 0)} m`;
     const s = Physics.projectileSummary(CONFIG.presetSpeed, 45);
     document.getElementById("exPrev").textContent = `${Utils.fmt(CONFIG.presetSpeed, 0)} m/s, 45° → cai a ${Utils.fmt(s.R, 1)} m`;
-    document.getElementById("exCls").textContent = SortModule.example();
+    document.getElementById("exLog").textContent = LogisticsModule.example();
     document.getElementById("exSup").textContent = SupplyModule.example();
     document.getElementById("exDesc").textContent = BlackHoleModule.example();
   }
@@ -8221,7 +7731,7 @@ function fullResetAll() {
   IntroModule.stop();
   RadarModule.fullReset();
   TrajectoryModule.fullReset();
-  SortModule.fullReset();
+  LogisticsModule.fullReset();
   SupplyModule.fullReset();
   BlackHoleModule.fullReset();
   AlvoModule.fullReset();
@@ -8238,7 +7748,7 @@ document.addEventListener("DOMContentLoaded", () => {
   RadarModule.init();
   TrajectoryModule.init();
   ChallengesModule.init();
-  SortModule.init();
+  LogisticsModule.init();
   SupplyModule.init();
   BlackHoleModule.init();
   AlvoModule.init();
