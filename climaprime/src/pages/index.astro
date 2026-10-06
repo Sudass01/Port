@@ -1,0 +1,41 @@
+---
+/**
+ * HOME — landing page completa.
+ * A ordem das seções abaixo pode ser alterada livremente; cada seção é um
+ * componente independente em src/components/sections/.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/sections/Hero.astro';
+import TrustBar from '../components/sections/TrustBar.astro';
+import Services from '../components/sections/Services.astro';
+import QuoteWizard from '../components/sections/QuoteWizard.astro';
+import Benefits from '../components/sections/Benefits.astro';
+import CustomerTypes from '../components/sections/CustomerTypes.astro';
+import Gallery from '../components/sections/Gallery.astro';
+import Reviews from '../components/sections/Reviews.astro';
+import ServiceAreas from '../components/sections/ServiceAreas.astro';
+import AttentionCTA from '../components/sections/AttentionCTA.astro';
+import HowItWorks from '../components/sections/HowItWorks.astro';
+import FAQ from '../components/sections/FAQ.astro';
+import MapSection from '../components/sections/MapSection.astro';
+import FinalCTA from '../components/sections/FinalCTA.astro';
+import { seo, faq } from '../config/content';
+import { faqSchema } from '../lib/schema';
+---
+
+<BaseLayout title={seo.homeTitle} description={seo.homeDescription} rawTitle schema={[faqSchema(faq)]}>
+  <Hero />
+  <TrustBar />
+  <Services />
+  <QuoteWizard trackLabel="home" />
+  <Benefits />
+  <CustomerTypes />
+  <Gallery />
+  <Reviews />
+  <ServiceAreas />
+  <AttentionCTA />
+  <HowItWorks />
+  <FAQ alt />
+  <MapSection />
+  <FinalCTA />
+</BaseLayout>

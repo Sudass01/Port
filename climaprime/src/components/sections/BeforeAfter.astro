@@ -1,0 +1,123 @@
+---
+import Icon from '../ui/Icon.astro';
+import { beforeAfter } from '../../config/gallery';
+---
+
+{
+  beforeAfter.map((ba) => (
+    <div class="ba" data-reveal>
+      <div class="ba__text">
+        <p class="eyebrow">Antes e depois</p>
+        <h3>{ba.title}</h3>
+        <p>Arraste a linha para comparar. A sujeira acumulada na serpentina reduz a troca de calor, causa mau cheiro e aumenta o consumo de energia.</p>
+        <ul class="ba__legend">
+          <li><span class="dot dot--before" />{ba.before.label}: poeira, fungos e resíduos</li>
+          <li><span class="dot dot--after" />{ba.after.label}: serpentina limpa e livre</li>
+        </ul>
+      </div>
+      <figure class="ba__figure">
+        <div class="compare" data-compare>
+          <img class="compare__img" src={ba.after.image} alt={ba.after.alt} width="1200" height="900" loading="lazy" decoding="async" draggable="false" />
+          <div class="compare__before">
+            <img class="compare__img" src={ba.before.image} alt={ba.before.alt} width="1200" height="900" loading="lazy" decoding="async" draggable="false" />
+          </div>
+          <span class="compare__tag compare__tag--before" aria-hidden="true">{ba.before.label}</span>
+          <span class="compare__tag compare__tag--after" aria-hidden="true">{ba.after.label}</span>
+          <div class="compare__line" aria-hidden="true" />
+          <button
+            type="button"
+            class="compare__handle"
+            role="slider"
+            aria-label="Comparar antes e depois"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="50"
+            data-compare-handle
+          >
+            <Icon name="move-horizontal" size={22} />
+          </button>
+        </div>
+        <figcaption>{ba.caption}</figcaption>
+      </figure>
+    </div>
+  ))
+}
+
+<script>
+  import '../../scripts/before-after';
+</script>
+
+<style>
+  .ba {
+    display: grid;
+    gap: 28px;
+    align-items: center;
+    margin-top: clamp(3rem, 2.4rem + 3vw, 5rem);
+    padding: clamp(20px, 1rem + 2vw, 40px);
+    border-radius: 28px;
+    background: #fff;
+    border: 1px solid var(--c-line);
+    box-shadow: var(--shadow-sm);
+  }
+  @media (min-width: 960px) { .ba { grid-template-columns: 0.8fr 1.2fr; gap: 48px; } }
+  .ba h3 { font-size: clamp(1.375rem, 1.2rem + 0.8vw, 1.75rem); margin-bottom: 12px; }
+  .ba__text > p:not(.eyebrow) { color: var(--c-muted); }
+  .ba__legend { list-style: none; display: grid; gap: 8px; margin-top: 18px; font-size: 0.92rem; font-weight: 550; }
+  .ba__legend li { display: flex; align-items: center; gap: 10px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .dot--before { background: #8a7a63; }
+  .dot--after { background: var(--c-brand); }
+
+  .ba__figure { margin: 0; min-width: 0; }
+  .ba__figure figcaption { margin-top: 12px; font-size: 0.85rem; color: var(--c-muted); text-align: center; }
+
+  .compare {
+    --pos: 50%;
+    position: relative;
+    aspect-ratio: 4 / 3;
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--c-brand-50);
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: ew-resize;
+  }
+  .compare__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+  .compare__before { position: absolute; inset: 0; clip-path: inset(0 calc(100% - var(--pos)) 0 0); }
+  .compare__line { position: absolute; top: 0; bottom: 0; left: var(--pos); width: 3px; margin-left: -1.5px; background: #fff; box-shadow: 0 0 12px rgb(0 0 0 / 0.25); pointer-events: none; }
+  .compare__handle {
+    position: absolute;
+    top: 50%;
+    left: var(--pos);
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    margin: -26px 0 0 -26px;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    background: var(--c-primary);
+    color: #fff;
+    box-shadow: 0 8px 24px -6px rgb(0 0 0 / 0.4);
+    cursor: ew-resize;
+    transition: transform 0.2s var(--ease);
+    touch-action: none;
+  }
+  .compare:global(.is-dragging) .compare__handle { transform: scale(1.08); }
+  .compare__tag {
+    position: absolute;
+    top: 14px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: rgb(15 23 42 / 0.72);
+    color: #fff;
+    pointer-events: none;
+  }
+  .compare__tag--before { left: 14px; }
+  .compare__tag--after { right: 14px; background: color-mix(in srgb, var(--c-primary) 88%, transparent); }
+</style>

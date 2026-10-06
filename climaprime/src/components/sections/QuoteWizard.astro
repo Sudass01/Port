@@ -1,0 +1,417 @@
+---
+/**
+ * "Monte seu orçamento" — formulário em 5 etapas que gera a mensagem e abre o WhatsApp.
+ * Opções e textos: src/config/quote.ts. Lógica: src/scripts/quote-wizard.ts.
+ */
+import Icon from '../ui/Icon.astro';
+import Button from '../ui/Button.astro';
+import { quote } from '../../config/quote';
+import { company } from '../../config/company';
+import { firebaseEnabled } from '../../config/integrations';
+
+interface Props {
+  /** Pré-seleciona um serviço (id da etapa 1), ex.: nas páginas de serviço. */
+  preselect?: string;
+  title?: string;
+  subtitle?: string;
+  trackLabel?: string;
+}
+const { preselect, title = quote.title, subtitle = quote.subtitle, trackLabel = 'quote' } = Astro.props;
+const s = quote.steps;
+const picks = [
+  ...company.serviceAreas.neighborhoods.slice(0, Math.ceil(s.location.quickPicks / 2)),
+  ...company.serviceAreas.cities.map((c) => c.name),
+].slice(0, s.location.quickPicks);
+const privacy = firebaseEnabled
+  ? 'Seus dados são usados apenas para responder ao seu pedido.'
+  : 'Nenhum dado fica salvo no site: a mensagem vai direto para o WhatsApp.';
+const total = 5;
+---
+
+<section id="orcamento" class="section quote" aria-labelledby="quote-title" data-hide-mobile-cta>
+  <div class="quote__glow" aria-hidden="true"></div>
+  <div class="container quote__grid">
+    <div class="quote__intro" data-reveal>
+      <p class="eyebrow eyebrow--light">Orçamento rápido</p>
+      <h2 id="quote-title">{title}</h2>
+      <p class="quote__subtitle">{subtitle}</p>
+      <ul class="quote__points">
+        <li><Icon name="timer" size={20} />Leva menos de 1 minuto</li>
+        <li><Icon name="message-circle" size={20} />Resposta direto no WhatsApp</li>
+        <li><Icon name="shield-check" size={20} />Orçamento gratuito e sem compromisso</li>
+      </ul>
+      <div class="quote__direct">
+        <span>Prefere conversar direto?</span>
+        <Button wa={company.whatsappMessages.default} variant="ghost-light" size="sm" trackLabel="quote_direct">
+          Chamar no WhatsApp
+        </Button>
+      </div>
+    </div>
+
+    <div class="quote__card" data-quote data-track-label={trackLabel} data-reveal style="--d:80ms">
+      <form novalidate aria-describedby="quote-progress-text">
+        <div class="quote__progress">
+          <div class="quote__progress-head">
+            <span>Etapa <strong data-progress-text id="quote-progress-text">1 de {total}</strong></span>
+            <span class="quote__progress-hint">Sem cadastro</span>
+          </div>
+          <div class="quote__bar" role="progressbar" aria-label="Progresso do orçamento" aria-valuemin="1" aria-valuemax={total} aria-valuenow="1">
+            <span data-progress-bar></span>
+          </div>
+        </div>
+
+        <div class="quote__stage" data-stage>
+          <!-- Etapa 1 -->
+          <fieldset class="quote__step" data-step>
+            <legend class="quote__q" data-step-title tabindex="-1">{s.service.question}</legend>
+            <div class="opts opts--service">
+              {s.service.options.map((o) => (
+                <label class="opt">
+                  <input type="radio" name="service" value={o.id} checked={preselect === o.id} />
+                  <span class="opt__box">
+                    {o.icon && <span class="opt__icon"><Icon name={o.icon} size={22} /></span>}
+                    <span class="opt__text">
+                      <span class="opt__label">{o.label}</span>
+                      {o.hint && <span class="opt__hint">{o.hint}</span>}
+                    </span>
+                    <span class="opt__check" aria-hidden="true"><Icon name="check" size={14} strokeWidth={3} /></span>
+                  </span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          <!-- Etapa 2 -->
+          <fieldset class="quote__step" data-step hidden>
+            <legend class="quote__q" data-step-title tabindex="-1">{s.quantity.question}</legend>
+            <div class="opts opts--qty">
+              {s.quantity.options.map((o) => (
+                <label class="opt opt--compact">
+                  <input type="radio" name="quantity" value={o.id} />
+                  <span class="opt__box">
+                    <span class="opt__label">{o.label}</span>
+                    <span class="opt__check" aria-hidden="true"><Icon name="check" size={14} strokeWidth={3} /></span>
+                  </span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          <!-- Etapa 3 -->
+          <fieldset class="quote__step" data-step hidden>
+            <legend class="quote__q" data-step-title tabindex="-1">{s.place.question}</legend>
+            <div class="opts opts--place">
+              {s.place.options.map((o) => (
+                <label class="opt">
+                  <input type="radio" name="place" value={o.id} />
+                  <span class="opt__box">
+                    {o.icon && <span class="opt__icon"><Icon name={o.icon} size={22} /></span>}
+                    <span class="opt__text">
+                      <span class="opt__label">{o.label}</span>
+                      {o.hint && <span class="opt__hint">{o.hint}</span>}
+                    </span>
+                    <span class="opt__check" aria-hidden="true"><Icon name="check" size={14} strokeWidth={3} /></span>
+                  </span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          <!-- Etapa 4 -->
+          <div class="quote__step" data-step hidden>
+            <p class="quote__q" data-step-title tabindex="-1">{s.location.question}</p>
+            <div class="field">
+              <label for="quote-location" class="field__label">{s.location.label}</label>
+              <div class="field__control">
+                <Icon name="map-pin" size={20} />
+                <input
+                  id="quote-location"
+                  name="location"
+                  type="text"
+                  autocomplete="address-level2"
+                  placeholder={s.location.placeholder}
+                  maxlength="80"
+                  enterkeyhint="next"
+                  aria-describedby="quote-location-help quote-error"
+                  list="quote-areas"
+                />
+              </div>
+              <datalist id="quote-areas">
+                {company.serviceAreas.neighborhoods.map((n) => <option value={`${n}, ${company.location.city}`} />)}
+                {company.serviceAreas.cities.map((c) => <option value={c.name} />)}
+              </datalist>
+              <p id="quote-location-help" class="field__help">{s.location.help}</p>
+              <div class="picks" aria-label="Sugestões">
+                {picks.map((p) => (
+                  <button type="button" class="pick" data-pick={p} aria-pressed="false">{p}</button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <!-- Etapa 5 -->
+          <div class="quote__step" data-step hidden>
+            <p class="quote__q" data-step-title tabindex="-1">{s.name.question}</p>
+            <div class="field">
+              <label for="quote-name" class="field__label">{s.name.label}</label>
+              <div class="field__control">
+                <Icon name="user" size={20} />
+                <input
+                  id="quote-name"
+                  name="name"
+                  type="text"
+                  autocomplete="given-name"
+                  placeholder={s.name.placeholder}
+                  maxlength="60"
+                  enterkeyhint="send"
+                  aria-describedby="quote-name-help quote-error"
+                />
+              </div>
+              <p id="quote-name-help" class="field__help">{s.name.help}</p>
+            </div>
+          </div>
+
+          <p class="quote__error" id="quote-error" role="alert" data-error hidden></p>
+        </div>
+
+        <div class="quote__nav" data-nav>
+          <button type="button" class="btn btn--outline quote__back" data-back hidden>
+            <Icon name="arrow-left" size={18} />
+            Voltar
+          </button>
+          <button type="button" class="btn btn--primary quote__next" data-next>
+            Continuar
+            <Icon name="arrow-right" size={18} class="btn__arrow" />
+          </button>
+          <button type="submit" class="btn btn--wa quote__submit" data-submit hidden>
+            <Icon name="whatsapp" size={20} />
+            {quote.submitLabel}
+          </button>
+        </div>
+
+        <p class="quote__privacy" data-privacy><Icon name="lock" size={14} />{privacy}</p>
+
+        <div class="quote__success" data-success hidden aria-live="polite">
+          <span class="success__icon" aria-hidden="true">
+            <svg viewBox="0 0 52 52" width="56" height="56"><circle cx="26" cy="26" r="24" /><path d="M15 27l7 7 15-16" /></svg>
+          </span>
+          <p class="success__title" data-success-title tabindex="-1">{quote.successTitle}</p>
+          <p class="success__text">{quote.successText}</p>
+          <dl class="success__summary" data-summary></dl>
+          <div class="success__fallback" data-fallback hidden>
+            <p>{quote.fallbackText}</p>
+          </div>
+          <a class="btn btn--wa btn--block btn--lg" href="#" target="_blank" rel="noopener" data-open-whatsapp>
+            <Icon name="whatsapp" size={20} />
+            Abrir WhatsApp
+          </a>
+          <button type="button" class="success__restart" data-restart>Fazer outro orçamento</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+  import '../../scripts/quote-wizard';
+</script>
+
+<style>
+  .quote {
+    background:
+      radial-gradient(800px 420px at 0% 0%, color-mix(in srgb, var(--c-brand-light) 26%, transparent), transparent 65%),
+      linear-gradient(150deg, var(--c-primary-deep) 0%, color-mix(in srgb, var(--c-primary-deep) 70%, var(--c-ink)) 100%);
+    color: rgb(255 255 255 / 0.82);
+    overflow: clip;
+  }
+  .quote__glow {
+    position: absolute;
+    right: -10%;
+    bottom: -30%;
+    width: 640px;
+    height: 640px;
+    border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--c-brand) 40%, transparent), transparent 65%);
+    pointer-events: none;
+  }
+  .quote__grid { position: relative; display: grid; gap: 36px; align-items: start; }
+  @media (min-width: 1024px) { .quote__grid { grid-template-columns: 0.85fr 1.15fr; gap: 64px; align-items: center; } }
+
+  .quote h2 { color: #fff; max-width: 16ch; }
+  .eyebrow--light { color: var(--c-brand-light); }
+  .quote__subtitle { margin-top: 16px; font-size: 1.0625rem; max-width: 44ch; }
+  .quote__privacy { display: flex; align-items: flex-start; gap: 6px; margin-top: 14px; font-size: 0.8rem; color: var(--c-muted); line-height: 1.4; }
+  .quote__privacy :global(.icon) { margin-top: 2px; flex-shrink: 0; }
+  .quote__points { list-style: none; display: none; gap: 12px; margin-top: 26px; font-size: 0.95rem; }
+  @media (min-width: 640px) { .quote__points { display: grid; } }
+  .quote__points li { display: flex; gap: 12px; align-items: flex-start; }
+  .quote__points :global(.icon) { color: var(--c-brand-light); margin-top: 1px; }
+  .quote__direct { display: none; align-items: center; flex-wrap: wrap; gap: 12px 16px; margin-top: 30px; padding-top: 26px; border-top: 1px solid rgb(255 255 255 / 0.14); font-weight: 550; color: #fff; }
+  @media (min-width: 1024px) { .quote__direct { display: flex; } }
+
+  .quote__card {
+    background: #fff;
+    color: var(--c-ink);
+    border-radius: 24px;
+    padding: 22px 18px 20px;
+    box-shadow: 0 40px 80px -30px rgb(0 0 0 / 0.5);
+    min-width: 0;
+  }
+  @media (min-width: 640px) { .quote__card { padding: 32px; border-radius: 28px; } }
+
+  .quote__progress { margin-bottom: 22px; }
+  .quote__progress-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 0.875rem; color: var(--c-muted); }
+  .quote__progress-head strong { color: var(--c-ink); }
+  .quote__progress-hint { display: inline-flex; padding: 3px 10px; border-radius: 999px; background: var(--c-brand-50); color: var(--c-primary); font-weight: 600; font-size: 0.78rem; }
+  .quote__bar { height: 6px; border-radius: 99px; background: var(--c-line-soft); overflow: hidden; }
+  .quote__bar span { display: block; height: 100%; width: var(--progress, 20%); border-radius: inherit; background: linear-gradient(90deg, var(--c-brand-light), var(--c-primary)); transition: width 0.5s var(--ease-out); }
+
+  .quote__stage { min-height: 300px; }
+  @media (min-width: 640px) { .quote__stage { min-height: 280px; } }
+  .quote__step { border: 0; margin: 0; padding: 0; min-width: 0; }
+  .quote__step:global(.is-entering-forward) { animation: step-in-f 0.42s var(--ease-out) both; }
+  .quote__step:global(.is-entering-back) { animation: step-in-b 0.42s var(--ease-out) both; }
+  @keyframes step-in-f { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: none; } }
+  @keyframes step-in-b { from { opacity: 0; transform: translateX(-18px); } to { opacity: 1; transform: none; } }
+
+  .quote__q { display: block; float: none; width: 100%; padding: 0; font-family: var(--font-display); font-size: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.25; color: var(--c-ink); margin-bottom: 18px; outline: none; }
+
+  /* Opções em cards */
+  .opts { display: grid; gap: 10px; }
+  .opts--service { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .opts--service .opt:last-child { grid-column: 1 / -1; }
+  .opts--qty { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .opts--qty .opt:nth-child(n + 4) { grid-column: span 1; }
+  .opts--place { grid-template-columns: 1fr; }
+  @media (min-width: 480px) {
+    .opts--qty { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+    .opts--qty .opt { grid-column: span 2; }
+    .opts--qty .opt:nth-child(4), .opts--qty .opt:nth-child(5) { grid-column: span 3; }
+  }
+  @media (min-width: 640px) {
+    .opts--service { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .opts--service .opt:nth-child(4) { grid-column: span 1; }
+    .opts--service .opt:last-child { grid-column: span 2; }
+    .opts--place { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+
+  .opt { position: relative; display: block; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .opt input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+  .opt__box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 100%;
+    min-height: 64px;
+    padding: 14px;
+    border: 1.5px solid var(--c-line);
+    border-radius: 16px;
+    background: #fff;
+    transition: border-color 0.2s var(--ease), background-color 0.2s var(--ease), box-shadow 0.2s var(--ease), transform 0.15s var(--ease);
+  }
+  .opts--service .opt__box, .opts--place .opt__box { flex-direction: column; align-items: flex-start; gap: 10px; padding: 16px 14px; }
+  @media (max-width: 639px) {
+    .opts--place .opt__box { flex-direction: row; align-items: center; }
+  }
+  .opt--compact .opt__box { justify-content: center; min-height: 56px; padding: 10px; }
+  .opt--compact .opt__label { font-size: 1rem; }
+  .opt__icon { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: var(--c-brand-50); color: var(--c-brand); flex-shrink: 0; transition: background-color 0.2s var(--ease), color 0.2s var(--ease); }
+  .opt__text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .opt__label { font-weight: 650; font-size: 0.97rem; color: var(--c-ink); line-height: 1.25; }
+  .opt__hint { font-size: 0.8rem; color: var(--c-muted); line-height: 1.3; }
+  .opt__check {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid var(--c-line);
+    background: #fff;
+    color: transparent;
+    transition: all 0.2s var(--ease);
+  }
+  .opt--compact .opt__check { top: 50%; right: 8px; transform: translateY(-50%) scale(0.85); }
+  @media (hover: hover) {
+    .opt:hover .opt__box { border-color: var(--c-brand-200); background: var(--c-brand-50); }
+  }
+  .opt:active .opt__box { transform: scale(0.985); }
+  .opt input:focus-visible + .opt__box { outline: 3px solid var(--c-brand-light); outline-offset: 2px; }
+  .opt input:checked + .opt__box { border-color: var(--c-primary); background: var(--c-brand-50); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-brand) 16%, transparent); }
+  .opt input:checked + .opt__box .opt__check { background: var(--c-primary); border-color: var(--c-primary); color: #fff; }
+  .opt input:checked + .opt__box .opt__icon { background: var(--c-primary); color: #fff; }
+
+  /* Campos */
+  .field__label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; color: var(--c-ink-2); }
+  .field__control { position: relative; }
+  .field__control :global(.icon) { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--c-muted); pointer-events: none; }
+  .field input {
+    width: 100%;
+    min-height: 58px;
+    padding: 0 16px 0 48px;
+    border: 1.5px solid var(--c-line);
+    border-radius: 14px;
+    background: #fff;
+    font-size: 1.0625rem; /* ≥16px: evita zoom automático no iPhone */
+    color: var(--c-ink);
+    transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+  }
+  .field input::placeholder { color: #94a3b8; }
+  .field input:focus { outline: none; border-color: var(--c-primary); box-shadow: 0 0 0 4px color-mix(in srgb, var(--c-brand) 18%, transparent); }
+  .field input[aria-invalid='true'] { border-color: var(--c-danger); }
+  .field__help { margin-top: 8px; font-size: 0.85rem; color: var(--c-muted); }
+  .picks { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .pick {
+    min-height: 40px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid var(--c-line);
+    background: var(--c-surface);
+    font-size: 0.875rem;
+    font-weight: 550;
+    color: var(--c-ink-2);
+    transition: all 0.2s var(--ease);
+  }
+  .pick:hover { border-color: var(--c-brand-200); background: var(--c-brand-50); }
+  .pick[aria-pressed='true'] { border-color: var(--c-primary); background: var(--c-primary); color: #fff; }
+
+  .quote__error {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: #fef3f2;
+    color: var(--c-danger);
+    font-size: 0.9rem;
+    font-weight: 550;
+    animation: shake 0.35s var(--ease);
+  }
+  @keyframes shake { 0%, 100% { transform: none; } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+
+  .quote__nav { display: flex; gap: 10px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--c-line-soft); }
+  .quote__nav .btn { min-height: 54px; }
+  .quote__next, .quote__submit { flex: 1; }
+  .quote__submit { white-space: normal; line-height: 1.25; }
+  .quote__back { flex: 0 0 auto; padding: 0 18px; }
+  @media (max-width: 379px) { .quote__back { padding: 0 14px; } .quote__submit { font-size: 0.9rem; padding: 0 14px; } }
+
+  /* Sucesso */
+  .quote__success { text-align: center; padding: 8px 0 0; animation: step-in-f 0.5s var(--ease-out) both; }
+  .success__icon { display: inline-block; margin-bottom: 12px; }
+  .success__icon circle { fill: color-mix(in srgb, var(--c-wa) 12%, #fff); stroke: var(--c-wa); stroke-width: 2; }
+  .success__icon path { fill: none; stroke: var(--c-wa); stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 40; stroke-dashoffset: 40; animation: draw 0.6s var(--ease-out) 0.2s forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .success__title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; color: var(--c-ink); letter-spacing: -0.02em; outline: none; }
+  .success__text { color: var(--c-muted); margin-top: 6px; }
+  .success__summary { display: grid; gap: 0; margin: 20px 0; padding: 6px 16px; text-align: left; border-radius: 16px; background: var(--c-surface); border: 1px solid var(--c-line-soft); }
+  .success__summary :global(div) { display: flex; justify-content: space-between; gap: 16px; padding: 9px 0; font-size: 0.9rem; }
+  .success__summary :global(div + div) { border-top: 1px solid var(--c-line); }
+  .success__summary :global(dt) { color: var(--c-muted); }
+  .success__summary :global(dd) { margin: 0; font-weight: 650; text-align: right; overflow-wrap: anywhere; }
+  .success__fallback p { margin-bottom: 10px; font-weight: 600; color: var(--c-ink); }
+  .success__restart { margin-top: 12px; min-height: 44px; padding: 0 12px; border: 0; background: none; color: var(--c-primary); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+</style>

@@ -1,0 +1,135 @@
+---
+/**
+ * Painel de leads (opcional) — /admin
+ * Lista os pedidos de orçamento gravados no Firebase. Não é indexado.
+ * Configuração: README → "Firebase (leads + painel)".
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/ui/Icon.astro';
+import { firebaseEnabled } from '../config/integrations';
+import { quote } from '../config/quote';
+
+const statuses = [
+  { id: 'novo', label: 'Novo' },
+  { id: 'em-contato', label: 'Em contato' },
+  { id: 'orcamento-enviado', label: 'Orçamento enviado' },
+  { id: 'fechado', label: 'Fechado' },
+  { id: 'perdido', label: 'Perdido' },
+];
+---
+
+<BaseLayout title="Painel de leads" description="Área restrita." noindex minimal>
+  <section class="admin">
+    <div class="container">
+      {
+        !firebaseEnabled ? (
+          <div class="admin-card admin-setup">
+            <span class="icon-badge"><Icon name="lock" size={24} /></span>
+            <h1>Painel de leads desativado</h1>
+            <p>
+              O site está funcionando normalmente: os pedidos vão direto para o WhatsApp. Para também guardar cada
+              pedido e acompanhar por aqui, configure o Firebase em <code>src/config/integrations.ts</code> (ou nas
+              variáveis de ambiente do Netlify) seguindo o README.
+            </p>
+            <a class="btn btn--outline" href="/">Voltar ao site</a>
+          </div>
+        ) : (
+          <div data-admin data-statuses={JSON.stringify(statuses)} data-options={JSON.stringify(quote.steps)}>
+            <div class="admin-card admin-login" data-view="login" hidden>
+              <span class="icon-badge"><Icon name="lock" size={24} /></span>
+              <h1>Entrar no painel</h1>
+              <p>Acesso restrito à equipe.</p>
+              <form data-login novalidate>
+                <label for="admin-email">E-mail</label>
+                <input id="admin-email" name="email" type="email" autocomplete="username" required />
+                <label for="admin-pass">Senha</label>
+                <input id="admin-pass" name="password" type="password" autocomplete="current-password" required />
+                <p class="admin-error" data-login-error role="alert" hidden />
+                <button type="submit" class="btn btn--primary btn--block">Entrar</button>
+              </form>
+            </div>
+
+            <div class="admin-loading" data-view="loading">
+              <span class="spinner" aria-hidden="true" />
+              Carregando…
+            </div>
+
+            <div data-view="app" hidden>
+              <header class="admin-head">
+                <div>
+                  <h1>Pedidos de orçamento</h1>
+                  <p data-summary>—</p>
+                </div>
+                <div class="admin-actions">
+                  <button type="button" class="btn btn--outline btn--sm" data-refresh><Icon name="refresh-cw" size={18} />Atualizar</button>
+                  <button type="button" class="btn btn--outline btn--sm" data-export><Icon name="download" size={18} />Exportar CSV</button>
+                  <button type="button" class="btn btn--outline btn--sm" data-logout><Icon name="log-out" size={18} />Sair</button>
+                </div>
+              </header>
+
+              <div class="admin-filters">
+                <label class="sr-only" for="admin-search">Buscar</label>
+                <input id="admin-search" type="search" placeholder="Buscar por nome, bairro, serviço…" data-search />
+                <label class="sr-only" for="admin-status">Status</label>
+                <select id="admin-status" data-status-filter>
+                  <option value="">Todos os status</option>
+                  {statuses.map((s) => <option value={s.id}>{s.label}</option>)}
+                </select>
+              </div>
+
+              <p class="admin-error" data-app-error role="alert" hidden />
+              <ul class="leads" data-leads />
+              <p class="admin-empty" data-empty hidden>Nenhum pedido encontrado.</p>
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+{firebaseEnabled && (
+  <script>
+    import '../scripts/admin';
+  </script>
+)}
+
+<style is:global>
+  .admin { padding: 40px 0 80px; min-height: 70vh; background: var(--c-surface); }
+  .admin-card { max-width: 480px; margin: 40px auto; padding: 32px; border-radius: 24px; background: #fff; border: 1px solid var(--c-line); box-shadow: var(--shadow-sm); }
+  .admin-card h1 { font-size: 1.6rem; margin: 18px 0 8px; }
+  .admin-card p { color: var(--c-muted); }
+  .admin-setup .btn { margin-top: 18px; }
+  .admin-setup code { font-size: 0.85em; background: var(--c-surface); padding: 2px 6px; border-radius: 6px; }
+  .admin-login form { display: grid; gap: 8px; margin-top: 18px; }
+  .admin-login label { font-weight: 600; font-size: 0.9rem; margin-top: 6px; }
+  .admin input, .admin select {
+    min-height: 50px; padding: 0 14px; border: 1.5px solid var(--c-line); border-radius: 12px; background: #fff; font-size: 1rem;
+  }
+  .admin input:focus, .admin select:focus { outline: none; border-color: var(--c-primary); box-shadow: 0 0 0 4px var(--c-brand-100); }
+  .admin-login .btn { margin-top: 14px; }
+  .admin-error { padding: 10px 14px; border-radius: 12px; background: #fef3f2; color: var(--c-danger); font-weight: 550; font-size: 0.9rem; }
+  .admin-loading { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 80px 0; color: var(--c-muted); }
+  .spinner { width: 22px; height: 22px; border-radius: 50%; border: 3px solid var(--c-brand-100); border-top-color: var(--c-primary); animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .admin-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 20px; }
+  .admin-head h1 { font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem); }
+  .admin-head p { color: var(--c-muted); margin-top: 4px; }
+  .admin-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .admin-filters { display: grid; gap: 10px; margin-bottom: 18px; }
+  @media (min-width: 720px) { .admin-filters { grid-template-columns: 1fr 240px; } }
+  .leads { list-style: none; display: grid; gap: 12px; }
+  .lead { padding: 18px 20px; border-radius: 18px; background: #fff; border: 1px solid var(--c-line); }
+  .lead__top { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: center; }
+  .lead__name { font-weight: 750; font-size: 1.05rem; }
+  .lead__date { color: var(--c-muted); font-size: 0.85rem; }
+  .lead__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px 18px; margin: 12px 0; font-size: 0.9rem; }
+  .lead__grid dt { color: var(--c-muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 650; }
+  .lead__grid dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+  .lead select { min-height: 40px; font-size: 0.9rem; }
+  .lead__status[data-s='novo'] { border-color: var(--c-brand); color: var(--c-primary); font-weight: 650; }
+  .lead details { font-size: 0.88rem; color: var(--c-muted); }
+  .lead details summary { cursor: pointer; font-weight: 600; color: var(--c-ink-2); min-height: 36px; display: flex; align-items: center; }
+  .lead pre { white-space: pre-wrap; font-family: inherit; background: var(--c-surface); padding: 12px; border-radius: 10px; margin: 6px 0 0; }
+  .admin-empty { text-align: center; padding: 40px 0; color: var(--c-muted); }
+</style>

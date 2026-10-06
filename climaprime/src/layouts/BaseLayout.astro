@@ -1,0 +1,105 @@
+---
+import '@fontsource-variable/inter/wght.css';
+import '@fontsource-variable/plus-jakarta-sans/wght.css';
+import '../styles/global.css';
+
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import WhatsAppFloat from '../components/layout/WhatsAppFloat.astro';
+import MobileCTA from '../components/layout/MobileCTA.astro';
+import Analytics from '../components/layout/Analytics.astro';
+import { company } from '../config/company';
+import { integrations } from '../config/integrations';
+import { seo } from '../config/content';
+import { localBusinessSchema } from '../lib/schema';
+
+interface Props {
+  /** Título completo da página (sem sufixo). Na home, use seo.homeTitle. */
+  title: string;
+  description: string;
+  /** true = não adiciona o sufixo " | Marca" ao título. */
+  rawTitle?: boolean;
+  image?: string;
+  noindex?: boolean;
+  /** JSON-LD extra (FAQ, Service, Breadcrumb...). */
+  schema?: Record<string, unknown>[];
+  /** Esconde barra/botão de WhatsApp (ex.: painel /admin). */
+  minimal?: boolean;
+}
+
+const { title, description, rawTitle = false, image = seo.ogImage, noindex = false, schema = [], minimal = false } = Astro.props;
+
+const fullTitle = rawTitle ? title : `${title}${seo.titleSuffix}`;
+const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const canonical = new URL(path, company.url).toString();
+const ogImage = new URL(image, company.url).toString();
+const t = company.theme;
+const themeCss = `:root{--c-primary:${t.primary};--c-primary-deep:${t.primaryDeep};--c-brand:${t.brand};--c-brand-light:${t.brandLight};--c-ink:${t.ink};--c-muted:${t.muted};--c-surface:${t.surface};--c-wa:${t.whatsapp};--c-wa-hover:${t.whatsappHover}}`;
+const schemas = minimal ? [] : [localBusinessSchema(), ...schema];
+const { gtmId } = integrations.analytics;
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large'} />
+    {!noindex && <link rel="canonical" href={canonical} />}
+    <meta name="theme-color" content={t.browserBar} />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <!-- Open Graph / redes sociais -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content={seo.locale} />
+    <meta property="og:site_name" content={company.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${company.name} — ${company.description}`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- Geo (SEO local) -->
+    <meta name="geo.region" content={`BR-${company.location.state}`} />
+    <meta name="geo.placename" content={company.location.city} />
+
+    <style is:inline set:html={themeCss}></style>
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    <noscript><style>[data-reveal]{opacity:1!important;transform:none!important}</style></noscript>
+
+    {schemas.map((s) => <script type="application/ld+json" set:html={JSON.stringify(s)} />)}
+
+    {!minimal && <Analytics />}
+  </head>
+  <body>
+    {
+      !minimal && gtmId && (
+        <noscript>
+          <iframe src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`} height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager" />
+        </noscript>
+      )
+    }
+    <a href="#conteudo" class="skip-link">Pular para o conteúdo</a>
+    <Header minimal={minimal} />
+    <main id="conteudo" tabindex="-1">
+      <slot />
+    </main>
+    {!minimal && <Footer />}
+    {!minimal && <WhatsAppFloat />}
+    {!minimal && <MobileCTA />}
+    <script>
+      import '../scripts/site';
+    </script>
+  </body>
+</html>

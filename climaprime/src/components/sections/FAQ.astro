@@ -1,0 +1,110 @@
+---
+import SectionHeader from '../ui/SectionHeader.astro';
+import Icon from '../ui/Icon.astro';
+import Button from '../ui/Button.astro';
+import { faq as defaultFaq, faqSection } from '../../config/content';
+import { company } from '../../config/company';
+
+interface Props { items?: { q: string; a: string }[]; title?: string; subtitle?: string; alt?: boolean }
+const { items = defaultFaq, title = faqSection.title, subtitle = faqSection.subtitle, alt = false } = Astro.props;
+---
+
+<section id="faq" class:list={['section', { 'section--alt': alt }]} aria-labelledby="faq-title">
+  <div class="container faq">
+    <div class="faq__side">
+      <SectionHeader id="faq-title" eyebrow={faqSection.eyebrow} title={title} subtitle={subtitle} />
+      <div class="faq__help" data-reveal>
+        <span class="icon-badge"><Icon name="headset" size={24} /></span>
+        <p><strong>Ainda com dúvida?</strong> Nossa equipe responde pelo WhatsApp.</p>
+        <Button wa={company.whatsappMessages.question} variant="wa" trackLabel="faq">Perguntar no WhatsApp</Button>
+      </div>
+    </div>
+
+    <div class="faq__list" data-accordion="single" data-reveal>
+      {items.map((item, i) => (
+        <div class="faq__item">
+          <h3>
+            <button type="button" class="faq__q" aria-expanded={i === 0 ? 'true' : 'false'} aria-controls={`faq-a-${i}`} id={`faq-q-${i}`} data-accordion-trigger>
+              <span>{item.q}</span>
+              <span class="faq__toggle" aria-hidden="true" />
+            </button>
+          </h3>
+          <div class="faq__a" id={`faq-a-${i}`} aria-labelledby={`faq-q-${i}`}>
+            <div><p>{item.a}</p></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  import '../../scripts/accordion';
+</script>
+
+<style>
+  .faq { display: grid; gap: 8px; }
+  @media (min-width: 1024px) { .faq { grid-template-columns: 0.8fr 1.2fr; gap: 64px; align-items: start; } .faq__side { position: sticky; top: calc(var(--header-h) + 32px); } }
+  .faq__help { display: none; gap: 14px; padding: 24px; border-radius: 22px; background: var(--c-surface); border: 1px solid var(--c-line); }
+  .section--alt .faq__help { background: #fff; }
+  .faq__help p { color: var(--c-muted); margin: 0; }
+  .faq__help strong { display: block; color: var(--c-ink); font-size: 1.0625rem; margin-bottom: 2px; }
+  .faq__help :global(.btn) { justify-self: start; }
+  @media (min-width: 1024px) { .faq__help { display: grid; } }
+
+  .faq__list { display: grid; gap: 10px; }
+  .faq__item { border: 1px solid var(--c-line); border-radius: 18px; background: #fff; transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease); }
+  .faq__item:has([aria-expanded='true']) { border-color: var(--c-brand-200); box-shadow: var(--shadow-sm); }
+  .faq__item h3 { font-size: 1rem; font-family: var(--font-sans); letter-spacing: -0.005em; }
+  .faq__q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    min-height: 64px;
+    padding: 16px 20px;
+    border: 0;
+    background: none;
+    text-align: left;
+    font-weight: 650;
+    font-size: 1.0125rem;
+    line-height: 1.4;
+    color: var(--c-ink);
+    border-radius: 18px;
+  }
+  .faq__q:hover { color: var(--c-primary); }
+  .faq__toggle {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--c-brand-50);
+    transition: background-color 0.3s var(--ease), transform 0.4s var(--ease-out);
+  }
+  .faq__toggle::before, .faq__toggle::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 12px;
+    height: 2px;
+    margin: -1px 0 0 -6px;
+    border-radius: 2px;
+    background: var(--c-primary);
+    transition: transform 0.4s var(--ease-out), background-color 0.3s;
+  }
+  .faq__toggle::after { transform: rotate(90deg); }
+  [aria-expanded='true'] .faq__toggle { background: var(--c-primary); transform: rotate(180deg); }
+  [aria-expanded='true'] .faq__toggle::before, [aria-expanded='true'] .faq__toggle::after { background: #fff; }
+  [aria-expanded='true'] .faq__toggle::after { transform: rotate(0deg); }
+
+  .faq__a { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.4s var(--ease-out); }
+  .faq__a > div { overflow: hidden; }
+  .faq__a p { padding: 0 20px 20px; color: var(--c-muted); opacity: 0; transform: translateY(-4px); transition: opacity 0.3s var(--ease), transform 0.4s var(--ease-out); }
+  .faq__item:has([aria-expanded='true']) .faq__a { grid-template-rows: 1fr; }
+  .faq__item:has([aria-expanded='true']) .faq__a p { opacity: 1; transform: none; }
+  html:not(.js) .faq__a { grid-template-rows: 1fr; }
+  html:not(.js) .faq__a p { opacity: 1; transform: none; }
+</style>

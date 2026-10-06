@@ -1,0 +1,51 @@
+---
+/**
+ * Página de serviço gerada a partir de src/config/services.ts (itens com `page`).
+ * Ex.: /servicos/limpeza-ar-condicionado
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/ui/PageHero.astro';
+import ServiceDetail from '../../components/sections/ServiceDetail.astro';
+import HowItWorks from '../../components/sections/HowItWorks.astro';
+import QuoteWizard from '../../components/sections/QuoteWizard.astro';
+import Reviews from '../../components/sections/Reviews.astro';
+import FAQ from '../../components/sections/FAQ.astro';
+import AreasCompact from '../../components/sections/AreasCompact.astro';
+import FinalCTA from '../../components/sections/FinalCTA.astro';
+import { servicePages } from '../../config/services';
+import { company } from '../../config/company';
+import { fill } from '../../lib/text';
+import { breadcrumbSchema, faqSchema, serviceSchema } from '../../lib/schema';
+
+export function getStaticPaths() {
+  return servicePages.map((service) => ({ params: { slug: service.slug }, props: { service } }));
+}
+
+const { service } = Astro.props;
+const page = service.page;
+const path = `/servicos/${service.slug}`;
+const h1 = fill(page.h1);
+const crumbs = [
+  { name: 'Início', path: '/' },
+  { name: 'Serviços', path: '/servicos' },
+  { name: service.title, path },
+];
+const faqItems = page.faq.map((f) => ({ q: fill(f.q), a: fill(f.a) }));
+const waMessage = `Olá! Encontrei vocês pelo site e gostaria de um orçamento de ${service.quote.label.toLowerCase()}.`;
+---
+
+<BaseLayout
+  title={fill(page.seoTitle)}
+  description={fill(page.seoDescription)}
+  image={page.image.src.endsWith('.svg') ? undefined : page.image.src}
+  schema={[serviceSchema(h1, fill(page.seoDescription), path), faqSchema(faqItems), breadcrumbSchema(crumbs)]}
+>
+  <PageHero eyebrow={service.title} title={h1} intro={fill(page.intro)} breadcrumbs={crumbs} image={page.image} waMessage={waMessage} trackLabel={`service_${service.id}`} />
+  <ServiceDetail page={page} title={service.title} quoteOption={service.quote.option} quoteLabel={service.quote.label} />
+  <HowItWorks eyebrow="Como funciona" title={`Como é feito o serviço de ${service.quote.label.toLowerCase()}`} steps={page.steps} />
+  <QuoteWizard preselect={service.quote.option} trackLabel={`service_${service.id}`} title={`Orçamento de ${service.quote.label.toLowerCase()} em menos de 1 minuto`} />
+  <FAQ items={faqItems} title={`Dúvidas sobre ${service.quote.label.toLowerCase()}`} />
+  <Reviews />
+  <AreasCompact title={`${service.title} em ${company.location.regionShort}`} />
+  <FinalCTA />
+</BaseLayout>

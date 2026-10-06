@@ -1,0 +1,150 @@
+---
+import Logo from '../ui/Logo.astro';
+import Icon from '../ui/Icon.astro';
+import { company } from '../../config/company';
+import { services, serviceHref } from '../../config/services';
+import { footer } from '../../config/content';
+import { whatsappUrl } from '../../lib/whatsapp';
+import { addressLine } from '../../lib/text';
+
+const year = new Date().getFullYear();
+const waMsg = company.whatsappMessages.default;
+const links = [
+  { label: 'Início', href: '/' },
+  { label: 'Serviços', href: '/servicos' },
+  { label: 'Para empresas', href: '/empresas' },
+  { label: 'Áreas atendidas', href: '/areas-atendidas' },
+  { label: 'Avaliações', href: '/#avaliacoes' },
+  { label: 'Perguntas frequentes', href: '/#faq' },
+  { label: 'Sobre', href: '/sobre' },
+  { label: 'Contato', href: '/contato' },
+];
+---
+
+<footer class="footer" data-hide-mobile-cta>
+  <div class="container footer__grid">
+    <div class="footer__brand">
+      <Logo onDark />
+      <p class="footer__about">{footer.about}</p>
+      <div class="footer__social">
+        <a
+          href={whatsappUrl(waMsg)}
+          target="_blank"
+          rel="noopener"
+          data-wa
+          data-wa-message={waMsg}
+          data-track-label="footer_icon"
+          aria-label="WhatsApp"
+        ><Icon name="whatsapp" size={20} /></a>
+        <a href={company.social.instagram.url} target="_blank" rel="noopener" aria-label={`Instagram @${company.social.instagram.handle}`} data-track-label="footer">
+          <Icon name="instagram" size={20} />
+        </a>
+        {company.social.facebook && (
+          <a href={company.social.facebook} target="_blank" rel="noopener" aria-label="Facebook"><Icon name="facebook" size={20} /></a>
+        )}
+      </div>
+    </div>
+
+    <nav class="footer__col" aria-label="Links rápidos">
+      <h2 class="footer__title">Links rápidos</h2>
+      <ul>
+        {links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+      </ul>
+    </nav>
+
+    <nav class="footer__col" aria-label="Serviços">
+      <h2 class="footer__title">Serviços</h2>
+      <ul>
+        {services.map((s) => <li><a href={serviceHref(s)}>{s.title}</a></li>)}
+      </ul>
+      <h2 class="footer__title footer__title--mt">Áreas atendidas</h2>
+      <p class="footer__areas">{company.serviceAreas.cities.map((c) => c.name).join(' · ')}</p>
+    </nav>
+
+    <div class="footer__col">
+      <h2 class="footer__title">Atendimento</h2>
+      <ul class="footer__contact">
+        <li>
+          <Icon name="whatsapp" size={18} />
+          <a href={whatsappUrl(waMsg)} target="_blank" rel="noopener" data-wa data-wa-message={waMsg} data-track-label="footer">
+            {company.contact.whatsappDisplay}
+          </a>
+        </li>
+        <li>
+          <Icon name="instagram" size={18} />
+          <a href={company.social.instagram.url} target="_blank" rel="noopener" data-track-label="footer">@{company.social.instagram.handle}</a>
+        </li>
+        {company.contact.email && (
+          <li><Icon name="mail" size={18} /><a href={`mailto:${company.contact.email}`}>{company.contact.email}</a></li>
+        )}
+        <li><Icon name="map-pin" size={18} /><span>{addressLine()}</span></li>
+      </ul>
+      <dl class="footer__hours">
+        {company.hours.map((h) => (
+          <div>
+            <dt>{h.label}</dt>
+            <dd>{h.open} às {h.close}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </div>
+
+  <div class="container footer__bottom">
+    <p>© {year} {company.name}.{company.demoMode && <> {footer.demoNotice}</>}</p>
+    <p><a href="/contato">Contato</a> · <a href="/sitemap-index.xml">Mapa do site</a></p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: #0b1424;
+    background: color-mix(in srgb, var(--c-ink) 92%, var(--c-primary-deep));
+    color: rgb(255 255 255 / 0.72);
+    padding-top: clamp(3.5rem, 3rem + 3vw, 5.5rem);
+    font-size: 0.95rem;
+  }
+  .footer__grid { display: grid; gap: 40px 24px; grid-template-columns: 1fr 1fr; padding-bottom: 48px; }
+  .footer__brand, .footer__col:last-child { grid-column: 1 / -1; }
+  @media (min-width: 640px) { .footer__col:last-child { grid-column: auto; } .footer__brand { grid-column: 1 / -1; } }
+  @media (min-width: 1024px) { .footer__grid { grid-template-columns: 1.35fr 0.9fr 1.1fr 1.1fr; } .footer__brand { grid-column: auto; } }
+  .footer__about { margin-top: 18px; max-width: 34ch; line-height: 1.6; }
+  .footer__social { display: flex; gap: 10px; margin-top: 22px; }
+  .footer__social a {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgb(255 255 255 / 0.07);
+    border: 1px solid rgb(255 255 255 / 0.1);
+    color: #fff;
+    transition: background-color 0.2s var(--ease), transform 0.2s var(--ease);
+  }
+  .footer__social a:hover { background: rgb(255 255 255 / 0.14); transform: translateY(-2px); }
+  .footer__title { font-family: var(--font-sans); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #fff; margin-bottom: 14px; }
+  .footer__title--mt { margin-top: 28px; }
+  .footer ul { list-style: none; display: grid; gap: 2px; }
+  .footer__col a { color: rgb(255 255 255 / 0.72); text-decoration: none; display: inline-block; padding: 7px 0; line-height: 1.35; transition: color 0.2s var(--ease); }
+  .footer__col a:hover { color: #fff; text-decoration: underline; }
+  .footer__areas { line-height: 1.8; }
+  .footer__contact li { display: flex; align-items: center; gap: 10px; }
+  .footer__contact :global(.icon) { color: var(--c-brand-light); }
+  .footer__contact span { padding: 6px 0; }
+  .footer__hours { margin: 18px 0 0; display: grid; gap: 8px; padding: 16px; border-radius: 14px; background: rgb(255 255 255 / 0.05); border: 1px solid rgb(255 255 255 / 0.08); }
+  .footer__hours div { display: flex; justify-content: space-between; gap: 12px; }
+  .footer__hours dt { color: rgb(255 255 255 / 0.7); }
+  .footer__hours dd { margin: 0; color: #fff; font-weight: 600; white-space: nowrap; }
+  .footer__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 24px;
+    padding-block: 22px calc(22px + var(--mobile-cta-space, 0px));
+    border-top: 1px solid rgb(255 255 255 / 0.1);
+    font-size: 0.85rem;
+    color: rgb(255 255 255 / 0.55);
+  }
+  .footer__bottom p { margin: 0; }
+  .footer__bottom a { color: rgb(255 255 255 / 0.7); }
+</style>

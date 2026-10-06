@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Button from '../components/ui/Button.astro';
+import Icon from '../components/ui/Icon.astro';
+import { company } from '../config/company';
+---
+
+<BaseLayout title="Página não encontrada" description="A página que você procurou não existe." noindex>
+  <section class="section nf" data-hero>
+    <div class="container nf__inner">
+      <span class="nf__icon"><Icon name="thermometer-snowflake" size={34} /></span>
+      <p class="eyebrow">Erro 404</p>
+      <h1>Página não encontrada</h1>
+      <p class="lead">O endereço pode ter mudado. Volte para o início ou fale direto com a nossa equipe.</p>
+      <div class="btn-row btn-row--stack nf__ctas">
+        <Button href="/" arrow>Voltar ao início</Button>
+        <Button wa={company.whatsappMessages.default} trackLabel="404">Falar no WhatsApp</Button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .nf { min-height: 60vh; display: grid; align-items: center; background: linear-gradient(180deg, var(--c-surface), #fff); }
+  .nf__inner { text-align: center; max-width: 640px; }
+  .nf__icon { display: inline-grid; place-items: center; width: 72px; height: 72px; border-radius: 22px; background: var(--c-brand-50); color: var(--c-brand); margin-bottom: 18px; }
+  .nf .lead { margin-top: 14px; }
+  .nf__ctas { justify-content: center; margin-top: 28px; }
+</style>

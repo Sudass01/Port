@@ -1,0 +1,238 @@
+---
+import Logo from '../ui/Logo.astro';
+import Icon from '../ui/Icon.astro';
+import Button from '../ui/Button.astro';
+import { navigation } from '../../config/content';
+import { company } from '../../config/company';
+import { whatsappUrl } from '../../lib/whatsapp';
+
+interface Props { minimal?: boolean }
+const { minimal = false } = Astro.props;
+const waMsg = company.whatsappMessages.default;
+---
+
+<header class="header" data-header>
+  <div class="container header__inner">
+    <Logo />
+
+    {
+      !minimal && (
+        <>
+          <nav class="header__nav" aria-label="Navegação principal">
+            <ul>
+              {navigation.map((item) => (
+                <li>
+                  <a href={item.href}>{item.label}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <div class="header__actions">
+            <a
+              href={whatsappUrl(waMsg)}
+              class="header__wa"
+              target="_blank"
+              rel="noopener"
+              data-wa
+              data-wa-message={waMsg}
+              data-track-label="header"
+              aria-label={`Falar no WhatsApp ${company.contact.whatsappDisplay}`}
+            >
+              <Icon name="whatsapp" size={22} />
+              <span class="header__wa-text">{company.contact.whatsappDisplay}</span>
+            </a>
+            <Button href="#orcamento" class="header__cta" size="sm" track="quote_cta_click" trackLabel="header">
+              Solicitar orçamento
+            </Button>
+            <button class="header__burger" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Abrir menu" data-menu-toggle>
+              <span class="burger" aria-hidden="true"><span /><span /><span /></span>
+            </button>
+          </div>
+        </>
+      )
+    }
+  </div>
+</header>
+
+{
+  !minimal && (
+    <div id="mobile-menu" class="mmenu" inert>
+      <div class="mmenu__backdrop" data-menu-backdrop />
+      <div class="mmenu__panel" role="dialog" aria-modal="true" aria-label="Menu">
+        <nav aria-label="Navegação mobile">
+          <ul class="mmenu__list">
+            {navigation.map((item, i) => (
+              <li style={`--i:${i}`}>
+                <a href={item.href}>
+                  <span>{item.label}</span>
+                  <Icon name="chevron-right" size={18} />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <div class="mmenu__ctas">
+          <Button href="#orcamento" block size="lg" arrow track="quote_cta_click" trackLabel="mobile_menu">
+            Solicitar orçamento
+          </Button>
+          <Button wa={waMsg} block size="lg" trackLabel="mobile_menu">
+            Chamar no WhatsApp
+          </Button>
+        </div>
+        <p class="mmenu__info">
+          <Icon name="clock" size={16} />
+          {company.hours.map((h) => `${h.label}: ${h.open}–${h.close}`).join(' · ')}
+        </p>
+      </div>
+    </div>
+  )
+}
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    background: rgb(255 255 255 / 0.92);
+    backdrop-filter: saturate(1.6) blur(12px);
+    -webkit-backdrop-filter: saturate(1.6) blur(12px);
+    border-bottom: 1px solid transparent;
+    transition: box-shadow 0.3s var(--ease), border-color 0.3s var(--ease), background-color 0.3s var(--ease);
+  }
+  .header:global(.is-scrolled) {
+    background: rgb(255 255 255 / 0.97);
+    border-color: var(--c-line-soft);
+    box-shadow: 0 6px 24px -14px rgb(15 23 42 / 0.18);
+  }
+  .header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    height: var(--header-h);
+    transition: height 0.3s var(--ease);
+  }
+  @media (min-width: 1024px) {
+    .header:global(.is-scrolled) .header__inner { height: 68px; }
+  }
+
+  .header__nav { display: none; }
+  .header__nav ul { list-style: none; display: flex; gap: 2px; }
+  .header__nav a {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 11px;
+    border-radius: 10px;
+    color: var(--c-ink-2);
+    font-size: 0.925rem;
+    font-weight: 550;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.2s var(--ease), background-color 0.2s var(--ease);
+  }
+  .header__nav a:hover { color: var(--c-primary); background: var(--c-brand-50); }
+
+  .header__actions { display: flex; align-items: center; gap: 8px; }
+  .header__wa {
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    color: var(--c-wa);
+    background: color-mix(in srgb, var(--c-wa) 9%, #fff);
+    text-decoration: none;
+    transition: background-color 0.2s var(--ease);
+  }
+  .header__wa:hover { background: color-mix(in srgb, var(--c-wa) 16%, #fff); }
+  .header__wa-text { display: none; }
+  .header :global(.header__cta) { display: none; }
+
+  .header__burger {
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--c-line);
+    border-radius: 12px;
+    background: #fff;
+    color: var(--c-ink);
+  }
+  .burger { position: relative; display: block; width: 20px; height: 14px; }
+  .burger span {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+    transition: transform 0.3s var(--ease-out), opacity 0.2s var(--ease), top 0.3s var(--ease-out);
+  }
+  .burger span:nth-child(1) { top: 0; }
+  .burger span:nth-child(2) { top: 6px; }
+  .burger span:nth-child(3) { top: 12px; }
+  [aria-expanded='true'] .burger span:nth-child(1) { top: 6px; transform: rotate(45deg); }
+  [aria-expanded='true'] .burger span:nth-child(2) { opacity: 0; }
+  [aria-expanded='true'] .burger span:nth-child(3) { top: 6px; transform: rotate(-45deg); }
+
+  @media (min-width: 520px) {
+    .header :global(.header__cta) { display: inline-flex; }
+  }
+  @media (min-width: 1024px) {
+    .header__nav { display: block; }
+    .header__burger { display: none; }
+    .header :global(.header__cta) { min-height: 46px; }
+  }
+  @media (min-width: 1360px) {
+    .header__wa { width: auto; padding: 0 14px 0 12px; gap: 8px; display: inline-flex; align-items: center; font-weight: 650; font-size: 0.92rem; }
+    .header__wa-text { display: inline; color: var(--c-ink); white-space: nowrap; }
+    .header__nav a { padding: 0 12px; }
+  }
+
+  /* Menu mobile */
+  .mmenu { position: fixed; inset: 0; top: var(--header-h); z-index: 55; pointer-events: none; }
+  .mmenu[data-open] { pointer-events: auto; }
+  .mmenu__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgb(15 23 42 / 0.35);
+    opacity: 0;
+    transition: opacity 0.3s var(--ease);
+  }
+  .mmenu[data-open] .mmenu__backdrop { opacity: 1; }
+  .mmenu__panel {
+    position: relative;
+    max-height: calc(100dvh - var(--header-h));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 8px var(--gutter) calc(24px + env(safe-area-inset-bottom));
+    background: #fff;
+    border-radius: 0 0 24px 24px;
+    box-shadow: 0 30px 60px -30px rgb(15 23 42 / 0.4);
+    transform: translateY(-12px);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.35s var(--ease-out), opacity 0.25s var(--ease), visibility 0s linear 0.35s;
+  }
+  .mmenu[data-open] .mmenu__panel { transform: none; opacity: 1; visibility: visible; transition-delay: 0s; }
+  .mmenu__list { list-style: none; }
+  .mmenu__list li { border-bottom: 1px solid var(--c-line-soft); }
+  .mmenu__list a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 54px;
+    color: var(--c-ink);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .mmenu__list a :global(.icon) { color: var(--c-muted); }
+  .mmenu__ctas { display: grid; gap: 10px; margin-top: 20px; }
+  .mmenu__info { display: flex; gap: 8px; align-items: flex-start; margin-top: 16px; font-size: 0.85rem; color: var(--c-muted); }
+  .mmenu__info :global(.icon) { margin-top: 3px; }
+  @media (min-width: 1024px) { .mmenu { display: none; } }
+</style>

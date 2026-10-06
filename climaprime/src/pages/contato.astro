@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/ui/PageHero.astro';
+import Icon from '../components/ui/Icon.astro';
+import QuoteWizard from '../components/sections/QuoteWizard.astro';
+import MapSection from '../components/sections/MapSection.astro';
+import FAQ from '../components/sections/FAQ.astro';
+import { contactPage, faq } from '../config/content';
+import { company } from '../config/company';
+import { whatsappUrl } from '../lib/whatsapp';
+import { breadcrumbSchema } from '../lib/schema';
+
+const crumbs = [
+  { name: 'Início', path: '/' },
+  { name: 'Contato', path: '/contato' },
+];
+const msg = company.whatsappMessages.default;
+const channels = [
+  { icon: 'whatsapp', title: 'WhatsApp', value: company.contact.whatsappDisplay, href: whatsappUrl(msg), wa: true, note: 'Canal mais rápido' },
+  { icon: 'phone', title: 'Telefone', value: company.contact.phoneDisplay, href: `tel:${company.contact.phone}`, wa: false, note: 'Horário comercial' },
+  { icon: 'instagram', title: 'Instagram', value: `@${company.social.instagram.handle}`, href: company.social.instagram.url, wa: false, note: 'Trabalhos recentes' },
+  ...(company.contact.email ? [{ icon: 'mail', title: 'E-mail', value: company.contact.email, href: `mailto:${company.contact.email}`, wa: false, note: 'Propostas e documentos' }] : []),
+];
+---
+
+<BaseLayout title={contactPage.seoTitle} description={contactPage.seoDescription} schema={[breadcrumbSchema(crumbs)]}>
+  <PageHero eyebrow={contactPage.eyebrow} title={contactPage.h1} intro={contactPage.intro} breadcrumbs={crumbs} />
+
+  <section class="section section--tight" aria-label="Canais de atendimento">
+    <div class="container">
+      <ul class="channels">
+        {channels.map((c, i) => (
+          <li data-reveal style={`--d:${i * 60}ms`}>
+            <a
+              href={c.href}
+              class:list={['channel', { 'channel--wa': c.wa }]}
+              target={c.href.startsWith('http') ? '_blank' : undefined}
+              rel={c.href.startsWith('http') ? 'noopener' : undefined}
+              {...(c.wa ? { 'data-wa': '', 'data-wa-message': msg } : {})}
+              data-track-label="contact_page"
+            >
+              <span class="channel__icon"><Icon name={c.icon} size={24} /></span>
+              <span class="channel__body">
+                <span class="channel__title">{c.title}</span>
+                <strong>{c.value}</strong>
+                <span class="channel__note">{c.note}</span>
+              </span>
+              <Icon name="arrow-right" size={20} class="channel__arrow" />
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <QuoteWizard trackLabel="contact_page" />
+  <MapSection />
+  <FAQ items={faq.slice(0, 5)} alt />
+</BaseLayout>
+
+<style>
+  .channels { list-style: none; display: grid; gap: 14px; }
+  @media (min-width: 720px) { .channels { grid-template-columns: repeat(3, 1fr); gap: 18px; } }
+  .channel {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 100%;
+    padding: 20px;
+    border-radius: 22px;
+    border: 1px solid var(--c-line);
+    background: #fff;
+    color: var(--c-ink);
+    text-decoration: none;
+    transition: transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out), border-color 0.2s;
+  }
+  .channel:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--c-brand-200); }
+  .channel__icon { display: grid; place-items: center; width: 52px; height: 52px; flex-shrink: 0; border-radius: 16px; background: var(--c-brand-50); color: var(--c-brand); }
+  .channel--wa .channel__icon { background: color-mix(in srgb, var(--c-wa) 12%, #fff); color: var(--c-wa); }
+  .channel__body { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+  .channel__title { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--c-muted); }
+  .channel strong { font-size: 1.0625rem; overflow-wrap: anywhere; }
+  .channel__note { font-size: 0.85rem; color: var(--c-muted); }
+  .channel :global(.channel__arrow) { color: var(--c-muted); }
+</style>

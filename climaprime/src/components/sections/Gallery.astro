@@ -1,0 +1,206 @@
+---
+import SectionHeader from '../ui/SectionHeader.astro';
+import Icon from '../ui/Icon.astro';
+import BeforeAfter from './BeforeAfter.astro';
+import { gallery, galleryCategories, gallerySection } from '../../config/gallery';
+
+interface Props { limit?: number; showBeforeAfter?: boolean }
+const { limit, showBeforeAfter = true } = Astro.props;
+const items = typeof limit === 'number' ? gallery.slice(0, limit) : gallery;
+const catLabel = (id: string) => galleryCategories.find((c) => c.id === id)?.label ?? id;
+const usedCats = galleryCategories.filter((c) => items.some((i) => i.category === c.id));
+---
+
+<section id="projetos" class="section section--alt" aria-labelledby="projetos-title">
+  <div class="container" data-gallery>
+    <div class="gallery__head">
+      <SectionHeader id="projetos-title" eyebrow="Projetos" title={gallerySection.title} subtitle={gallerySection.subtitle} />
+      <div class="gallery__filters" role="group" aria-label="Filtrar por categoria" data-reveal>
+        <button type="button" class="filter" data-filter="all" aria-pressed="true">Todos</button>
+        {usedCats.map((c) => <button type="button" class="filter" data-filter={c.id} aria-pressed="false">{c.label}</button>)}
+      </div>
+    </div>
+    <p class="sr-only" aria-live="polite" data-gallery-status></p>
+
+    <ul class="gallery">
+      {items.map((item, i) => (
+        <li
+          class="gallery__item"
+          data-gallery-item
+          data-category={item.category}
+          data-category-label={catLabel(item.category)}
+          data-src={item.image}
+          data-alt={item.alt}
+          data-title={item.title}
+          data-description={item.description}
+          data-location={item.location}
+          data-reveal
+          style={`--d:${(i % 4) * 60}ms`}
+        >
+          <button type="button" class="gitem" aria-label={`Ampliar: ${item.title}, ${item.location}`}>
+            <span class="gitem__media">
+              <img src={item.image} alt={item.alt} width={item.width ?? 1200} height={item.height ?? 900} loading="lazy" decoding="async" />
+              <span class="gitem__zoom" aria-hidden="true"><Icon name="expand" size={18} /></span>
+            </span>
+            <span class="gitem__body">
+              <span class="gitem__cat">{catLabel(item.category)}</span>
+              <span class="gitem__title">{item.title}</span>
+              <span class="gitem__loc"><Icon name="map-pin" size={14} />{item.location}</span>
+            </span>
+          </button>
+        </li>
+      ))}
+    </ul>
+
+    {showBeforeAfter && <BeforeAfter />}
+
+    <dialog class="lightbox" data-lightbox aria-label="Visualizar trabalho">
+      <div class="lightbox__inner">
+        <button type="button" class="lightbox__close" data-lb-close aria-label="Fechar"><Icon name="x" size={22} /></button>
+        <figure class="lightbox__figure">
+          <div class="lightbox__media">
+            <img data-lb-image alt="" width="1200" height="900" />
+          </div>
+          <figcaption class="lightbox__caption">
+            <span class="lightbox__meta" data-lb-meta></span>
+            <strong data-lb-title></strong>
+            <span data-lb-desc></span>
+          </figcaption>
+        </figure>
+        <div class="lightbox__nav">
+          <button type="button" class="lightbox__arrow" data-lb-prev aria-label="Anterior"><Icon name="chevron-left" size={22} /></button>
+          <span class="lightbox__counter" data-lb-counter aria-live="polite"></span>
+          <button type="button" class="lightbox__arrow" data-lb-next aria-label="Próximo"><Icon name="chevron-right" size={22} /></button>
+        </div>
+      </div>
+    </dialog>
+  </div>
+</section>
+
+<script>
+  import '../../scripts/gallery';
+</script>
+
+<style>
+  .gallery__head { display: flex; flex-direction: column; gap: 0; }
+  @media (min-width: 1024px) {
+    .gallery__head { flex-direction: row; align-items: flex-end; justify-content: space-between; gap: 32px; margin-bottom: 3rem; }
+    .gallery__head :global(.section-head) { margin-bottom: 0; }
+  }
+  .gallery__filters {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 2px 2px 6px;
+    margin: -8px -2px 24px;
+    scrollbar-width: none;
+  }
+  .gallery__filters::-webkit-scrollbar { display: none; }
+  @media (min-width: 1024px) { .gallery__filters { margin: 0; flex-shrink: 0; } }
+  .filter {
+    flex-shrink: 0;
+    min-height: 44px;
+    padding: 0 18px;
+    border-radius: 999px;
+    border: 1px solid var(--c-line);
+    background: #fff;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--c-ink-2);
+    transition: all 0.2s var(--ease);
+  }
+  .filter:hover { border-color: var(--c-brand-200); color: var(--c-primary); }
+  .filter[aria-pressed='true'] { background: var(--c-ink); border-color: var(--c-ink); color: #fff; }
+
+  .gallery { list-style: none; display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  @media (min-width: 640px) { .gallery { gap: 16px; } }
+  @media (min-width: 1024px) { .gallery { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; } }
+
+  .gitem {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 1px solid var(--c-line);
+    border-radius: 20px;
+    background: #fff;
+    text-align: left;
+    overflow: hidden;
+    transition: transform 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out);
+  }
+  @media (hover: hover) {
+    .gitem:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+    .gitem:hover img { transform: scale(1.04); }
+    .gitem:hover .gitem__zoom { opacity: 1; transform: none; }
+  }
+  .gitem__media { position: relative; display: block; aspect-ratio: 4 / 3; overflow: hidden; background: var(--c-brand-50); }
+  .gitem__media img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--ease-out); }
+  .gitem__zoom {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: rgb(255 255 255 / 0.92);
+    color: var(--c-ink);
+    opacity: 0;
+    transform: scale(0.9);
+    transition: all 0.3s var(--ease-out);
+  }
+  @media (hover: none) { .gitem__zoom { opacity: 1; transform: none; } }
+  .gitem__body { display: flex; flex-direction: column; gap: 4px; padding: 12px 12px 14px; }
+  @media (min-width: 640px) { .gitem__body { padding: 16px 18px 18px; } }
+  .gitem__cat { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--c-primary); }
+  .gitem__title { font-family: var(--font-display); font-weight: 700; font-size: clamp(0.92rem, 0.85rem + 0.4vw, 1.0625rem); line-height: 1.3; color: var(--c-ink); letter-spacing: -0.01em; }
+  .gitem__loc { display: inline-flex; align-items: flex-start; gap: 5px; font-size: 0.8rem; line-height: 1.35; color: var(--c-muted); }
+  .gitem__loc :global(.icon) { margin-top: 1px; }
+  .gitem { border-radius: 16px; }
+  @media (min-width: 640px) { .gitem { border-radius: 20px; } .gitem__loc { font-size: 0.85rem; } }
+
+  /* Lightbox */
+  .lightbox {
+    width: min(100% - 24px, 1040px);
+    max-width: none;
+    max-height: calc(100dvh - 24px);
+    padding: 0;
+    border: 0;
+    border-radius: 24px;
+    background: #fff;
+    box-shadow: 0 40px 100px -20px rgb(0 0 0 / 0.5);
+    overflow: auto;
+  }
+  .lightbox::backdrop { background: rgb(8 15 28 / 0.78); backdrop-filter: blur(4px); }
+  .lightbox[open] { animation: lb-in 0.35s var(--ease-out); }
+  @keyframes lb-in { from { opacity: 0; transform: translateY(14px) scale(0.98); } to { opacity: 1; transform: none; } }
+  .lightbox__inner { position: relative; }
+  .lightbox__figure { margin: 0; }
+  .lightbox__media { background: var(--c-brand-50); aspect-ratio: 4 / 3; max-height: 70dvh; display: grid; place-items: center; }
+  .lightbox__media img { width: 100%; height: 100%; object-fit: contain; opacity: 0; transition: opacity 0.3s var(--ease); }
+  .lightbox__media img:global(.is-loaded) { opacity: 1; }
+  .lightbox__caption { display: flex; flex-direction: column; gap: 4px; padding: 18px 20px 6px; color: var(--c-muted); font-size: 0.95rem; }
+  .lightbox__caption strong { font-family: var(--font-display); font-size: 1.2rem; color: var(--c-ink); }
+  .lightbox__meta { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--c-primary); }
+  .lightbox__close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border: 0;
+    border-radius: 14px;
+    background: rgb(255 255 255 / 0.94);
+    color: var(--c-ink);
+    box-shadow: var(--shadow-sm);
+  }
+  .lightbox__nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px 16px; }
+  .lightbox__arrow { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; border: 1px solid var(--c-line); background: #fff; color: var(--c-ink); }
+  .lightbox__arrow:hover { background: var(--c-brand-50); border-color: var(--c-brand-200); }
+  .lightbox__counter { font-size: 0.9rem; font-weight: 600; color: var(--c-muted); }
+</style>

@@ -1,0 +1,61 @@
+---
+/**
+ * ============================================================================
+ *  ANALYTICS / TAG MANAGER / META PIXEL
+ * ============================================================================
+ *  Os IDs ficam em src/config/integrations.ts (ou variáveis de ambiente).
+ *  Com o ID vazio, o script correspondente NÃO é carregado.
+ *  Os eventos do site (whatsapp_click, quote_completed...) são enviados por
+ *  src/scripts/analytics.ts para todos os que estiverem ativos.
+ *
+ *  Se precisar colar outro código de rastreamento no <head>, coloque-o abaixo
+ *  do bloco do Meta Pixel.
+ * ============================================================================
+ */
+import { integrations } from '../../config/integrations';
+const { ga4Id, gtmId, metaPixelId } = integrations.analytics;
+---
+
+{
+  gtmId && (
+    <script is:inline define:vars={{ gtmId }}>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+        var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, 'script', 'dataLayer', gtmId);
+    </script>
+  )
+}
+{
+  ga4Id && (
+    <>
+      <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${ga4Id}`} />
+      <script is:inline define:vars={{ ga4Id }}>
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function () { window.dataLayer.push(arguments); };
+        window.gtag('js', new Date());
+        window.gtag('config', ga4Id);
+      </script>
+    </>
+  )
+}
+{
+  metaPixelId && (
+    <script is:inline define:vars={{ metaPixelId }}>
+      !(function (f, b, e, v, n, t, s) {
+        if (f.fbq) return;
+        n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); };
+        if (!f._fbq) f._fbq = n;
+        n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = [];
+        t = b.createElement(e); t.async = !0; t.src = v;
+        s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s);
+      })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+      window.fbq('init', metaPixelId);
+      window.fbq('track', 'PageView');
+    </script>
+  )
+}

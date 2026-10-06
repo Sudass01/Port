@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/ui/PageHero.astro';
+import SectionHeader from '../components/ui/SectionHeader.astro';
+import Icon from '../components/ui/Icon.astro';
+import Services from '../components/sections/Services.astro';
+import QuoteWizard from '../components/sections/QuoteWizard.astro';
+import FinalCTA from '../components/sections/FinalCTA.astro';
+import { aboutPage } from '../config/content';
+import { breadcrumbSchema } from '../lib/schema';
+
+const crumbs = [
+  { name: 'Início', path: '/' },
+  { name: 'Sobre', path: '/sobre' },
+];
+---
+
+<BaseLayout title={aboutPage.seoTitle} description={aboutPage.seoDescription} schema={[breadcrumbSchema(crumbs)]}>
+  <PageHero eyebrow={aboutPage.eyebrow} title={aboutPage.h1} intro={aboutPage.paragraphs[0]} breadcrumbs={crumbs} />
+
+  <section class="section" aria-labelledby="jeito-title">
+    <div class="container about">
+      <div class="prose" data-reveal>
+        <h2 id="jeito-title">Como trabalhamos</h2>
+        {aboutPage.paragraphs.slice(1).map((p) => <p>{p}</p>)}
+      </div>
+      <ul class="values">
+        {aboutPage.values.map((v, i) => (
+          <li data-reveal style={`--d:${i * 60}ms`}>
+            <span class="icon-badge"><Icon name={v.icon} size={24} /></span>
+            <div>
+              <h3>{v.title}</h3>
+              <p>{v.text}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <Services />
+  <QuoteWizard trackLabel="about_page" />
+  <FinalCTA />
+</BaseLayout>
+
+<style>
+  .about { display: grid; gap: 40px; align-items: start; }
+  @media (min-width: 960px) { .about { grid-template-columns: 1fr 1fr; gap: 64px; } }
+  .about .prose h2 { margin-bottom: 18px; }
+  .values { list-style: none; display: grid; gap: 14px; }
+  .values li { display: flex; gap: 16px; padding: 20px; border-radius: 20px; border: 1px solid var(--c-line); background: #fff; }
+  .values h3 { font-size: 1.0625rem; margin-bottom: 4px; }
+  .values p { color: var(--c-muted); font-size: 0.95rem; }
+</style>

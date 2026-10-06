@@ -1,0 +1,78 @@
+---
+import SectionHeader from '../ui/SectionHeader.astro';
+import Icon from '../ui/Icon.astro';
+import { howItWorks } from '../../config/content';
+
+interface Props { steps?: { title: string; text: string; icon?: string }[]; title?: string; eyebrow?: string; alt?: boolean }
+const { steps = howItWorks.steps, title = howItWorks.title, eyebrow = howItWorks.eyebrow, alt = false } = Astro.props;
+const id = `how-${Math.random().toString(36).slice(2, 7)}`;
+---
+
+<section class:list={['section', { 'section--alt': alt }]} aria-labelledby={id}>
+  <div class="container">
+    <SectionHeader id={id} eyebrow={eyebrow} title={title} center />
+    <ol class="how">
+      {steps.map((s, i) => (
+        <li class="how__step" data-reveal style={`--d:${i * 90}ms`}>
+          <span class="how__num" aria-hidden="true">{i + 1}</span>
+          {s.icon && <span class="how__icon"><Icon name={s.icon} size={22} /></span>}
+          <h3><span class="sr-only">Passo {i + 1}: </span>{s.title}</h3>
+          <p>{s.text}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .how { list-style: none; display: grid; gap: 16px; counter-reset: how; position: relative; }
+  @media (min-width: 860px) {
+    .how { grid-template-columns: repeat(3, 1fr); gap: 28px; }
+    .how::before {
+      content: '';
+      position: absolute;
+      top: 34px;
+      left: 16%;
+      right: 16%;
+      border-top: 2px dashed var(--c-brand-200);
+    }
+  }
+  .how__step {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 16px;
+    padding: 20px;
+    border-radius: 20px;
+    background: #fff;
+    border: 1px solid var(--c-line);
+  }
+  .how__step h3 { font-size: 1.0625rem; align-self: center; }
+  .how__step p { grid-column: 2; color: var(--c-muted); font-size: 0.95rem; margin-top: 4px; }
+  .how__icon { display: none; }
+  .how__num {
+    grid-row: span 2;
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: var(--c-primary);
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.1rem;
+    box-shadow: 0 0 0 6px var(--c-brand-50);
+  }
+  @media (min-width: 860px) {
+    .how__step { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 0 10px; background: transparent; border: 0; }
+    .how__num { width: 68px; height: 68px; font-size: 1.5rem; margin-bottom: 22px; box-shadow: 0 0 0 10px #fff, 0 0 0 11px var(--c-brand-100); }
+    .how__step h3 { font-size: 1.1875rem; max-width: 18ch; }
+    .how__step p { margin-top: 8px; }
+  }
+</style>
+<style>
+  @media (min-width: 860px) {
+    .section--alt .how__num { box-shadow: 0 0 0 10px var(--c-surface), 0 0 0 11px var(--c-brand-100); }
+  }
+</style>

@@ -1,0 +1,90 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/ui/PageHero.astro';
+import SectionHeader from '../components/ui/SectionHeader.astro';
+import Icon from '../components/ui/Icon.astro';
+import Button from '../components/ui/Button.astro';
+import HowItWorks from '../components/sections/HowItWorks.astro';
+import QuoteWizard from '../components/sections/QuoteWizard.astro';
+import FAQ from '../components/sections/FAQ.astro';
+import AreasCompact from '../components/sections/AreasCompact.astro';
+import { businessPage } from '../config/content';
+import { company } from '../config/company';
+import { breadcrumbSchema, faqSchema, serviceSchema } from '../lib/schema';
+
+const crumbs = [
+  { name: 'Início', path: '/' },
+  { name: 'Para empresas', path: '/empresas' },
+];
+const msg = company.whatsappMessages.commercial;
+---
+
+<BaseLayout
+  title={businessPage.seoTitle}
+  description={businessPage.seoDescription}
+  schema={[serviceSchema(businessPage.h1, businessPage.seoDescription, '/empresas'), faqSchema(businessPage.faq), breadcrumbSchema(crumbs)]}
+>
+  <PageHero
+    eyebrow={businessPage.eyebrow}
+    title={businessPage.h1}
+    intro={businessPage.intro}
+    breadcrumbs={crumbs}
+    image={{ src: '/images/galeria/manutencao-escritorio.svg', alt: 'Escritório com vários aparelhos de ar-condicionado em manutenção' }}
+    waMessage={msg}
+    primaryWa
+    primaryLabel={businessPage.cta}
+    trackLabel="business_hero"
+  />
+
+  <section class="section" aria-labelledby="publicos-emp-title">
+    <div class="container">
+      <SectionHeader id="publicos-emp-title" eyebrow="Quem atendemos" title="Climatização para todo tipo de negócio" />
+      <ul class="aud" data-reveal>
+        {businessPage.audiences.map((a) => (
+          <li><span class="icon-badge"><Icon name={a.icon} size={24} /></span>{a.label}</li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="ofertas-title">
+    <div class="container">
+      <SectionHeader id="ofertas-title" eyebrow="O que oferecemos" title="Manutenção organizada para não parar sua operação" />
+      <ul class="offers">
+        {businessPage.offers.map((o, i) => (
+          <li class="offer" data-reveal style={`--d:${i * 70}ms`}>
+            <span class="offer__icon"><Icon name={o.icon} size={26} /></span>
+            <h3>{o.title}</h3>
+            <p>{o.text}</p>
+          </li>
+        ))}
+      </ul>
+      <div class="offers__cta" data-reveal>
+        <p><strong>Tem vários aparelhos?</strong> Envie a quantidade e o tipo de ambiente para receber uma proposta.</p>
+        <Button wa={msg} size="lg" track="commercial_quote_click" trackLabel="business_offers">{businessPage.cta}</Button>
+      </div>
+    </div>
+  </section>
+
+  <HowItWorks eyebrow="Proposta comercial" title={businessPage.howTitle} steps={businessPage.how} />
+  <QuoteWizard preselect="empresa" trackLabel="business_page" title="Prefere montar o pedido agora?" />
+  <FAQ items={businessPage.faq} title="Dúvidas de empresas" />
+  <AreasCompact />
+</BaseLayout>
+
+<style>
+  .aud { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  @media (min-width: 640px) { .aud { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  @media (min-width: 1024px) { .aud { grid-template-columns: repeat(7, minmax(0, 1fr)); } }
+  .aud li { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 22px 12px; border-radius: 20px; border: 1px solid var(--c-line); background: #fff; font-weight: 650; text-align: center; font-size: 0.95rem; }
+  .offers { list-style: none; display: grid; gap: 16px; }
+  @media (min-width: 640px) { .offers { grid-template-columns: repeat(2, 1fr); gap: 20px; } }
+  .offer { padding: 28px 26px; border-radius: 24px; background: #fff; border: 1px solid var(--c-line); }
+  .offer__icon { display: grid; place-items: center; width: 54px; height: 54px; border-radius: 16px; color: #fff; background: linear-gradient(140deg, var(--c-brand-light), var(--c-primary)); }
+  .offer h3 { margin: 18px 0 8px; font-size: 1.25rem; }
+  .offer p { color: var(--c-muted); }
+  .offers__cta { display: grid; gap: 16px; align-items: center; margin-top: 28px; padding: 24px 26px; border-radius: 22px; background: var(--c-primary-deep); color: rgb(255 255 255 / 0.85); }
+  .offers__cta strong { color: #fff; }
+  .offers__cta p { margin: 0; }
+  @media (min-width: 860px) { .offers__cta { grid-template-columns: 1fr auto; } }
+</style>

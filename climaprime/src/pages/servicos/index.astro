@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/ui/PageHero.astro';
+import Services from '../../components/sections/Services.astro';
+import QuoteWizard from '../../components/sections/QuoteWizard.astro';
+import HowItWorks from '../../components/sections/HowItWorks.astro';
+import FAQ from '../../components/sections/FAQ.astro';
+import AreasCompact from '../../components/sections/AreasCompact.astro';
+import FinalCTA from '../../components/sections/FinalCTA.astro';
+import { servicesPage, faq } from '../../config/content';
+import { breadcrumbSchema } from '../../lib/schema';
+
+const crumbs = [
+  { name: 'Início', path: '/' },
+  { name: 'Serviços', path: '/servicos' },
+];
+---
+
+<BaseLayout title={servicesPage.seoTitle} description={servicesPage.seoDescription} schema={[breadcrumbSchema(crumbs)]}>
+  <PageHero eyebrow={servicesPage.eyebrow} title={servicesPage.h1} intro={servicesPage.intro} breadcrumbs={crumbs} />
+  <Services showHeader={false} id="lista-servicos" />
+  <QuoteWizard trackLabel="services_page" />
+  <HowItWorks />
+  <FAQ items={faq.slice(1, 7)} alt />
+  <AreasCompact />
+  <FinalCTA />
+</BaseLayout>

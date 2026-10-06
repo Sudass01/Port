@@ -1,0 +1,13 @@
+---
+import { iconSvg } from '../../lib/icons';
+
+interface Props {
+  name: string;
+  size?: number;
+  strokeWidth?: number;
+  class?: string;
+}
+const { name, size = 24, strokeWidth = 1.75, class: className = '' } = Astro.props;
+---
+
+<Fragment set:html={iconSvg(name, size, strokeWidth, className)} />

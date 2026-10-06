@@ -1,0 +1,52 @@
+rules_version = '2';
+
+// Regras do Firestore para o template (leads do formulário de orçamento).
+// Firebase Console → Firestore Database → Regras → cole este conteúdo → Publicar.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    function str(v, max) {
+      return v is string && v.size() <= max;
+    }
+
+    // Pedidos de orçamento: qualquer visitante CRIA (com validação);
+    // só administradores leem, atualizam o status ou apagam.
+    match /leads/{id} {
+      allow create: if request.resource.data.keys().hasOnly([
+            'service', 'serviceId', 'quantity', 'place', 'location', 'name', 'origin',
+            'attribution', 'page', 'message', 'status', 'createdAt', 'userAgent'])
+        && str(request.resource.data.name, 80) && request.resource.data.name.size() >= 2
+        && str(request.resource.data.location, 100)
+        && str(request.resource.data.service, 80)
+        && str(request.resource.data.serviceId, 40)
+        && str(request.resource.data.quantity, 40)
+        && str(request.resource.data.place, 40)
+        && str(request.resource.data.origin, 200)
+        && str(request.resource.data.page, 200)
+        && str(request.resource.data.message, 2000)
+        && str(request.resource.data.userAgent, 200)
+        && request.resource.data.attribution is map
+        && request.resource.data.attribution.size() <= 10
+        && request.resource.data.status == 'novo'
+        && request.resource.data.createdAt == request.time;
+      allow read, delete: if isAdmin();
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']);
+    }
+
+    // Lista de administradores: documento com o UID do usuário (criado no console).
+    match /admins/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

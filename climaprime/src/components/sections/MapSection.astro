@@ -1,0 +1,118 @@
+---
+import Icon from '../ui/Icon.astro';
+import Button from '../ui/Button.astro';
+import SectionHeader from '../ui/SectionHeader.astro';
+import { mapSection } from '../../config/content';
+import { company } from '../../config/company';
+import { addressLine } from '../../lib/text';
+
+const { location } = company;
+// URL do mapa: usa o embed informado em company.ts ou monta um a partir da busca.
+const embed = location.mapEmbedUrl || `https://www.google.com/maps?q=${encodeURIComponent(location.mapQuery)}&output=embed`;
+---
+
+<section id="localizacao" class="section" aria-labelledby="mapa-title">
+  <div class="container">
+    <div class="mapwrap">
+      <div class="mapwrap__info" data-reveal>
+        <SectionHeader id="mapa-title" eyebrow={mapSection.eyebrow} title={mapSection.title} subtitle={mapSection.text} />
+        <ul class="mapwrap__list">
+          <li>
+            <span class="icon-badge icon-badge--sm"><Icon name="map-pin" size={20} /></span>
+            <span><strong>Endereço</strong>{addressLine()}</span>
+          </li>
+          <li>
+            <span class="icon-badge icon-badge--sm"><Icon name="clock" size={20} /></span>
+            <span>
+              <strong>Horário de atendimento</strong>
+              {company.hours.map((h) => <span class="block">{h.label}: {h.open} às {h.close}</span>)}
+            </span>
+          </li>
+          <li>
+            <span class="icon-badge icon-badge--sm"><Icon name="whatsapp" size={20} /></span>
+            <span><strong>WhatsApp</strong>{company.contact.whatsappDisplay}</span>
+          </li>
+        </ul>
+        <div class="btn-row">
+          <Button wa={company.whatsappMessages.default} trackLabel="map_section">Chamar no WhatsApp</Button>
+          <Button href={location.mapLink} variant="outline" icon="external-link">{mapSection.openInMaps}</Button>
+        </div>
+      </div>
+
+      <div class="map" data-map data-src={embed} data-title={`Mapa — ${company.name}`} data-reveal style="--d:80ms">
+        <div class="map__placeholder" aria-hidden="true">
+          <svg viewBox="0 0 600 420" preserveAspectRatio="xMidYMid slice">
+            <rect width="600" height="420" fill="#eef4f9" />
+            <g fill="#e2ebf3">
+              <rect x="30" y="30" width="150" height="110" rx="8" /><rect x="210" y="30" width="170" height="80" rx="8" />
+              <rect x="410" y="30" width="160" height="140" rx="8" /><rect x="30" y="170" width="120" height="120" rx="8" />
+              <rect x="410" y="200" width="160" height="90" rx="8" /><rect x="30" y="320" width="200" height="80" rx="8" />
+              <rect x="260" y="320" width="120" height="80" rx="8" /><rect x="410" y="320" width="160" height="80" rx="8" />
+            </g>
+            <path d="M190 0v420M395 0v420M0 155h600M0 305h600" stroke="#fff" stroke-width="16" />
+            <path d="M-20 260 C120 220 220 260 300 210 S480 120 640 150" stroke="#fff" stroke-width="22" fill="none" />
+            <path d="M-20 260 C120 220 220 260 300 210 S480 120 640 150" stroke="#d6e2ee" stroke-width="2" fill="none" stroke-dasharray="10 10" />
+            <circle cx="300" cy="210" r="60" fill="var(--c-brand)" opacity="0.08" />
+            <circle cx="300" cy="210" r="30" fill="var(--c-brand)" opacity="0.12" />
+          </svg>
+          <span class="map__pin"><Icon name="map-pin" size={30} strokeWidth={2} /></span>
+        </div>
+        <button type="button" class="map__load" data-map-load>
+          <Icon name="map" size={20} />
+          {mapSection.mapButton} · {location.city} - {location.state}
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import '../../scripts/map';
+</script>
+
+<style>
+  .mapwrap { display: grid; gap: 32px; align-items: center; }
+  @media (min-width: 960px) { .mapwrap { grid-template-columns: 0.9fr 1.1fr; gap: 56px; } }
+  .mapwrap__info :global(.section-head) { margin-bottom: 28px; }
+  .mapwrap__list { list-style: none; display: grid; gap: 18px; margin-bottom: 28px; }
+  .mapwrap__list li { display: flex; gap: 14px; align-items: flex-start; color: var(--c-muted); font-size: 0.97rem; }
+  .mapwrap__list strong { display: block; color: var(--c-ink); font-size: 0.95rem; }
+  .block { display: block; }
+
+  .map {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    border-radius: 28px;
+    overflow: hidden;
+    border: 1px solid var(--c-line);
+    box-shadow: var(--shadow-md);
+    background: #eef4f9;
+  }
+  @media (max-width: 559px) { .map { aspect-ratio: 1 / 1; } }
+  .map__placeholder, .map__placeholder svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .map__pin { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -100%); color: var(--c-primary); filter: drop-shadow(0 6px 8px rgb(0 0 0 / 0.2)); }
+  .map__load {
+    position: absolute;
+    left: 50%;
+    bottom: 20px;
+    transform: translateX(-50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 50px;
+    padding: 0 20px;
+    border: 1px solid var(--c-line);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--c-ink);
+    font-weight: 650;
+    font-size: 0.92rem;
+    white-space: nowrap;
+    box-shadow: var(--shadow-md);
+    transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
+  }
+  .map__load:hover { transform: translateX(-50%) translateY(-2px); }
+  .map__load :global(.icon) { color: var(--c-primary); }
+  .map :global(.map__iframe) { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .map:global(.is-loaded) .map__placeholder { display: none; }
+</style>

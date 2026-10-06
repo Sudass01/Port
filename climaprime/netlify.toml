@@ -1,0 +1,10 @@
+# Deploy via Git (GitHub → Netlify). Para o deploy por arrastar-e-soltar,
+# use a pasta dist/ (ou o .zip de deploy) — este arquivo não é necessário.
+# Se o template estiver dentro de um repositório maior, configure no Netlify:
+#   Base directory: climaprime
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"

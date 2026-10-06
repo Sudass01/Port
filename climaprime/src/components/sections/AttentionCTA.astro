@@ -1,0 +1,61 @@
+---
+import Icon from '../ui/Icon.astro';
+import Button from '../ui/Button.astro';
+import { attentionCta } from '../../config/content';
+import { company } from '../../config/company';
+---
+
+<section class="section section--tight" aria-labelledby="atencao-title">
+  <div class="container">
+    <div class="attn" data-reveal>
+      <svg class="attn__art" viewBox="0 0 400 400" aria-hidden="true">
+        <g fill="none" stroke="currentColor" stroke-linecap="round">
+          <circle cx="200" cy="200" r="120" stroke-width="1" opacity="0.25" />
+          <circle cx="200" cy="200" r="170" stroke-width="1" opacity="0.15" stroke-dasharray="4 8" />
+          <g stroke-width="10" opacity="0.5">
+            <path d="M200 110v180M122 155l156 90M122 245l156-90" />
+            <path d="M178 122l22 18 22-18M178 278l22-18 22 18M128 182l8-27-27-8M272 218l-8 27 27 8M128 218l8 27-27 8M272 182l-8-27 27-8" stroke-width="8" />
+          </g>
+        </g>
+      </svg>
+      <div class="attn__content">
+        <h2 id="atencao-title">{attentionCta.title}</h2>
+        <p>{attentionCta.text}</p>
+        <ul class="attn__signs" aria-label="Sinais comuns">
+          {attentionCta.signs.map((s) => <li><Icon name="circle-alert" size={16} />{s}</li>)}
+        </ul>
+      </div>
+      <div class="attn__action">
+        <Button wa={company.whatsappMessages.specialist} size="lg" variant="light" trackLabel="attention_cta" class="attn__btn">
+          {attentionCta.cta}
+        </Button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .attn {
+    position: relative;
+    display: grid;
+    gap: 24px;
+    align-items: center;
+    padding: clamp(28px, 1.2rem + 4vw, 64px);
+    border-radius: 32px;
+    background:
+      radial-gradient(500px 300px at 100% 0%, color-mix(in srgb, var(--c-brand-light) 45%, transparent), transparent 70%),
+      linear-gradient(120deg, var(--c-primary) 0%, var(--c-primary-deep) 100%);
+    color: rgb(255 255 255 / 0.85);
+    overflow: hidden;
+    isolation: isolate;
+  }
+  @media (min-width: 960px) { .attn { grid-template-columns: 1fr auto; gap: 48px; } }
+  .attn__art { position: absolute; right: -90px; top: 50%; width: 420px; transform: translateY(-50%); color: #fff; z-index: -1; opacity: 0.35; }
+  @media (max-width: 959px) { .attn__art { right: -160px; top: 20%; } }
+  .attn h2 { color: #fff; max-width: 20ch; }
+  .attn__content > p { margin-top: 14px; font-size: 1.0625rem; max-width: 52ch; }
+  .attn__signs { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+  .attn__signs li { display: inline-flex; align-items: center; gap: 7px; padding: 7px 13px; border-radius: 999px; background: rgb(255 255 255 / 0.12); border: 1px solid rgb(255 255 255 / 0.18); color: #fff; font-size: 0.875rem; font-weight: 550; }
+  .attn__action :global(.attn__btn) { width: 100%; --btn-fg: var(--c-wa); }
+  @media (min-width: 480px) { .attn__action :global(.attn__btn) { width: auto; } }
+</style>

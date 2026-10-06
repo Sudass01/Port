@@ -1,0 +1,70 @@
+---
+/**
+ * Barra fixa inferior — só no celular. Aparece depois do topo da página e
+ * some perto do rodapé e enquanto o formulário de orçamento está visível.
+ */
+import Icon from '../ui/Icon.astro';
+import { company } from '../../config/company';
+import { whatsappUrl } from '../../lib/whatsapp';
+const msg = company.whatsappMessages.default;
+---
+
+<div class="mcta" data-mobile-cta>
+  <a
+    href={whatsappUrl(msg)}
+    class="mcta__btn mcta__btn--wa"
+    target="_blank"
+    rel="noopener"
+    data-wa
+    data-wa-message={msg}
+    data-track-label="mobile_bar"
+  >
+    <Icon name="whatsapp" size={20} />
+    WhatsApp
+  </a>
+  <a href="#orcamento" class="mcta__btn mcta__btn--quote" data-track="quote_cta_click" data-track-label="mobile_bar">
+    <Icon name="clipboard-list" size={20} />
+    Solicitar orçamento
+  </a>
+</div>
+
+<style>
+  .mcta {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    display: grid;
+    grid-template-columns: 1fr 1.35fr;
+    gap: 8px;
+    padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+    background: rgb(255 255 255 / 0.96);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid var(--c-line);
+    box-shadow: 0 -10px 30px -18px rgb(15 23 42 / 0.3);
+    transform: translateY(110%);
+    transition: transform 0.35s var(--ease-out);
+  }
+  .mcta[data-visible] { transform: none; }
+  :global(html.menu-open) .mcta { transform: translateY(110%); }
+  @media (min-width: 768px) { .mcta { display: none; } }
+  .mcta__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 48px;
+    border-radius: 12px;
+    font-weight: 650;
+    font-size: 0.95rem;
+    text-decoration: none;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.15s var(--ease);
+  }
+  .mcta__btn:active { transform: scale(0.97); }
+  .mcta__btn--wa { background: var(--c-wa); color: #fff; }
+  .mcta__btn--quote { background: var(--c-primary); color: #fff; }
+</style>

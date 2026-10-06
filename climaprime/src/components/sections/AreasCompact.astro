@@ -1,0 +1,33 @@
+---
+/** Bloco compacto de áreas atendidas (usado nas páginas internas). */
+import Icon from '../ui/Icon.astro';
+import { company } from '../../config/company';
+import { areasSection } from '../../config/content';
+
+interface Props { title?: string }
+const { title = areasSection.title } = Astro.props;
+---
+
+<section class="section section--tight section--alt" aria-labelledby="areas-compact-title">
+  <div class="container ac">
+    <div>
+      <p class="eyebrow">{areasSection.eyebrow}</p>
+      <h2 id="areas-compact-title">{title}</h2>
+      <p class="ac__text">{areasSection.subtitle}</p>
+      <a href="/areas-atendidas" class="text-link">Ver todas as áreas atendidas <Icon name="arrow-right" size={18} /></a>
+    </div>
+    <ul class="ac__list" aria-label="Cidades e bairros">
+      {company.serviceAreas.cities.map((c) => <li class="chip chip--city"><Icon name="map-pin" size={16} />{c.name}</li>)}
+      {company.serviceAreas.neighborhoods.map((n) => <li class="chip">{n}</li>)}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .ac { display: grid; gap: 24px; align-items: center; }
+  @media (min-width: 960px) { .ac { grid-template-columns: 0.9fr 1.1fr; gap: 56px; } }
+  .ac h2 { font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.125rem); }
+  .ac__text { color: var(--c-muted); margin-top: 12px; }
+  .ac__list { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip--city { font-weight: 650; color: var(--c-ink); border-color: var(--c-brand-200); background: var(--c-brand-50); }
+</style>

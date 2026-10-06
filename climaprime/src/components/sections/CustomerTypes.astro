@@ -1,0 +1,98 @@
+---
+import SectionHeader from '../ui/SectionHeader.astro';
+import Icon from '../ui/Icon.astro';
+import Button from '../ui/Button.astro';
+import { customerTypesSection } from '../../config/content';
+import { company } from '../../config/company';
+---
+
+<section id="publicos" class="section" aria-labelledby="publicos-title">
+  <div class="container">
+    <SectionHeader id="publicos-title" eyebrow={customerTypesSection.eyebrow} title={customerTypesSection.title} subtitle={customerTypesSection.subtitle} />
+    <div class="ctypes">
+      {customerTypesSection.items.map((c, i) => (
+        <article class={`ctype ctype--${c.id}`} data-reveal style={`--d:${i * 80}ms`}>
+          <div class="ctype__head">
+            <span class="ctype__icon"><Icon name={c.icon} size={26} /></span>
+            <h3>{c.title}</h3>
+          </div>
+          <p class="ctype__text">{c.text}</p>
+          <ul class="ctype__list">
+            {c.items.map((item) => (
+              <li><Icon name="check" size={16} strokeWidth={2.5} />{item}</li>
+            ))}
+          </ul>
+          <div class="ctype__cta">
+            {c.cta.type === 'commercial' ? (
+              <Button wa={company.whatsappMessages.commercial} variant="light" block track="commercial_quote_click" trackLabel={`customer_${c.id}`}>
+                {c.cta.label}
+              </Button>
+            ) : (
+              <Button href="#orcamento" quote={c.cta.service} quoteLabel="" variant="outline" block arrow track="quote_cta_click" trackLabel={`customer_${c.id}`}>
+                {c.cta.label}
+              </Button>
+            )}
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .ctypes { display: grid; gap: 18px; }
+  @media (min-width: 900px) { .ctypes { grid-template-columns: repeat(3, 1fr); gap: 22px; } }
+
+  .ctype {
+    --tint: var(--c-brand-50);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 28px 24px 24px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--c-line);
+    background: #fff;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .ctype::after {
+    content: '';
+    position: absolute;
+    right: -60px;
+    top: -60px;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: var(--tint);
+    z-index: -1;
+  }
+  .ctype__head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+  .ctype__icon { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 16px; background: var(--c-brand-50); color: var(--c-brand); }
+  .ctype h3 { font-size: 1.375rem; }
+  .ctype__text { color: var(--c-muted); }
+  .ctype__list { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 26px; }
+  .ctype__list li { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 999px; background: var(--c-surface); border: 1px solid var(--c-line-soft); font-size: 0.875rem; font-weight: 600; color: var(--c-ink-2); }
+  .ctype__list :global(.icon) { color: var(--c-brand); }
+  .ctype__cta { margin-top: auto; }
+
+  /* Residencial: claro e acolhedor */
+  .ctype--residencial { background: linear-gradient(180deg, #fff, var(--c-surface)); }
+
+  /* Comercial: tom azul suave */
+  .ctype--comercial { --tint: var(--c-brand-100); background: linear-gradient(180deg, var(--c-brand-50), #fff); border-color: var(--c-brand-100); }
+  .ctype--comercial .ctype__icon { background: #fff; box-shadow: var(--shadow-sm); }
+
+  /* Empresarial: escuro, mais corporativo */
+  .ctype--empresarial {
+    --tint: color-mix(in srgb, var(--c-brand-light) 18%, transparent);
+    background: linear-gradient(160deg, var(--c-primary-deep), color-mix(in srgb, var(--c-primary-deep) 60%, var(--c-ink)));
+    border-color: transparent;
+    color: rgb(255 255 255 / 0.8);
+    box-shadow: var(--shadow-lg);
+  }
+  .ctype--empresarial h3 { color: #fff; }
+  .ctype--empresarial .ctype__text { color: rgb(255 255 255 / 0.78); }
+  .ctype--empresarial .ctype__icon { background: rgb(255 255 255 / 0.1); color: var(--c-brand-light); border: 1px solid rgb(255 255 255 / 0.14); }
+  .ctype--empresarial .ctype__list li { background: rgb(255 255 255 / 0.08); border-color: rgb(255 255 255 / 0.12); color: #fff; }
+  .ctype--empresarial .ctype__list :global(.icon) { color: var(--c-brand-light); }
+</style>

@@ -1,0 +1,52 @@
+---
+import SectionHeader from '../ui/SectionHeader.astro';
+import Icon from '../ui/Icon.astro';
+import { benefitsSection } from '../../config/content';
+---
+
+<section id="diferenciais" class="section section--alt" aria-labelledby="diferenciais-title">
+  <div class="container">
+    <SectionHeader id="diferenciais-title" eyebrow={benefitsSection.eyebrow} title={benefitsSection.title} subtitle={benefitsSection.subtitle} center />
+    <ul class="benefits">
+      {benefitsSection.items.map((b, i) => (
+        <li class="benefit" data-reveal style={`--d:${(i % 3) * 70}ms`}>
+          <span class="benefit__icon"><Icon name={b.icon} size={24} /></span>
+          <div>
+            <h3>{b.title}</h3>
+            <p>{b.text}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .benefits {
+    list-style: none;
+    display: grid;
+    gap: 1px;
+    background: var(--c-line);
+    border: 1px solid var(--c-line);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  @media (min-width: 640px) { .benefits { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .benefits { grid-template-columns: repeat(3, 1fr); } }
+  .benefit { display: flex; gap: 16px; padding: 26px 22px; background: #fff; transition: background-color 0.3s var(--ease); }
+  @media (min-width: 1024px) { .benefit { padding: 34px 30px; flex-direction: column; gap: 20px; } }
+  @media (hover: hover) { .benefit:hover { background: var(--c-brand-50); } }
+  .benefit__icon {
+    display: grid;
+    place-items: center;
+    width: 50px;
+    height: 50px;
+    flex-shrink: 0;
+    border-radius: 15px;
+    color: #fff;
+    background: linear-gradient(140deg, var(--c-brand-light), var(--c-primary));
+    box-shadow: 0 10px 20px -10px color-mix(in srgb, var(--c-primary) 80%, transparent);
+  }
+  .benefit h3 { font-size: 1.0625rem; margin-bottom: 6px; }
+  .benefit p { color: var(--c-muted); font-size: 0.95rem; }
+</style>

@@ -1,0 +1,62 @@
+---
+/**
+ * Botão/link padrão do site.
+ *  - `wa`    → abre o WhatsApp com a mensagem informada (a origem da campanha é anexada no clique)
+ *  - `quote` → leva ao formulário de orçamento, já com o serviço selecionado (id de quote.ts)
+ *  - `href`  → link comum
+ */
+import Icon from './Icon.astro';
+import { whatsappUrl } from '../../lib/whatsapp';
+
+interface Props {
+  href?: string;
+  wa?: string;
+  quote?: string;
+  quoteLabel?: string;
+  variant?: 'primary' | 'wa' | 'outline' | 'light' | 'ghost-light';
+  size?: 'sm' | 'md' | 'lg';
+  icon?: string;
+  arrow?: boolean;
+  block?: boolean;
+  track?: string;
+  trackLabel?: string;
+  class?: string;
+  ariaLabel?: string;
+}
+
+const {
+  href,
+  wa,
+  quote,
+  quoteLabel,
+  variant = wa !== undefined ? 'wa' : 'primary',
+  size = 'md',
+  icon = wa !== undefined ? 'whatsapp' : undefined,
+  arrow = false,
+  block = false,
+  track,
+  trackLabel,
+  class: className = '',
+  ariaLabel,
+} = Astro.props;
+
+const isWa = wa !== undefined;
+const finalHref = isWa ? whatsappUrl(wa) : quote ? '#orcamento' : href ?? '#';
+const classes = ['btn', `btn--${variant}`, size !== 'md' && `btn--${size}`, block && 'btn--block', className]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<a
+  href={finalHref}
+  class={classes}
+  {...isWa ? { target: '_blank', rel: 'noopener', 'data-wa': '', 'data-wa-message': wa } : {}}
+  {...quote ? { 'data-quote-service': quote, 'data-quote-label': quoteLabel ?? '' } : {}}
+  {...track ? { 'data-track': track } : {}}
+  {...trackLabel ? { 'data-track-label': trackLabel } : {}}
+  {...ariaLabel ? { 'aria-label': ariaLabel } : {}}
+>
+  {icon && <Icon name={icon} size={20} />}
+  <span><slot /></span>
+  {arrow && <Icon name="arrow-right" size={20} class="btn__arrow" />}
+</a>

@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/ui/PageHero.astro';
+import ServiceAreas from '../components/sections/ServiceAreas.astro';
+import Services from '../components/sections/Services.astro';
+import QuoteWizard from '../components/sections/QuoteWizard.astro';
+import FinalCTA from '../components/sections/FinalCTA.astro';
+import { areasPage } from '../config/content';
+import { company } from '../config/company';
+import { breadcrumbSchema } from '../lib/schema';
+
+const crumbs = [
+  { name: 'Início', path: '/' },
+  { name: 'Áreas atendidas', path: '/areas-atendidas' },
+];
+---
+
+<BaseLayout title={areasPage.seoTitle} description={areasPage.seoDescription} schema={[breadcrumbSchema(crumbs)]}>
+  <PageHero eyebrow={areasPage.eyebrow} title={areasPage.h1} intro={areasPage.intro} breadcrumbs={crumbs} waMessage={company.whatsappMessages.area} />
+  <ServiceAreas showHeader={false} />
+  <Services />
+  <QuoteWizard trackLabel="areas_page" />
+  <FinalCTA />
+</BaseLayout>

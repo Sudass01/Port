@@ -1,0 +1,53 @@
+---
+import Button from '../ui/Button.astro';
+import Icon from '../ui/Icon.astro';
+import { finalCta } from '../../config/content';
+import { company } from '../../config/company';
+---
+
+<section class="section section--tight final" aria-labelledby="final-title">
+  <div class="container">
+    <div class="final__box" data-reveal>
+      <div class="final__icon" aria-hidden="true"><Icon name="snowflake" size={30} /></div>
+      <h2 id="final-title">{finalCta.title}</h2>
+      <p>{finalCta.text}</p>
+      <div class="btn-row btn-row--stack final__ctas">
+        <Button href="#orcamento" size="lg" arrow track="quote_cta_click" trackLabel="final_cta">{finalCta.primary}</Button>
+        <Button wa={company.whatsappMessages.default} size="lg" trackLabel="final_cta">{finalCta.secondary}</Button>
+      </div>
+      <p class="final__meta">
+        <Icon name="clock" size={16} />
+        {company.hours.map((h) => `${h.label}, ${h.open} às ${h.close}`).join(' · ')}
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .final__box {
+    position: relative;
+    padding: clamp(40px, 2rem + 4vw, 80px) clamp(20px, 1rem + 4vw, 64px);
+    border-radius: 32px;
+    text-align: center;
+    background:
+      radial-gradient(600px 300px at 50% 0%, var(--c-brand-100), transparent 70%),
+      linear-gradient(180deg, var(--c-surface), #fff);
+    border: 1px solid var(--c-line);
+    overflow: hidden;
+  }
+  .final__icon {
+    display: inline-grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 22px;
+    border-radius: 20px;
+    background: linear-gradient(140deg, var(--c-brand-light), var(--c-primary));
+    color: #fff;
+    box-shadow: 0 16px 30px -12px color-mix(in srgb, var(--c-primary) 70%, transparent);
+  }
+  .final h2 { max-width: 20ch; margin-inline: auto; }
+  .final__box > p:not(.final__meta) { margin: 14px auto 0; max-width: 44ch; color: var(--c-muted); font-size: 1.0625rem; }
+  .final__ctas { justify-content: center; margin-top: 30px; }
+  .final__meta { display: inline-flex; align-items: center; gap: 8px; margin-top: 24px; font-size: 0.875rem; color: var(--c-muted); flex-wrap: wrap; justify-content: center; }
+</style>
